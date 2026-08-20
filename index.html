@@ -19,7 +19,7 @@
     <!-- Social share preview (WhatsApp / Instagram / Facebook link cards) -->
     <meta property="og:title" content="Jagdish Lifestyle | Handloom Gifting & Home">
     <meta property="og:description" content="Handloom curtains, bed sets, towels & sofa covers — perfect for festive gifting, weddings, housewarming or personal use. The online outlet of Jagdish Silk Store, Phagwara.">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80">
+    <meta property="og:image" content="https://rajanrachna.github.io/Jagdish-Silk-Store/logo-horizontal.png">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://rajanrachna.github.io/Jagdish-Silk-Store/">
     <meta property="og:locale" content="en_IN">
@@ -29,7 +29,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Jagdish Lifestyle | Handloom Gifting & Home">
     <meta name="twitter:description" content="Handloom curtains, bed sets, towels & sofa covers for festive gifting, weddings, housewarming or personal use.">
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80">
+    <meta name="twitter:image" content="https://rajanrachna.github.io/Jagdish-Silk-Store/logo-horizontal.png">
 
     <!-- Local business structured data, for Google Search / Maps rich results -->
     <script type="application/ld+json">
@@ -740,7 +740,7 @@
                     <li><a href="#lifestyle-catalog">Shop</a></li>
                     <li><a href="bulk-order.html">Bulk Orders</a></li>
                     <li><a href="#location-section">Store</a></li>
-                    <li><a href="https://www.instagram.com/jagdish_silk_store/" target="_blank">Instagram</a></li>
+                    <li><a href="javascript:void(0)" onclick="openInstagramProfile()">Instagram</a></li>
                 </ul>
             </nav>
             <a href="https://wa.me/919815068679?text=Hi%20Jagdish%20Lifestyle!%20I'd%20like%20to%20know%20more." target="_blank" class="header-wa-btn"><i class="fab fa-whatsapp"></i> <span>Chat</span></a>
@@ -1119,7 +1119,7 @@
         </div>
 
         <div class="ig-btn-container">
-            <a href="https://www.instagram.com/jagdish_silk_store/" target="_blank" class="btn-follow"><i class="fab fa-instagram"></i> Follow for Daily Updates</a>
+            <a href="javascript:void(0)" onclick="openInstagramProfile()" class="btn-follow"><i class="fab fa-instagram"></i> Follow for Daily Updates</a>
         </div>
     </section>
 
@@ -1136,7 +1136,7 @@
                 </div>
                 <p class="footer-about">Handloom curtains, bed sets, towels & sofa covers — picked for festive gifting, weddings, housewarming and everyday home use. The online outlet of Jagdish Silk Store, Sarafan Bazaar, Phagwara.</p>
                 <div class="footer-social">
-                    <a href="https://www.instagram.com/jagdish_silk_store/" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="javascript:void(0)" onclick="openInstagramProfile()" title="Instagram"><i class="fab fa-instagram"></i></a>
                     <a href="https://wa.me/919815068679" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                     <a href="tel:+919815068679" title="Call Us"><i class="fas fa-phone"></i></a>
                     <a href="https://maps.google.com/?q=Sarafan+Bazaar,+Phagwara" target="_blank" title="Location"><i class="fas fa-map-marker-alt"></i></a>
@@ -1150,7 +1150,7 @@
                     <li><a href="grand-gift.html">🎁 The Grand Gift</a></li>
                     <li><a href="#location-section">Visit Our Store</a></li>
                     <li><a href="#reels-section">Instagram Reels</a></li>
-                    <li><a href="https://www.instagram.com/jagdish_silk_store/" target="_blank">@jagdish_silk_store</a></li>
+                    <li><a href="javascript:void(0)" onclick="openInstagramProfile()">@jagdish_silk_store</a></li>
                 </ul>
             </div>
             <div class="footer-col">
@@ -1323,17 +1323,10 @@
         <div class="exit-popup">
             <button class="modal-close" onclick="closeExitPopup()"><i class="fas fa-times"></i></button>
             <div class="exit-popup-emoji">🎁</div>
-            <h3>Wait! Don't Go Empty Handed</h3>
-            <p>Here's a special coupon just for you — copy it or screenshot it before you leave.</p>
-            <div class="coupon-box">
-                <div>
-                    <span class="coupon-code" id="exitCouponCode">WELCOME10</span>
-                    <span class="coupon-off" id="exitCouponOff">10% OFF</span>
-                </div>
-                <button class="copy-btn" id="exitCouponBtn" onclick="copyCouponCode(this)">Copy Code</button>
-            </div>
-            <a href="https://wa.me/919815068679?text=Hi%20Jagdish%20Lifestyle!%20I%20have%20a%20coupon%20code%20I%27d%20like%20to%20use." target="_blank" class="exit-popup-cta"><i class="fab fa-whatsapp"></i> Claim on WhatsApp</a>
-            <button class="exit-popup-skip" onclick="closeExitPopup()">No thanks, I'll pay full price</button>
+            <h3>Wait! Before You Go...</h3>
+            <p>We're picking someone from the Jagdish Lifestyle circle for <strong>The Grand Gift</strong> this season. Takes 30 seconds to enter — no purchase necessary.</p>
+            <a href="grand-gift.html" class="exit-popup-cta" style="background: linear-gradient(135deg, var(--primary-pink), #ad1457);"><i class="fas fa-gift"></i> Enter the Grand Gift</a>
+            <button class="exit-popup-skip" onclick="closeExitPopup()">No thanks, maybe next time</button>
         </div>
     </div>
 
@@ -1344,7 +1337,7 @@
             <div class="exit-popup-emoji">📸</div>
             <h3>Come Say Hi on Instagram!</h3>
             <p>New designs, behind-the-scenes & festive drops go up there first. Follow @jagdish_silk_store so you don't miss out ✨</p>
-            <a href="https://www.instagram.com/jagdish_silk_store/" target="_blank" class="exit-popup-cta" style="background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);" onclick="closeInstaFollowModal()"><i class="fab fa-instagram"></i> Follow @jagdish_silk_store</a>
+            <a href="javascript:void(0)" onclick="openInstagramProfile(); closeInstaFollowModal();" class="exit-popup-cta" style="background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);"><i class="fab fa-instagram"></i> Follow @jagdish_silk_store</a>
             <button class="exit-popup-skip" onclick="closeInstaFollowModal()">Maybe later</button>
         </div>
     </div>
@@ -1547,6 +1540,8 @@
         function renderProducts() {
             document.getElementById('productGrid').innerHTML = getVisibleProducts().map(buildCardHTML).join('');
             applyFilters();
+            const wOverlay = document.getElementById('wishlistOverlay');
+            if (wOverlay && wOverlay.classList.contains('active')) renderWishlistPanel();
         }
 
         function toggleProductVisibility(id) {
@@ -2323,6 +2318,20 @@
             document.getElementById('instaFollowModal').classList.remove('active');
             document.body.style.overflow = '';
         }
+        // Tries to open the Instagram app straight to the profile (so Follow is one tap away);
+        // falls back to the web profile if the app isn't installed.
+        function openInstagramProfile() {
+            const webUrl = 'https://www.instagram.com/jagdish_silk_store/';
+            const appUrl = 'instagram://user?username=jagdish_silk_store';
+            let didHide = false;
+            const onVisibilityChange = () => { if (document.hidden) didHide = true; };
+            document.addEventListener('visibilitychange', onVisibilityChange);
+            window.location.href = appUrl;
+            setTimeout(() => {
+                document.removeEventListener('visibilitychange', onVisibilityChange);
+                if (!didHide) window.open(webUrl, '_blank');
+            }, 1000);
+        }
 
         // ================= WISHLIST (persistent, saved in this browser) =================
         let wishlist = JSON.parse(localStorage.getItem('jss_wishlist') || '[]');
@@ -2338,6 +2347,15 @@
             } else {
                 countEl.style.display = 'none';
             }
+        }
+
+        function getDeviceId() {
+            let id = localStorage.getItem('jss_deviceId');
+            if (!id) {
+                id = 'dev_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+                localStorage.setItem('jss_deviceId', id);
+            }
+            return id;
         }
 
         function toggleWishlist(id, btn) {
@@ -2362,6 +2380,16 @@
                 setTimeout(() => btn.classList.remove('heart-pop'), 450);
             }
             if (document.getElementById('wishlistOverlay').classList.contains('active')) renderWishlistPanel();
+
+            // Log every add/remove to the Sheet in the background — best-effort, never interrupts the UI
+            const p = currentProducts.find(x => x.id === id);
+            submitToGoogleSheet({
+                form_type: 'Wishlist Click',
+                product: p ? p.title : id,
+                action: nowActive ? 'Added' : 'Removed',
+                device_id: getDeviceId(),
+                page: window.location.href
+            }).catch(() => {});
         }
 
         function openWishlistPanel() {
@@ -2493,47 +2521,18 @@
             if (e.target.id === 'careModal') closeCareModal();
         }
 
-        // ================= EXIT-INTENT COUPON POPUP =================
+        // ================= EXIT-INTENT: GRAND GIFT PROMPT =================
         let exitPopupShown = false;
-
-        function pickCoupon() {
-            return COUPONS[Math.floor(Math.random() * COUPONS.length)];
-        }
 
         function showExitPopup() {
             if (exitPopupShown || localStorage.getItem('jss_exitShown')) return;
             exitPopupShown = true;
             localStorage.setItem('jss_exitShown', Date.now());
-
-            const coupon = pickCoupon();
-            document.getElementById('exitCouponCode').textContent = coupon.code;
-            document.getElementById('exitCouponOff').textContent = `${coupon.discount}% OFF — ${coupon.label}`;
             document.getElementById('exitPopup').classList.add('active');
         }
 
         function closeExitPopup() {
             document.getElementById('exitPopup').classList.remove('active');
-        }
-
-        function copyCouponCode(btn) {
-            const code = document.getElementById('exitCouponCode').textContent;
-            const done = () => {
-                const original = 'Copy Code';
-                btn.textContent = 'Copied!';
-                btn.classList.add('copied');
-                setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 2000);
-            };
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(code).then(done).catch(done);
-            } else {
-                const temp = document.createElement('textarea');
-                temp.value = code;
-                document.body.appendChild(temp);
-                temp.select();
-                document.execCommand('copy');
-                document.body.removeChild(temp);
-                done();
-            }
         }
 
         // Desktop: trigger when the mouse leaves through the top of the viewport
