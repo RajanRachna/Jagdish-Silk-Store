@@ -18,20 +18,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<!-- ================= LIVE CATALOG BACKEND (GitHub) ================= -->
+    <!-- ================= LIVE CATALOG BACKEND (GitHub — one platform, one token, that's it) ================= -->
+    <!-- Your product data + photos are stored right inside your own GitHub repo. -->
+    <!-- NOTE: the GitHub token is NOT stored in this file anymore — GitHub auto-revokes any
+         token it finds committed in a public repo. You'll paste your token once in the admin
+         panel itself (Admin login → GitHub Token field); it's saved only in your browser. -->
     <script>
-        // Attached to 'window' to guarantee global access across all script tags
-        window.GITHUB_OWNER = "RajanRachna";
-        window.GITHUB_REPO = "Jagdish-Silk-Store";
-        window.GITHUB_BRANCH = "main";
-        
-        // Active Token Applied
-        window.GITHUB_TOKEN = "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";
+        const GITHUB_OWNER = "RajanRachna";
+        const GITHUB_REPO = "Jagdish-Silk-Store";
+        const GITHUB_BRANCH = "main";
 
-        // Admin password is stored as a SHA-256 hash (not plain text)
-        window.ADMIN_PASSWORD_HASH = "bdc98fc57b6559f7bb9e1896e9859eb7f8c521d1a45b0cd64d449ce9cf91bd8e";
+        // Admin password is stored as a SHA-256 hash (not plain text) — current password is: rajanrachna
+        // Want a different password? Just tell Claude and it'll swap this hash for you.
+        const ADMIN_PASSWORD_HASH = "bdc98fc57b6559f7bb9e1896e9859eb7f8c521d1a45b0cd64d449ce9cf91bd8e";
     </script>
-    
+
     <style>
         :root {
             --bg-main: #FFFBF7;
@@ -550,6 +551,7 @@
             <span><i class="fas fa-user-shield"></i> Admin Mode</span>
             <div class="admin-bar-actions">
                 <button class="admin-btn-add" onclick="openProductForm()"><i class="fas fa-plus"></i> Add New Product</button>
+                <button class="admin-btn-logout" onclick="updateGithubToken()"><i class="fas fa-key"></i> GitHub Token</button>
                 <button class="admin-btn-logout" onclick="adminLogout()">Logout</button>
             </div>
         </div>
@@ -1303,9 +1305,28 @@
         const GH_API = 'https://api.github.com';
         const DATA_PATH = 'data/products.json';
 
+        // ================= GitHub token: lives ONLY in this browser, never in the file =================
+        // GitHub auto-revokes tokens it finds committed to a public repo, so we never hardcode it here.
+        function getGithubToken() {
+            return localStorage.getItem('jss_ghToken') || '';
+        }
+        function updateGithubToken(silent) {
+            const current = getGithubToken();
+            const t = prompt('Paste your GitHub Personal Access Token (Contents: Read & write, scoped to this repo):', current);
+            if (t === null) return false;
+            localStorage.setItem('jss_ghToken', t.trim());
+            if (!silent) alert('GitHub token saved to this browser.');
+            return true;
+        }
+        function requireGithubToken() {
+            const t = getGithubToken();
+            if (!t) throw new Error('No GitHub token set yet. Click "GitHub Token" in the admin bar and paste it in.');
+            return t;
+        }
+
         async function fetchProducts() {
             try {
-                const res = await fetch(`https://raw.githubusercontent.com/${window.GITHUB_OWNER}/${window.GITHUB_REPO}/${window.GITHUB_BRANCH}/${DATA_PATH}?t=${Date.now()}`);
+                const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${DATA_PATH}?t=${Date.now()}`);
                 let products = res.ok ? await res.json() : []; // 404 just means no products committed yet
 
                 if ((!products || products.length === 0) && isAdmin) {
@@ -1326,8 +1347,8 @@
         }
 
         async function getFileSha(path) {
-            const res = await fetch(`${GH_API}/repos/${window.GITHUB_OWNER}/${window.GITHUB_REPO}/contents/${path}?ref=${window.GITHUB_BRANCH}`, {
-                headers: { Authorization: `token ${window.GITHUB_TOKEN}` }
+            const res = await fetch(`${GH_API}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}`, {
+                headers: { Authorization: `token ${requireGithubToken()}` }
             });
             if (res.status === 404) return null;
             if (!res.ok) {
@@ -1344,12 +1365,12 @@
             const body = {
                 message: 'Update product catalog',
                 content: utf8ToBase64(JSON.stringify(products, null, 2)),
-                branch: window.GITHUB_BRANCH
+                branch: GITHUB_BRANCH
             };
             if (sha) body.sha = sha;
-            const res = await fetch(`${GH_API}/repos/${window.GITHUB_OWNER}/${window.GITHUB_REPO}/contents/${DATA_PATH}`, {
+            const res = await fetch(`${GH_API}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${DATA_PATH}`, {
                 method: 'PUT',
-                headers: { Authorization: `token ${window.GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
+                headers: { Authorization: `token ${requireGithubToken()}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
             });
             if (!res.ok) {
@@ -1414,17 +1435,17 @@
         async function uploadImageToGitHub(file) {
             const base64Content = await compressImage(file);
             const path = `images/${Date.now()}_${Math.random().toString(36).slice(2, 8)}.jpg`;
-            const res = await fetch(`${GH_API}/repos/${window.GITHUB_OWNER}/${window.GITHUB_REPO}/contents/${path}`, {
+            const res = await fetch(`${GH_API}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`, {
                 method: 'PUT',
-                headers: { Authorization: `token ${window.GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: 'Add product image', content: base64Content, branch: window.GITHUB_BRANCH })
+                headers: { Authorization: `token ${requireGithubToken()}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: 'Add product image', content: base64Content, branch: GITHUB_BRANCH })
             });
             if (!res.ok) {
                 let detail = '';
                 try { detail = (await res.json()).message || ''; } catch (e) {}
                 throw new Error(`Image upload failed (HTTP ${res.status}${detail ? ': ' + detail : ''}). Check GitHub username / repo / token permissions.`);
             }
-            return `https://raw.githubusercontent.com/${window.GITHUB_OWNER}/${window.GITHUB_REPO}/${window.GITHUB_BRANCH}/${path}`;
+            return `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${path}`;
         }
 
         async function sha256Hex(str) {
@@ -1465,13 +1486,16 @@
             const btn = document.getElementById('adminLoginBtn');
             btn.disabled = true; btn.textContent = 'Logging in...';
             const hash = await sha256Hex(pass);
-            if (hash === window.ADMIN_PASSWORD_HASH) {
+            if (hash === ADMIN_PASSWORD_HASH) {
                 isAdmin = true;
                 localStorage.setItem('jss_isAdmin', '1');
                 document.getElementById('adminPasswordInput').value = '';
                 updateAdminUI();
-                fetchProducts(); // re-check catalog now that we're admin (seeds it on the very first login)
                 closeAdminModal('adminLoginModal');
+                if (!getGithubToken()) {
+                    updateGithubToken(true); // first-time setup — ask for the token right away
+                }
+                fetchProducts(); // re-check catalog now that we're admin (seeds it on the very first login)
             } else {
                 document.getElementById('adminLoginError').style.display = 'block';
             }
