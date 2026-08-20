@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 260">
+  <defs>
+    <radialGradient id="bg2" cx="50%" cy="38%" r="75%">
+      <stop offset="0%" stop-color="#3d2721"/>
+      <stop offset="100%" stop-color="#2C1B18"/>
+    </radialGradient>
+    <linearGradient id="gold2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE49B"/>
+      <stop offset="100%" stop-color="#FFC107"/>
+    </linearGradient>
+  </defs>
+
+  <!-- badge -->
+  <g transform="translate(130,130)">
+    <circle cx="0" cy="0" r="108" fill="#2C1B18"/>
+    <circle cx="0" cy="0" r="101" fill="none" stroke="url(#gold2)" stroke-width="3"/>
+    <text x="0" y="26" font-family="Playfair Display, Georgia, 'Times New Roman', serif" font-style="italic" font-weight="700" font-size="95" fill="#FFFBF7" text-anchor="middle">JL</text>
+    <line x1="-48" y1="46" x2="48" y2="46" stroke="#FFC107" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- wordmark -->
+  <text x="278" y="128" font-family="Playfair Display, Georgia, 'Times New Roman', serif" font-style="italic" font-weight="700" font-size="58" fill="#2C1B18">Jagdish Lifestyle</text>
+  <text x="280" y="163" font-family="Poppins, Arial, sans-serif" font-weight="600" font-size="18" letter-spacing="3" fill="#E91E63">ONLINE OUTLET OF JAGDISH SILK STORE</text>
+  <text x="280" y="196" font-family="Poppins, Arial, sans-serif" font-weight="500" font-size="16" letter-spacing="1.5" fill="#7F8C8D">HANDLOOM  ·  GIFTING  ·  PHAGWARA</text>
+</svg>
