@@ -1,0 +1,84 @@
+{
+  "curtains": {
+    "title": "Curtain Care & Size Guide",
+    "care": [
+      "Dry Clean Only for velvet variants",
+      "Gentle machine wash (cold) for sheer/net fabric",
+      "Do not bleach",
+      "Iron on low heat, reverse side"
+    ],
+    "size": [
+      "7 ft length fits standard window frames",
+      "9 ft length recommended for door/balcony openings",
+      "Standard width per panel: 4 ft (extra-wide on request)"
+    ]
+  },
+  "bed-double": {
+    "title": "Double Bed Set Care & Size Guide",
+    "care": [
+      "Machine wash cold, separately for first 2 washes",
+      "Do not bleach — preserves print vibrancy",
+      "Tumble dry low or line dry in shade",
+      "Iron on medium heat"
+    ],
+    "size": [
+      "Fits mattress size 60\"x78\" (Queen) to 72\"x78\" (King)",
+      "Set includes 1 bedsheet + 2 pillow covers",
+      "Elastic-fitted option available on select designs"
+    ]
+  },
+  "bed-single": {
+    "title": "Single Bed Set Care & Size Guide",
+    "care": [
+      "Machine wash cold",
+      "Do not bleach",
+      "Line dry in shade to protect pastel prints",
+      "Iron on medium heat"
+    ],
+    "size": [
+      "Fits mattress size 36\"x75\" to 48\"x75\"",
+      "Set includes 1 bedsheet + 1 pillow cover",
+      "Elastic-fitted option adds a secure, wrinkle-free look"
+    ]
+  },
+  "towels": {
+    "title": "Towel Care & Size Guide",
+    "care": [
+      "Machine wash warm before first use to boost absorbency",
+      "Avoid fabric softener — it reduces GSM fluffiness",
+      "Tumble dry low or line dry",
+      "Do not iron over embroidered borders"
+    ],
+    "size": [
+      "Bath towel: approx. 30in x 60in",
+      "Hand towel: approx. 16in x 24in",
+      "600 GSM = extra thick, extra absorbent"
+    ]
+  },
+  "sofa": {
+    "title": "Sofa Cover Care & Size Guide",
+    "care": [
+      "Dry Clean Only for quilted velvet covers",
+      "Spot clean spills immediately with a damp cloth",
+      "Do not wring or twist the fabric",
+      "Steam iron on reverse side only"
+    ],
+    "size": [
+      "1 Seater: fits 26\"-30\" wide sofas",
+      "2 Seater: fits 50\"-58\" wide sofas",
+      "3 Seater: fits 68\"-78\" wide sofas",
+      "Measure your sofa's widest point before ordering"
+    ]
+  },
+  "default": {
+    "title": "Fabric Care & Size Guide",
+    "care": [
+      "Dry Clean recommended for best results",
+      "Avoid direct harsh sunlight for long periods",
+      "Iron on low-medium heat"
+    ],
+    "size": [
+      "Message us on WhatsApp for exact measurements before ordering."
+    ]
+  }
+}
