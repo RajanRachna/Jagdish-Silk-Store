@@ -480,6 +480,13 @@
 
         .admin-img-list { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
         .admin-img-thumb { position: relative; width: 70px; height: 70px; border-radius: 10px; overflow: hidden; border: 1px solid #eee; }
+        .tag-checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; }
+        .tag-checkbox {
+            display: flex; align-items: center; gap: 7px; background: #F8F9FA; padding: 8px 14px; border-radius: 20px;
+            font-size: 0.85rem; font-weight: 500; cursor: pointer; border: 1px solid #E0E0E0; transition: 0.2s;
+        }
+        .tag-checkbox:has(input:checked) { background: var(--soft-pink); border-color: var(--primary-pink); }
+        .tag-checkbox input { cursor: pointer; }
         .admin-img-thumb img { width: 100%; height: 100%; object-fit: cover; }
         .admin-img-thumb button {
             position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; border-radius: 50%; background: rgba(0,0,0,0.6);
@@ -509,8 +516,26 @@
         .card-admin-menu button.danger i { color: #e74c3c; }
         .card-admin-menu button.danger:hover { background: #fdecea; }
         .out-of-stock-badge {
-            position: absolute; top: 65px; left: 20px; z-index: 6; background: rgba(127,140,141,0.92); color: white;
-            padding: 6px 15px; font-size: 0.75rem; font-weight: 700; border-radius: 20px;
+            position: absolute; top: 65px; left: 20px; z-index: 6; background: linear-gradient(135deg, var(--primary-pink), #c2185b); color: white;
+            padding: 6px 15px; font-size: 0.75rem; font-weight: 700; border-radius: 20px; display: flex; align-items: center; gap: 5px;
+        }
+        .restock-btn { background: var(--warm-mustard) !important; color: var(--deep-heritage) !important; box-shadow: 0 6px 16px rgba(255,193,7,0.35) !important; }
+        .restock-btn:hover { background: #ffb300 !important; }
+
+        .product-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+        .product-tag {
+            font-size: 0.66rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; display: flex;
+            align-items: center; gap: 4px; text-transform: uppercase; letter-spacing: 0.3px;
+        }
+        .tag-demand { background: var(--soft-pink); color: var(--primary-pink); }
+        .tag-launch { background: #FFF3CD; color: #8a6d1a; }
+        .tag-bundle { background: #E0F2F1; color: #00695C; }
+        .tag-finishing { background: #FFF3E0; color: #E65100; }
+
+        .life-card-hidden-admin { opacity: 0.55; }
+        .hidden-ribbon {
+            position: absolute; top: 0; left: 0; right: 0; background: var(--deep-heritage); color: white;
+            text-align: center; font-size: 0.68rem; font-weight: 700; letter-spacing: 1.5px; padding: 6px; z-index: 15;
         }
 
         /* ================= FOOTER ================= */
@@ -1084,6 +1109,15 @@
                     <small>Leave blank for a simple "Standard" option.</small>
                 </div>
                 <div class="admin-field">
+                    <label>Tags (optional)</label>
+                    <div class="tag-checkbox-group">
+                        <label class="tag-checkbox"><input type="checkbox" name="pfTag" value="High in Demand"> 🔥 High in Demand</label>
+                        <label class="tag-checkbox"><input type="checkbox" name="pfTag" value="Latest Launch"> ✨ Latest Launch</label>
+                        <label class="tag-checkbox"><input type="checkbox" name="pfTag" value="Bundle Offer"> 🎁 Bundle Offer</label>
+                        <label class="tag-checkbox"><input type="checkbox" name="pfTag" value="Finishing Fast"> ⏳ Finishing Fast</label>
+                    </div>
+                </div>
+                <div class="admin-field">
                     <label>Images</label>
                     <div class="admin-img-list" id="pfImageList"></div>
                     <input type="file" id="pfImageUpload" accept="image/*" multiple>
@@ -1193,7 +1227,7 @@
             const tabsWrap = document.getElementById('filterTabs');
             const prevActive = tabsWrap.querySelector('.filter-btn.active');
             const prevFilter = prevActive ? prevActive.getAttribute('data-filter') : 'all';
-            const cats = [...new Set(currentProducts.map(p => p.category).filter(Boolean))];
+            const cats = [...new Set(getVisibleProducts().map(p => p.category).filter(Boolean))];
             const stillExists = cats.includes(prevFilter);
             let html = `<button class="filter-btn${(prevFilter==='all'||!stillExists)?' active':''}" data-filter="all">All Items</button>`;
             cats.forEach(cat => {
@@ -1229,26 +1263,43 @@
                 <button class="slider-btn next-btn" onclick="slideImg(this, 1)"><i class="fas fa-chevron-right"></i></button>
                 <div class="slider-dots">${dots}</div>` : '';
             const badgeHtml = p.badge ? `<span class="badge"><i class="fas fa-tag"></i> ${escapeHtml(p.badge)}</span>` : '';
-            const outOfStock = (p.qty !== undefined && p.qty !== null && p.qty <= 0);
-            const oosHtml = outOfStock ? `<span class="out-of-stock-badge">Out of Stock</span>` : '';
+            const isSoldOut = !!p.soldOut || (p.qty !== undefined && p.qty !== null && p.qty <= 0);
+            const isHidden = p.visible === false;
+            const oosHtml = isSoldOut ? `<span class="out-of-stock-badge"><i class="fas fa-fire"></i> High in Demand</span>` : '';
             const oldPriceHtml = (p.oldPrice && p.oldPrice > p.price) ? `<span class="old-price">₹${Number(p.oldPrice).toLocaleString('en-IN')}</span>` : '';
-            const lowStockHtml = (!outOfStock && p.qty !== undefined && p.qty !== null && p.qty > 0 && p.qty <= 5) ? `<span class="low-stock-chip">Only ${p.qty} left</span>` : '';
+            const lowStockHtml = (!isSoldOut && p.qty !== undefined && p.qty !== null && p.qty > 0 && p.qty <= 5) ? `<span class="low-stock-chip">Only ${p.qty} left</span>` : '';
             const variants = (p.variants && p.variants.length) ? p.variants : ['Standard'];
             const variantOptions = variants.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
             const maxQty = Math.max(1, Math.min(20, (p.qty !== undefined && p.qty !== null) ? p.qty : 20));
+
+            const TAG_META = {
+                'High in Demand': { icon: 'fa-fire', cls: 'tag-demand' },
+                'Latest Launch': { icon: 'fa-sparkles', cls: 'tag-launch' },
+                'Bundle Offer': { icon: 'fa-gift', cls: 'tag-bundle' },
+                'Finishing Fast': { icon: 'fa-hourglass-half', cls: 'tag-finishing' }
+            };
+            const tagsHtml = (p.tags && p.tags.length) ? `<div class="product-tags">${p.tags.map(t => {
+                const meta = TAG_META[t] || { icon: 'fa-tag', cls: 'tag-demand' };
+                return `<span class="product-tag ${meta.cls}"><i class="fas ${meta.icon}"></i> ${escapeHtml(t)}</span>`;
+            }).join('')}</div>` : '';
+
+            const hiddenRibbon = (isAdmin && isHidden) ? `<div class="hidden-ribbon">HIDDEN FROM CUSTOMERS</div>` : '';
             const adminControls = isAdmin ? `
                 <div class="card-admin-controls">
                     <button class="card-admin-btn card-kebab-btn" onclick="toggleCardMenu(event, '${p.id}')" title="Options"><i class="fas fa-ellipsis-vertical"></i></button>
                     <div class="card-admin-menu" id="menu-${p.id}">
                         <button type="button" onclick="closeAllCardMenus(); editProduct('${p.id}')"><i class="fas fa-pen"></i> Edit</button>
                         <button type="button" onclick="closeAllCardMenus(); duplicateProduct('${p.id}')"><i class="fas fa-clone"></i> Duplicate</button>
+                        <button type="button" onclick="closeAllCardMenus(); toggleProductVisibility('${p.id}')"><i class="fas fa-eye${isHidden ? '' : '-slash'}"></i> ${isHidden ? 'Show to Customers' : 'Hide from Customers'}</button>
+                        <button type="button" onclick="closeAllCardMenus(); toggleSoldOut('${p.id}')"><i class="fas fa-fire"></i> ${isSoldOut ? 'Mark Available' : 'Mark High in Demand'}</button>
                         <button type="button" class="danger" onclick="closeAllCardMenus(); deleteProduct('${p.id}')"><i class="fas fa-trash"></i> Delete</button>
                     </div>
                 </div>` : '';
             const desc = (p.description && p.description.trim()) ? escapeHtml(p.description) : 'Beautiful handloom piece from Jagdish Lifestyle — perfect for gifting or everyday use.';
 
             return `
-            <div class="life-card" data-id="${p.id}" data-category="${escapeHtml(p.category)}" data-price="${p.price || 0}">
+            <div class="life-card${isAdmin && isHidden ? ' life-card-hidden-admin' : ''}" data-id="${p.id}" data-category="${escapeHtml(p.category)}" data-price="${p.price || 0}">
+                ${hiddenRibbon}
                 ${badgeHtml}${oosHtml}
                 <div class="image-slider" data-index="0">
                     ${sliderNav}
@@ -1256,15 +1307,16 @@
                     ${adminControls}
                 </div>
                 <div class="card-body">
+                    ${tagsHtml}
                     <h3 class="prod-name" data-name="${escapeHtml(p.title)}">${escapeHtml(p.title)}</h3>
                     <p class="prod-desc">${desc}</p>
                     <div class="price-box"><span class="price">₹${Number(p.price || 0).toLocaleString('en-IN')}</span> ${oldPriceHtml}${lowStockHtml}</div>
                     <div class="options-row">
                         <select class="variant-select">${variantOptions}</select>
-                        <input type="number" class="qty-input" value="1" min="1" max="${maxQty}" ${outOfStock ? 'disabled' : ''}>
+                        <input type="number" class="qty-input" value="1" min="1" max="${maxQty}" ${isSoldOut ? 'disabled' : ''}>
                     </div>
                     <div class="card-actions">
-                        <button class="buy-wa-btn" onclick="orderWA(this)" ${outOfStock ? 'disabled' : ''}><i class="fab fa-whatsapp"></i> ${outOfStock ? 'Out of Stock' : 'Reserve Now'}</button>
+                        <button class="buy-wa-btn ${isSoldOut ? 'restock-btn' : ''}" onclick="orderWA(this)"><i class="fab fa-whatsapp"></i> ${isSoldOut ? 'Ask About Restock' : 'Reserve Now'}</button>
                         <button class="share-btn" onclick="shareProduct(this)" title="Share"><i class="fas fa-share-alt"></i></button>
                     </div>
                 </div>
@@ -1272,9 +1324,27 @@
             </div>`;
         }
 
+        function getVisibleProducts() {
+            return isAdmin ? currentProducts : currentProducts.filter(p => p.visible !== false);
+        }
+
         function renderProducts() {
-            document.getElementById('productGrid').innerHTML = currentProducts.map(buildCardHTML).join('');
+            document.getElementById('productGrid').innerHTML = getVisibleProducts().map(buildCardHTML).join('');
             applyFilters();
+        }
+
+        function toggleProductVisibility(id) {
+            const updated = currentProducts.map(p => p.id === id ? { ...p, visible: p.visible === false ? true : false } : p);
+            saveProductsToGitHub(updated)
+                .then(() => { currentProducts = updated; renderFilterTabs(); renderProducts(); })
+                .catch(err => alert('Update failed: ' + err.message));
+        }
+
+        function toggleSoldOut(id) {
+            const updated = currentProducts.map(p => p.id === id ? { ...p, soldOut: !p.soldOut } : p);
+            saveProductsToGitHub(updated)
+                .then(() => { currentProducts = updated; renderProducts(); })
+                .catch(err => alert('Update failed: ' + err.message));
         }
 
         function applyFilters() {
@@ -1372,6 +1442,12 @@
             }
 
             const number = "919815068679";
+
+            if (btn.classList.contains('restock-btn')) {
+                const restockMsg = `Hi Jagdish Lifestyle ✨,\n\nI'm interested in *${name}*${category ? ' (' + category + ')' : ''} — it shows as high in demand right now.\n\n*Variant / Size interested in:* ${variant}\n\nPlease let me know as soon as it's back in stock!`;
+                window.open(`https://wa.me/${number}?text=${encodeURIComponent(restockMsg)}`, '_blank');
+                return;
+            }
 
             let msg = `Hi Jagdish Lifestyle ✨,\n\nI want to order:\n\n*Item:* ${name}\n`;
             if (category) msg += `*Collection:* ${category}\n`;
@@ -1780,6 +1856,9 @@
             document.getElementById('pfQty').value = p && p.qty !== undefined && p.qty !== null ? p.qty : 10;
             document.getElementById('pfVariants').value = p && p.variants ? p.variants.join(', ') : '';
             pfExistingImages = p ? [...(p.images || [])] : [];
+            document.querySelectorAll('input[name="pfTag"]').forEach(cb => {
+                cb.checked = !!(p && p.tags && p.tags.includes(cb.value));
+            });
 
             renderPfImageList();
             populateCategoryOptions(p ? p.category : null);
@@ -1973,8 +2052,9 @@
                 const variantsRaw = document.getElementById('pfVariants').value.trim();
                 const variants = variantsRaw ? variantsRaw.split(',').map(v => v.trim()).filter(Boolean) : ['Standard'];
 
+                const tags = Array.from(document.querySelectorAll('input[name="pfTag"]:checked')).map(cb => cb.value);
                 const fields = {
-                    title, category, images, variants,
+                    title, category, images, variants, tags,
                     description: document.getElementById('pfDesc').value.trim(),
                     price,
                     oldPrice: oldPriceVal ? parseInt(oldPriceVal) : null,
