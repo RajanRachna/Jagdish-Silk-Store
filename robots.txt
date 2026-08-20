@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rajanrachna.github.io/Jagdish-Silk-Store/sitemap.xml
