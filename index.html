@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jagdish Silk Store | Handloom Gifting & Home, Phagwara</title>
-    <meta name="description" content="Handloom curtains, bed sets, towels & sofa covers from Jagdish Silk Store, Phagwara — perfect for festive gifting, weddings, housewarming or your own home. Order on WhatsApp.">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%81%3C/text%3E%3C/svg%3E">
+    <title>Jagdish Lifestyle | Handloom Gifting & Home, Phagwara</title>
+    <meta name="description" content="Handloom curtains, bed sets, towels & sofa covers — perfect for festive gifting, weddings, housewarming or your own home. Jagdish Lifestyle is the online outlet of Jagdish Silk Store, Phagwara. Order on WhatsApp.">
+    <!-- Favicon — upload the logo files into an /assets folder in your repo (see setup steps) for this to show. -->
+    <link rel="icon" type="image/png" href="assets/logo-icon-192.png">
+    <link rel="apple-touch-icon" href="assets/logo-icon-192.png">
 
     <!-- Social share preview (WhatsApp / Instagram / Facebook link cards) -->
-    <meta property="og:title" content="Jagdish Silk Store | Handloom Gifting & Home">
-    <meta property="og:description" content="Handloom curtains, bed sets, towels & sofa covers — perfect for festive gifting, weddings, housewarming or personal use. Sarafan Bazaar, Phagwara.">
+    <meta property="og:title" content="Jagdish Lifestyle | Handloom Gifting & Home">
+    <meta property="og:description" content="Handloom curtains, bed sets, towels & sofa covers — perfect for festive gifting, weddings, housewarming or personal use. The online outlet of Jagdish Silk Store, Phagwara.">
     <meta property="og:image" content="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80">
     <meta property="og:type" content="website">
     
@@ -82,7 +84,9 @@
             box-shadow: 0 4px 30px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center;
         }
         
-        .logo-text { font-size: 2.2rem; font-weight: 700; color: var(--primary-pink); letter-spacing: 1px; }
+        .header-brand { display: flex; align-items: center; gap: 12px; }
+        .header-logo-img { height: 46px; width: 46px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+        .logo-text { font-size: 1.8rem; font-weight: 700; color: var(--primary-pink); letter-spacing: 0.5px; line-height: 1.15; }
         .logo-sub { font-size: 0.75rem; font-family: 'Poppins', sans-serif; color: var(--text-gray); text-transform: uppercase; letter-spacing: 3px; display: block; }
         
         nav ul { display: flex; gap: 20px; list-style: none; }
@@ -147,7 +151,14 @@
         }
         .search-clear:hover { color: var(--primary-pink); }
 
-        .filter-tabs { display: flex; gap: 10px; flex-wrap: wrap; }
+        .filter-tabs { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .filter-tab-group { display: inline-flex; align-items: center; gap: 4px; }
+        .tab-delete-btn {
+            width: 22px; height: 22px; flex-shrink: 0; border-radius: 50%; border: none; cursor: pointer;
+            background: rgba(231,76,60,0.12); color: #e74c3c; font-size: 0.65rem;
+            display: flex; align-items: center; justify-content: center; transition: 0.2s;
+        }
+        .tab-delete-btn:hover { background: #e74c3c; color: white; transform: scale(1.1); }
         .filter-btn {
             padding: 10px 20px; background: #F8F9FA; color: var(--text-gray);
             border: 1px solid #E0E0E0; border-radius: 30px; cursor: pointer;
@@ -243,7 +254,8 @@
         .reviews-track { display: flex; gap: 30px; transition: transform 0.5s ease-in-out; }
         .review-card { min-width: 350px; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); flex-shrink: 0; }
         .review-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
-        .reviewer-initial { width: 45px; height: 45px; background: var(--soft-pink); color: var(--primary-pink); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; }
+        .reviewer-initial { width: 45px; height: 45px; background: var(--soft-pink); color: var(--primary-pink); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; flex-shrink: 0; }
+        .google-icon { width: 20px; height: 20px; object-fit: contain; margin-left: auto; flex-shrink: 0; }
         .reviewer-info h4 { color: var(--deep-heritage); margin-bottom: 3px; font-size: 1.1rem; }
         .stars { color: var(--warm-mustard); font-size: 0.9rem; }
         .review-text { color: var(--text-gray); font-size: 0.95rem; line-height: 1.6; font-style: italic; }
@@ -361,7 +373,7 @@
         .admin-fab.is-admin { background: var(--primary-pink); color: white; }
 
         .admin-bar {
-            display: none; position: sticky; top: 0; z-index: 2500; background: var(--deep-heritage); color: white;
+            display: none; background: var(--deep-heritage); color: white;
             padding: 12px 5vw; align-items: center; justify-content: space-between; gap: 15px; flex-wrap: wrap;
         }
         .admin-bar.active { display: flex; }
@@ -432,7 +444,7 @@
         /* ================= FOOTER ================= */
         .site-footer { background: #1a100e; color: rgba(255,255,255,0.85); padding: 70px 5vw 0; }
         .footer-grid { max-width: 1300px; margin: 0 auto; display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 40px; padding-bottom: 45px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .footer-brand .logo-text { color: var(--primary-pink); font-size: 1.9rem; }
+        .footer-brand .logo-text { color: var(--primary-pink); font-size: 1.6rem; }
         .footer-brand .logo-sub { color: rgba(255,255,255,0.5); }
         .footer-about { margin-top: 14px; font-size: 0.92rem; line-height: 1.7; color: rgba(255,255,255,0.65); max-width: 380px; }
         .footer-social { display: flex; gap: 12px; margin-top: 20px; }
@@ -446,15 +458,11 @@
         .footer-bottom { max-width: 1300px; margin: 0 auto; padding: 22px 0 100px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; font-size: 0.8rem; color: rgba(255,255,255,0.45); }
         .footer-bottom a { color: rgba(255,255,255,0.45); text-decoration: none; }
         .footer-bottom a:hover { color: var(--warm-mustard); }
-        @media(max-width: 768px) {
-            .footer-grid { grid-template-columns: 1fr; gap: 32px; }
-            .footer-bottom { flex-direction: column; text-align: center; padding-bottom: 120px; }
-        }
-
         @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         
         @media(max-width: 768px) {
             header { padding: 15px 20px; flex-direction: column; gap: 10px; }
+            .logo-text { font-size: 1.5rem; }
             .hero h1 { font-size: 3rem; }
             .hero-buttons { flex-direction: column; width: 100%; }
             .filter-section { top: 110px; padding: 15px; }
@@ -465,6 +473,8 @@
             .notify-banner { bottom: 95px; width: 90vw; padding: 12px 16px; }
             .exit-popup { padding: 30px 22px; }
             .coupon-box { flex-direction: column; text-align: center; }
+            .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+            .footer-bottom { flex-direction: column; text-align: center; padding-bottom: 120px; }
         }
     </style>
 </head>
@@ -480,9 +490,12 @@
     </div>
 
     <header>
-        <div>
-            <div class="logo-text">Jagdish</div>
-            <span class="logo-sub">Silk Store & Lifestyle</span>
+        <div class="header-brand">
+            <img src="assets/logo-icon-192.png" alt="Jagdish Lifestyle" class="header-logo-img" onerror="this.style.display='none'">
+            <div>
+                <div class="logo-text">Jagdish Lifestyle</div>
+                <span class="logo-sub">Online Outlet of Jagdish Silk Store</span>
+            </div>
         </div>
         <nav>
             <ul>
@@ -504,7 +517,7 @@
         </div>
         <div class="hero-buttons">
             <a href="#lifestyle-catalog" class="btn-hero btn-primary"><i class="fas fa-shopping-bag"></i> Explore Catalog</a>
-            <a href="https://wa.me/919815068679?text=Hi%20Jagdish%20Silk%20Store!%20I'd%20like%20to%20know%20more." target="_blank" class="btn-hero btn-secondary"><i class="fab fa-whatsapp"></i> Chat With Us</a>
+            <a href="https://wa.me/919815068679?text=Hi%20Jagdish%20Lifestyle!%20I'd%20like%20to%20know%20more." target="_blank" class="btn-hero btn-secondary"><i class="fab fa-whatsapp"></i> Chat With Us</a>
         </div>
     </section>
 
@@ -857,9 +870,14 @@
     <footer class="site-footer">
         <div class="footer-grid">
             <div class="footer-brand">
-                <div class="logo-text">Jagdish</div>
-                <span class="logo-sub">Silk Store & Lifestyle</span>
-                <p class="footer-about">Handloom curtains, bed sets, towels & sofa covers from Sarafan Bazaar, Phagwara — picked for festive gifting, weddings, housewarming and everyday home use.</p>
+                <div class="header-brand">
+                    <img src="assets/logo-icon-192.png" alt="Jagdish Lifestyle" class="header-logo-img" onerror="this.style.display='none'">
+                    <div>
+                        <div class="logo-text">Jagdish Lifestyle</div>
+                        <span class="logo-sub">Online Outlet of Jagdish Silk Store</span>
+                    </div>
+                </div>
+                <p class="footer-about">Handloom curtains, bed sets, towels & sofa covers — picked for festive gifting, weddings, housewarming and everyday home use. The online outlet of Jagdish Silk Store, Sarafan Bazaar, Phagwara.</p>
                 <div class="footer-social">
                     <a href="https://www.instagram.com/jagdish_silk_store/" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
                     <a href="https://wa.me/919815068679" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
@@ -886,7 +904,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <span>&copy; <span id="footerYear"></span> Jagdish Silk Store. All rights reserved.</span>
+            <span>&copy; <span id="footerYear"></span> Jagdish Lifestyle. All rights reserved.</span>
             <span>Orders taken via WhatsApp only &middot; Made with care in Phagwara</span>
         </div>
     </footer>
@@ -894,7 +912,7 @@
     <!-- ================= FLOATING ACTION BAR ================= -->
     <div class="floating-bar">
         <a href="tel:+919815068679" class="action-icon ic-call" title="Call Us"><i class="fas fa-phone"></i></a>
-        <a href="https://wa.me/919815068679?text=Hi%20Jagdish%20Silk%20Store!%20I'm%20exploring%20the%20catalog." target="_blank" class="action-icon ic-wa" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://wa.me/919815068679?text=Hi%20Jagdish%20Lifestyle!%20I'm%20exploring%20the%20catalog." target="_blank" class="action-icon ic-wa" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
         <a href="https://www.instagram.com/jagdish_silk_store/" target="_blank" class="action-icon ic-ig" title="Instagram"><i class="fab fa-instagram"></i></a>
         <a href="https://maps.google.com/?q=Sarafan+Bazaar,+Phagwara" target="_blank" class="action-icon ic-map" title="Location"><i class="fas fa-map-marker-alt"></i></a>
     </div>
@@ -1000,7 +1018,7 @@
                 </div>
                 <button class="copy-btn" id="exitCouponBtn" onclick="copyCouponCode(this)">Copy Code</button>
             </div>
-            <a href="https://wa.me/919815068679?text=Hi%20Jagdish%20Silk%20Store!%20I%20have%20a%20coupon%20code%20I%27d%20like%20to%20use." target="_blank" class="exit-popup-cta"><i class="fab fa-whatsapp"></i> Claim on WhatsApp</a>
+            <a href="https://wa.me/919815068679?text=Hi%20Jagdish%20Lifestyle!%20I%20have%20a%20coupon%20code%20I%27d%20like%20to%20use." target="_blank" class="exit-popup-cta"><i class="fab fa-whatsapp"></i> Claim on WhatsApp</a>
             <button class="exit-popup-skip" onclick="closeExitPopup()">No thanks, I'll pay full price</button>
         </div>
     </div>
@@ -1034,7 +1052,8 @@
             const stillExists = cats.includes(prevFilter);
             let html = `<button class="filter-btn${(prevFilter==='all'||!stillExists)?' active':''}" data-filter="all">All Items</button>`;
             cats.forEach(cat => {
-                html += `<button class="filter-btn${(stillExists && prevFilter===cat)?' active':''}" data-filter="${escapeHtml(cat)}">${escapeHtml(cat)}</button>`;
+                const delBtn = isAdmin ? `<button type="button" class="tab-delete-btn" onclick="deleteCollection('${escapeHtml(cat).replace(/'/g, "\\'")}')" title="Delete this whole collection"><i class="fas fa-trash"></i></button>` : '';
+                html += `<span class="filter-tab-group"><button class="filter-btn${(stillExists && prevFilter===cat)?' active':''}" data-filter="${escapeHtml(cat)}">${escapeHtml(cat)}</button>${delBtn}</span>`;
             });
             tabsWrap.innerHTML = html;
             tabsWrap.querySelectorAll('.filter-btn').forEach(btn => {
@@ -1044,6 +1063,15 @@
                     applyFilters();
                 });
             });
+        }
+
+        function deleteCollection(cat) {
+            const count = currentProducts.filter(p => p.category === cat).length;
+            if (!confirm(`Delete the entire "${cat}" collection? This will remove ${count} product(s) and cannot be undone.`)) return;
+            const updated = currentProducts.filter(p => p.category !== cat);
+            saveProductsToGitHub(updated)
+                .then(() => { currentProducts = updated; renderFilterTabs(); renderProducts(); })
+                .catch(err => alert('Delete failed: ' + err.message));
         }
 
         // ---- Build one product card's HTML ----
@@ -1068,7 +1096,7 @@
                     <button class="card-admin-btn card-edit-btn" onclick="editProduct('${p.id}')" title="Edit"><i class="fas fa-pen"></i></button>
                     <button class="card-admin-btn card-delete-btn" onclick="deleteProduct('${p.id}')" title="Delete"><i class="fas fa-trash"></i></button>
                 </div>` : '';
-            const desc = (p.description && p.description.trim()) ? escapeHtml(p.description) : 'Beautiful handloom piece from Jagdish Silk Store — perfect for gifting or everyday use.';
+            const desc = (p.description && p.description.trim()) ? escapeHtml(p.description) : 'Beautiful handloom piece from Jagdish Lifestyle — perfect for gifting or everyday use.';
 
             return `
             <div class="life-card" data-id="${p.id}" data-category="${escapeHtml(p.category)}" data-price="${p.price || 0}">
@@ -1193,7 +1221,7 @@
             
             const number = "919815068679"; 
             
-            const msg = `Hi Jagdish Silk Store ✨,\n\nI want to order:\n\n*Item:* ${name}\n*Selected Design:* Picture No. ${designIndex}\n*Variant / Size:* ${variant}\n*Quantity:* ${qty} Piece(s)\n\nPlease share the total amount!`;
+            const msg = `Hi Jagdish Lifestyle ✨,\n\nI want to order:\n\n*Item:* ${name}\n*Selected Design:* Picture No. ${designIndex}\n*Variant / Size:* ${variant}\n*Quantity:* ${qty} Piece(s)\n\nPlease share the total amount!`;
             window.open(`https://wa.me/${number}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
@@ -1202,7 +1230,7 @@
             const card = btn.closest('.life-card');
             const name = card.querySelector('.prod-name').getAttribute('data-name');
             
-            const shareText = `Hey! Look at this beautiful *${name}* from Jagdish Silk Store ✨.\n\nThey have 100+ premium designs! Message them directly to order: https://wa.me/919815068679`;
+            const shareText = `Hey! Look at this beautiful *${name}* from Jagdish Lifestyle ✨.\n\nThey have 100+ premium designs! Message them directly to order: https://wa.me/919815068679`;
             window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
         }
 
@@ -1429,6 +1457,7 @@
             isAdmin = false;
             localStorage.removeItem('jss_isAdmin');
             updateAdminUI();
+            renderFilterTabs();
             renderProducts();
         }
 
@@ -1661,7 +1690,7 @@
                 localStorage.setItem('jss_notifyChoice', permission);
                 if (permission === 'granted') {
                     const bestCoupon = COUPONS[COUPONS.length - 1]; // highest tier, capped at 25%
-                    new Notification('🎉 Jagdish Silk Store', {
+                    new Notification('🎉 Jagdish Lifestyle', {
                         body: `You unlocked ${bestCoupon.code} — ${bestCoupon.discount}% OFF your next order! Show this on WhatsApp.`
                     });
                 }
