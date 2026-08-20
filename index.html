@@ -105,7 +105,8 @@
             font-size: 0.78rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
         }
         .marquee-track { display: inline-block; animation: scrollMarquee 28s linear infinite; }
-        .marquee-track span { margin: 0 26px; }
+        .marquee-track span { margin: 0 26px; position: relative; }
+        .marquee-track span::after { content: '·'; position: absolute; right: -26px; opacity: 0.6; }
         .marquee-track span.highlight { color: var(--soft-pink); }
         @keyframes scrollMarquee { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
 
@@ -597,8 +598,8 @@
 
     <div class="vibe-marquee">
         <div class="marquee-track">
-            <span class="highlight">✨ Free Gift With Every Order</span><span>✦ Pure Handloom</span><span>✨ Old Money Aesthetics</span><span>✦ Sohni Kudi Collection</span><span class="highlight">✨ 100% Quality Assured</span><span>✦ Sarafan Bazaar, Phagwara</span>
-            <span class="highlight">✦ Free Gift With Every Order</span><span>✨ Pure Handloom</span><span>✦ Old Money Aesthetics</span><span>✨ Sohni Kudi Collection</span><span class="highlight">✦ 100% Quality Assured</span><span>✨ Sarafan Bazaar, Phagwara</span>
+            <span class="highlight">Free Gift With Every Order</span><span>Pure Handloom</span><span>Old Money Aesthetics</span><span>Sohni Kudi Collection</span><span class="highlight">100% Quality Assured</span><span>Sarafan Bazaar, Phagwara</span>
+            <span class="highlight">Free Gift With Every Order</span><span>Pure Handloom</span><span>Old Money Aesthetics</span><span>Sohni Kudi Collection</span><span class="highlight">100% Quality Assured</span><span>Sarafan Bazaar, Phagwara</span>
         </div>
     </div>
 
