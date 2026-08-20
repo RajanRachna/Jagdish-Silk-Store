@@ -1043,6 +1043,10 @@
         function escapeHtml(str) {
             return String(str == null ? '' : str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
         }
+        // For safely embedding a raw string inside a single-quoted onclick="fn('...')" attribute
+        function escapeJsString(str) {
+            return String(str == null ? '' : str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        }
 
         // ---- Filter tabs (auto-generated from product categories) ----
         function renderFilterTabs() {
@@ -1053,7 +1057,7 @@
             const stillExists = cats.includes(prevFilter);
             let html = `<button class="filter-btn${(prevFilter==='all'||!stillExists)?' active':''}" data-filter="all">All Items</button>`;
             cats.forEach(cat => {
-                const delBtn = isAdmin ? `<button type="button" class="tab-delete-btn" onclick="deleteCollection('${escapeHtml(cat).replace(/'/g, "\\'")}')" title="Delete this whole collection"><i class="fas fa-trash"></i></button>` : '';
+                const delBtn = isAdmin ? `<button type="button" class="tab-delete-btn" onclick="deleteCollection('${escapeJsString(cat)}')" title="Delete this whole collection"><i class="fas fa-trash"></i></button>` : '';
                 html += `<span class="filter-tab-group"><button class="filter-btn${(stillExists && prevFilter===cat)?' active':''}" data-filter="${escapeHtml(cat)}">${escapeHtml(cat)}</button>${delBtn}</span>`;
             });
             tabsWrap.innerHTML = html;
@@ -1347,8 +1351,9 @@
         }
 
         async function getFileSha(path) {
-            const res = await fetch(`${GH_API}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}`, {
-                headers: { Authorization: `token ${requireGithubToken()}` }
+            const res = await fetch(`${GH_API}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}&_=${Date.now()}`, {
+                headers: { Authorization: `token ${requireGithubToken()}` },
+                cache: 'no-store'
             });
             if (res.status === 404) return null;
             if (!res.ok) {
