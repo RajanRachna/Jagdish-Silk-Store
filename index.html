@@ -3,7 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jagdish Silk Store | Philosophical Aesthetic & Lifestyle</title>
+    <title>Jagdish Silk Store | Handloom Gifting & Home, Phagwara</title>
+    <meta name="description" content="Handloom curtains, bed sets, towels & sofa covers from Jagdish Silk Store, Phagwara — perfect for festive gifting, weddings, housewarming or your own home. Order on WhatsApp.">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%81%3C/text%3E%3C/svg%3E">
+
+    <!-- Social share preview (WhatsApp / Instagram / Facebook link cards) -->
+    <meta property="og:title" content="Jagdish Silk Store | Handloom Gifting & Home">
+    <meta property="og:description" content="Handloom curtains, bed sets, towels & sofa covers — perfect for festive gifting, weddings, housewarming or personal use. Sarafan Bazaar, Phagwara.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80">
+    <meta property="og:type" content="website">
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -41,7 +49,6 @@
             background-color: var(--bg-main);
             color: var(--text-dark);
             overflow-x: hidden; scroll-behavior: smooth;
-            padding-bottom: 110px;
         }
 
         h1, h2, h3, .logo-text { 
@@ -91,6 +98,14 @@
         .hero h1 { font-size: 4.5rem; color: var(--deep-heritage); margin-bottom: 10px; line-height: 1.1; }
         .hero h1 span { color: var(--primary-pink); font-style: italic; }
         .hero p { font-size: 1.2rem; color: var(--text-gray); font-weight: 400; max-width: 650px; line-height: 1.8; margin-top: 15px; }
+
+        .hero-chips { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 22px; }
+        .hero-chip {
+            background: rgba(255,255,255,0.75); backdrop-filter: blur(6px); border: 1px solid rgba(233,30,99,0.2);
+            color: var(--deep-heritage); padding: 8px 18px; border-radius: 30px; font-size: 0.85rem; font-weight: 600;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .hero-chip i { color: var(--primary-pink); }
 
         .hero-buttons { display: flex; gap: 20px; margin-top: 35px; }
         .btn-hero {
@@ -412,6 +427,28 @@
             padding: 6px 15px; font-size: 0.75rem; font-weight: 700; border-radius: 20px;
         }
 
+        /* ================= FOOTER ================= */
+        .site-footer { background: #1a100e; color: rgba(255,255,255,0.85); padding: 70px 5vw 0; }
+        .footer-grid { max-width: 1300px; margin: 0 auto; display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 40px; padding-bottom: 45px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .footer-brand .logo-text { color: var(--primary-pink); font-size: 1.9rem; }
+        .footer-brand .logo-sub { color: rgba(255,255,255,0.5); }
+        .footer-about { margin-top: 14px; font-size: 0.92rem; line-height: 1.7; color: rgba(255,255,255,0.65); max-width: 380px; }
+        .footer-social { display: flex; gap: 12px; margin-top: 20px; }
+        .footer-social a { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.08); color: white; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: 0.3s; }
+        .footer-social a:hover { background: var(--primary-pink); transform: translateY(-3px); }
+        .footer-col h4 { color: var(--warm-mustard); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 20px; font-family: 'Poppins', sans-serif; }
+        .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 13px; }
+        .footer-col a, .footer-col span { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.92rem; display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; }
+        .footer-col a:hover { color: var(--primary-pink); }
+        .footer-col i { color: var(--warm-mustard); margin-top: 3px; width: 14px; text-align: center; flex-shrink: 0; }
+        .footer-bottom { max-width: 1300px; margin: 0 auto; padding: 22px 0 100px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; font-size: 0.8rem; color: rgba(255,255,255,0.45); }
+        .footer-bottom a { color: rgba(255,255,255,0.45); text-decoration: none; }
+        .footer-bottom a:hover { color: var(--warm-mustard); }
+        @media(max-width: 768px) {
+            .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+            .footer-bottom { flex-direction: column; text-align: center; padding-bottom: 120px; }
+        }
+
         @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         
         @media(max-width: 768px) {
@@ -455,8 +492,14 @@
     </header>
 
     <section class="hero">
-        <h1>Curated for your <span>Space</span></h1>
-        <p>A massive variety of philosophical fashion & home decor. Use the filters below to explore 100+ premium designs!</p>
+        <h1>Handloom, made for <span>Every Occasion</span></h1>
+        <p>Premium curtains, bed sets, towels & sofa covers — for festive gifting, weddings, housewarming, or simply your own home.</p>
+        <div class="hero-chips">
+            <span class="hero-chip"><i class="fas fa-gift"></i> Festive Gifting</span>
+            <span class="hero-chip"><i class="fas fa-heart"></i> Wedding Shagun</span>
+            <span class="hero-chip"><i class="fas fa-house"></i> Housewarming</span>
+            <span class="hero-chip"><i class="fas fa-user"></i> Personal Use</span>
+        </div>
         <div class="hero-buttons">
             <a href="#lifestyle-catalog" class="btn-hero btn-primary"><i class="fas fa-shopping-bag"></i> Explore Catalog</a>
             <a href="https://wa.me/919815068679?text=Hi%20Jagdish%20Silk%20Store!%20I'd%20like%20to%20know%20more." target="_blank" class="btn-hero btn-secondary"><i class="fab fa-whatsapp"></i> Chat With Us</a>
@@ -807,6 +850,44 @@
             <a href="https://www.instagram.com/jagdish_silk_store/" target="_blank" class="btn-follow"><i class="fab fa-instagram"></i> Follow for Daily Updates</a>
         </div>
     </section>
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="site-footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="logo-text">Jagdish</div>
+                <span class="logo-sub">Silk Store & Lifestyle</span>
+                <p class="footer-about">Handloom curtains, bed sets, towels & sofa covers from Sarafan Bazaar, Phagwara — picked for festive gifting, weddings, housewarming and everyday home use.</p>
+                <div class="footer-social">
+                    <a href="https://www.instagram.com/jagdish_silk_store/" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://wa.me/919815068679" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="tel:+919815068679" title="Call Us"><i class="fas fa-phone"></i></a>
+                    <a href="https://maps.google.com/?q=Sarafan+Bazaar,+Phagwara" target="_blank" title="Location"><i class="fas fa-map-marker-alt"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#lifestyle-catalog">Shop Catalog</a></li>
+                    <li><a href="#location-section">Visit Our Store</a></li>
+                    <li><a href="#reels-section">Instagram Reels</a></li>
+                    <li><a href="https://www.instagram.com/jagdish_silk_store/" target="_blank">@jagdish_silk_store</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Get In Touch</h4>
+                <ul>
+                    <li><i class="fas fa-map-marker-alt"></i> <span>Sarafan Bazaar, Phagwara, Punjab</span></li>
+                    <li><a href="tel:+919815068679"><i class="fas fa-phone"></i> +91 98150 68679</a></li>
+                    <li><a href="https://wa.me/919815068679" target="_blank"><i class="fab fa-whatsapp"></i> Order on WhatsApp</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; <span id="footerYear"></span> Jagdish Silk Store. All rights reserved.</span>
+            <span>Orders taken via WhatsApp only &middot; Made with care in Phagwara</span>
+        </div>
+    </footer>
 
     <!-- ================= FLOATING ACTION BAR ================= -->
     <div class="floating-bar">
@@ -1478,6 +1559,8 @@
 
         // Kick off the initial catalog load
         fetchProducts();
+
+        document.getElementById('footerYear').textContent = new Date().getFullYear();
 
         function openCareModal(card) {
             const category = card.getAttribute('data-category');
