@@ -428,13 +428,15 @@
             color: white; border: none; font-size: 0.7rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
 
-        .card-admin-controls { position: absolute; bottom: 12px; left: 12px; z-index: 8; display: flex; gap: 8px; }
+        .card-admin-controls { position: absolute; bottom: 55px; left: 12px; z-index: 8; display: flex; gap: 6px; }
+        .card-admin-controls .card-admin-btn { width: 32px; height: 32px; font-size: 0.75rem; }
         .card-admin-btn {
             width: 36px; height: 36px; border-radius: 50%; border: none; cursor: pointer; font-size: 0.85rem;
             display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.25); transition: 0.2s;
         }
         .card-admin-btn:hover { transform: scale(1.1); }
         .card-edit-btn { background: var(--warm-mustard); color: var(--deep-heritage); }
+        .card-duplicate-btn { background: #3498db; color: white; }
         .card-delete-btn { background: #e74c3c; color: white; }
         .out-of-stock-badge {
             position: absolute; top: 65px; left: 20px; z-index: 6; background: rgba(44,27,24,0.9); color: white;
@@ -954,9 +956,9 @@
                 </div>
                 <div class="admin-field">
                     <label>Collection / Category</label>
-                    <input type="text" id="pfCategory" list="categoryList" required placeholder="e.g. Curtains, Wedding Gifting, Diwali Hampers...">
-                    <datalist id="categoryList"></datalist>
-                    <small>Type a new name here to create a brand-new collection — it'll appear as a filter tab automatically.</small>
+                    <select id="pfCategorySelect" required></select>
+                    <input type="text" id="pfCategoryCustom" placeholder="Type your new collection name" style="display:none; margin-top:8px;">
+                    <small>Pick an existing collection, or choose "+ New Collection" to type your own.</small>
                 </div>
                 <div class="admin-field-row">
                     <div class="admin-field">
@@ -1099,6 +1101,7 @@
             const adminControls = isAdmin ? `
                 <div class="card-admin-controls">
                     <button class="card-admin-btn card-edit-btn" onclick="editProduct('${p.id}')" title="Edit"><i class="fas fa-pen"></i></button>
+                    <button class="card-admin-btn card-duplicate-btn" onclick="duplicateProduct('${p.id}')" title="Duplicate"><i class="fas fa-clone"></i></button>
                     <button class="card-admin-btn card-delete-btn" onclick="deleteProduct('${p.id}')" title="Delete"><i class="fas fa-trash"></i></button>
                 </div>` : '';
             const desc = (p.description && p.description.trim()) ? escapeHtml(p.description) : 'Beautiful handloom piece from Jagdish Lifestyle — perfect for gifting or everyday use.';
@@ -1520,11 +1523,45 @@
         let pfEditingId = null;
         let pfExistingImages = [];
         let pfNewFiles = [];
+        const CUSTOM_CATEGORY_VALUE = '__custom__';
+        const PRESET_CATEGORIES = [
+            'Festive Gifting', 'Wedding Shagun', 'Housewarming', 'Personal Use',
+            'Curtains', 'Bed Sets', 'Towels', 'Sofa Covers'
+        ];
 
-        function populateCategoryDatalist() {
-            const cats = [...new Set(currentProducts.map(p => p.category).filter(Boolean))];
-            document.getElementById('categoryList').innerHTML = cats.map(c => `<option value="${escapeHtml(c)}">`).join('');
+        function populateCategoryOptions(selectedCategory) {
+            const dynamicCats = [...new Set(currentProducts.map(p => p.category).filter(Boolean))];
+            const allCats = [...new Set([...PRESET_CATEGORIES, ...dynamicCats])];
+            const sel = document.getElementById('pfCategorySelect');
+            sel.innerHTML = allCats.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('')
+                + `<option value="${CUSTOM_CATEGORY_VALUE}">➕ New Collection...</option>`;
+
+            const customInput = document.getElementById('pfCategoryCustom');
+            if (selectedCategory && allCats.includes(selectedCategory)) {
+                sel.value = selectedCategory;
+                customInput.style.display = 'none';
+                customInput.value = '';
+            } else if (selectedCategory) {
+                sel.value = CUSTOM_CATEGORY_VALUE;
+                customInput.style.display = 'block';
+                customInput.value = selectedCategory;
+            } else {
+                sel.value = PRESET_CATEGORIES[0];
+                customInput.style.display = 'none';
+                customInput.value = '';
+            }
         }
+
+        document.getElementById('pfCategorySelect').addEventListener('change', e => {
+            const customInput = document.getElementById('pfCategoryCustom');
+            if (e.target.value === CUSTOM_CATEGORY_VALUE) {
+                customInput.style.display = 'block';
+                customInput.focus();
+            } else {
+                customInput.style.display = 'none';
+                customInput.value = '';
+            }
+        });
 
         function renderPfImageList() {
             const wrap = document.getElementById('pfImageList');
@@ -1547,17 +1584,19 @@
             renderPfImageList();
         });
 
-        function openProductForm(id) {
+        // id = editing an existing product in place. prefillFrom = seed fields from another
+        // product but save as a brand-new one (used by Duplicate).
+        function openProductForm(id, prefillFrom) {
             pfEditingId = id || null;
-            document.getElementById('productFormTitle').textContent = id ? 'Edit Product' : 'Add New Product';
+            document.getElementById('productFormTitle').textContent = id ? 'Edit Product' : (prefillFrom ? 'Duplicate Product' : 'Add New Product');
             document.getElementById('pfError').style.display = 'none';
             document.getElementById('pfImageUpload').value = '';
             pfNewFiles = [];
 
-            const p = id ? currentProducts.find(x => x.id === id) : null;
-            document.getElementById('pfTitle').value = p ? (p.title || '') : '';
+            const p = id ? currentProducts.find(x => x.id === id) : (prefillFrom || null);
+            const isDuplicate = !id && !!prefillFrom;
+            document.getElementById('pfTitle').value = p ? (p.title || '') + (isDuplicate ? ' (Copy)' : '') : '';
             document.getElementById('pfDesc').value = p ? (p.description || '') : '';
-            document.getElementById('pfCategory').value = p ? (p.category || '') : '';
             document.getElementById('pfPrice').value = p ? (p.price || '') : '';
             document.getElementById('pfOldPrice').value = p && p.oldPrice ? p.oldPrice : '';
             document.getElementById('pfBadge').value = p ? (p.badge || '') : '';
@@ -1566,12 +1605,18 @@
             pfExistingImages = p ? [...(p.images || [])] : [];
 
             renderPfImageList();
-            populateCategoryDatalist();
+            populateCategoryOptions(p ? p.category : null);
             document.getElementById('productFormModal').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
 
         function editProduct(id) { openProductForm(id); }
+
+        function duplicateProduct(id) {
+            const p = currentProducts.find(x => x.id === id);
+            if (!p) return;
+            openProductForm(null, p);
+        }
 
         function deleteProduct(id) {
             if (!confirm('Delete this product? This cannot be undone.')) return;
@@ -1588,7 +1633,10 @@
             errEl.style.display = 'none';
 
             const title = document.getElementById('pfTitle').value.trim();
-            const category = document.getElementById('pfCategory').value.trim();
+            const categorySelect = document.getElementById('pfCategorySelect').value;
+            const category = (categorySelect === CUSTOM_CATEGORY_VALUE)
+                ? document.getElementById('pfCategoryCustom').value.trim()
+                : categorySelect;
             const price = parseInt(document.getElementById('pfPrice').value);
 
             if (!title || !category || isNaN(price)) {
