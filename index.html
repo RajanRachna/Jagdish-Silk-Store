@@ -20,13 +20,13 @@
 
     <!-- ================= LIVE CATALOG BACKEND (GitHub — one platform, one token, that's it) ================= -->
     <!-- Your product data + photos are stored right inside your own GitHub repo. -->
+    <!-- NOTE: the GitHub token is NOT stored in this file anymore — GitHub auto-revokes any
+         token it finds committed in a public repo. You'll paste your token once in the admin
+         panel itself (Admin login → GitHub Token field); it's saved only in your browser. -->
     <script>
         const GITHUB_OWNER = "RajanRachna";
         const GITHUB_REPO = "Jagdish-Silk-Store";
         const GITHUB_BRANCH = "main";
-        // ⚠️ This token expires 19 Sep — generate a fresh one before then (same steps as before)
-        // and just send it to Claude to swap in, or the admin panel will stop saving after that date.
-        const GITHUB_TOKEN = "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";
 
         // Admin password is stored as a SHA-256 hash (not plain text) — current password is: rajanrachna
         // Want a different password? Just tell Claude and it'll swap this hash for you.
