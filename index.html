@@ -90,6 +90,12 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        button, a { transition: transform 0.15s ease; }
+        button:active, .btn-hero:active, .exit-popup-cta:active, .header-wa-btn:active { transform: scale(0.96); }
+
+        .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.16,1,0.3,1); }
+        .reveal.in-view { opacity: 1; transform: translateY(0); }
         
         body {
             font-family: 'Poppins', sans-serif;
@@ -255,7 +261,8 @@
         /* Image Slider */
         .image-slider { position: relative; width: 100%; height: 350px; overflow: hidden; background: #eee; }
         .slider-track { display: flex; width: 100%; height: 100%; transition: transform 0.4s ease-in-out; }
-        .slider-track img { min-width: 100%; height: 100%; object-fit: cover; }
+        .slider-track img { min-width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .life-card:hover .slider-track img { transform: scale(1.06); }
         .slider-btn {
             position: absolute; top: 50%; transform: translateY(-50%);
             background: rgba(255, 255, 255, 0.85); border: none; width: 40px; height: 40px;
@@ -320,6 +327,9 @@
         }
         .share-btn:hover { background: #E0E0E0; color: var(--text-dark); transform: scale(1.05); }
         .wishlist-btn:hover { background: var(--soft-pink); color: var(--primary-pink); }
+        .wishlist-btn.active { background: var(--primary-pink); color: white; border-color: var(--primary-pink); }
+        .wishlist-btn.heart-pop i { animation: heartPop 0.45s cubic-bezier(0.34,1.56,0.64,1); }
+        @keyframes heartPop { 0% { transform: scale(1); } 40% { transform: scale(1.5); } 100% { transform: scale(1); } }
 
         /* No Results Message */
         .no-results { text-align: center; width: 100%; padding: 40px; font-size: 1.2rem; color: var(--text-gray); display: none; }
@@ -365,11 +375,11 @@
             display: none; position: fixed; inset: 0; background: rgba(44,27,24,0.6);
             backdrop-filter: blur(6px); z-index: 5000; align-items: center; justify-content: center; padding: 20px;
         }
-        .care-modal-overlay.active { display: flex; }
+        .care-modal-overlay.active { display: flex; animation: overlayFadeIn 0.25s ease; }
         .care-modal {
             background: var(--bg-main); border-radius: 24px; max-width: 420px; width: 100%;
             padding: 35px 30px; position: relative; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.3);
-            animation: fadeUp 0.35s ease; max-height: 85vh; overflow-y: auto;
+            animation: fadeUp 0.4s cubic-bezier(0.34,1.56,0.64,1); max-height: 85vh; overflow-y: auto;
         }
         .modal-close {
             position: absolute; top: 18px; right: 18px; width: 34px; height: 34px; border-radius: 50%;
@@ -393,11 +403,11 @@
             display: none; position: fixed; inset: 0; background: rgba(44,27,24,0.65);
             backdrop-filter: blur(6px); z-index: 6000; align-items: center; justify-content: center; padding: 20px;
         }
-        .exit-popup-overlay.active { display: flex; }
+        .exit-popup-overlay.active { display: flex; animation: overlayFadeIn 0.25s ease; }
         .exit-popup {
             background: linear-gradient(160deg, #fff, var(--soft-pink)); border-radius: 28px; max-width: 400px; width: 100%;
             padding: 40px 30px; text-align: center; position: relative; box-shadow: 0 30px 70px rgba(0,0,0,0.35);
-            animation: fadeUp 0.4s ease; border: 1px solid rgba(233,30,99,0.15);
+            animation: fadeUp 0.45s cubic-bezier(0.34,1.56,0.64,1); border: 1px solid rgba(233,30,99,0.15);
         }
         .exit-popup h3 { font-size: 1.6rem; margin: 15px 0 10px; }
         .exit-popup p { color: var(--text-gray); font-size: 0.95rem; margin-bottom: 20px; line-height: 1.6; }
@@ -448,6 +458,19 @@
         .admin-fab:hover { transform: scale(1.08); }
         .admin-fab.is-admin { background: var(--primary-pink); color: white; }
 
+        .wishlist-fab {
+            position: fixed; bottom: 110px; left: 20px; z-index: 4000;
+            width: 52px; height: 52px; border-radius: 50%; background: white; color: var(--primary-pink);
+            border: 1px solid var(--soft-pink); cursor: pointer; font-size: 1.2rem; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            display: flex; align-items: center; justify-content: center; transition: 0.3s;
+        }
+        .wishlist-fab:hover { transform: scale(1.08); }
+        .wishlist-count {
+            display: none; position: absolute; top: -4px; right: -4px; min-width: 20px; height: 20px; padding: 0 5px;
+            border-radius: 10px; background: var(--deep-heritage); color: var(--warm-mustard); font-size: 0.68rem; font-weight: 700;
+            align-items: center; justify-content: center;
+        }
+
         .admin-bar {
             display: none; background: var(--deep-heritage); color: white;
             padding: 12px 5vw; align-items: center; justify-content: space-between; gap: 15px; flex-wrap: wrap;
@@ -469,11 +492,11 @@
             display: none; position: fixed; inset: 0; background: rgba(44,27,24,0.65);
             backdrop-filter: blur(6px); z-index: 6500; align-items: center; justify-content: center; padding: 20px;
         }
-        .admin-modal-overlay.active { display: flex; }
+        .admin-modal-overlay.active { display: flex; animation: overlayFadeIn 0.25s ease; }
         .admin-modal {
             background: var(--bg-main); border-radius: 24px; max-width: 480px; width: 100%;
             padding: 35px 30px; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.3);
-            animation: fadeUp 0.35s ease; max-height: 88vh; overflow-y: auto;
+            animation: fadeUp 0.4s cubic-bezier(0.34,1.56,0.64,1); max-height: 88vh; overflow-y: auto;
         }
         .admin-modal.wide { max-width: 640px; }
         .admin-modal h3 { font-size: 1.4rem; margin-bottom: 22px; text-align: center; }
@@ -495,6 +518,62 @@
         .admin-submit-btn:hover { background: #d81b60; }
         .admin-submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
         .admin-error { color: var(--primary-pink); font-size: 0.85rem; text-align: center; margin-top: 10px; display: none; }
+
+        /* ================= FLOATING-LABEL FORM FIELDS ================= */
+        .float-field { position: relative; margin-bottom: 20px; text-align: left; }
+        .float-field input, .float-field textarea {
+            width: 100%; padding: 18px 15px 8px; border: 2px solid #EEE; border-radius: 12px; background: #F8F9FA;
+            font-family: inherit; font-size: 0.95rem; outline: none; transition: 0.25s; color: var(--text-dark);
+        }
+        .float-field textarea { min-height: 80px; resize: vertical; }
+        .float-field label {
+            position: absolute; left: 15px; top: 17px; color: var(--text-gray); font-size: 0.95rem;
+            pointer-events: none; transition: 0.2s ease; background: transparent;
+        }
+        .float-field input:focus, .float-field input:not(:placeholder-shown),
+        .float-field textarea:focus, .float-field textarea:not(:placeholder-shown) {
+            border-color: var(--primary-pink); background: white;
+        }
+        .float-field input:focus + label, .float-field input:not(:placeholder-shown) + label,
+        .float-field textarea:focus + label, .float-field textarea:not(:placeholder-shown) + label {
+            top: 7px; font-size: 0.65rem; font-weight: 700; color: var(--primary-pink); text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
+        /* ================= WISHLIST DRAWER PANEL ================= */
+        .wishlist-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(44,27,24,0.5); backdrop-filter: blur(4px);
+            z-index: 7000; justify-content: flex-end;
+        }
+        .wishlist-overlay.active { display: flex; animation: overlayFadeIn 0.25s ease; }
+        .wishlist-panel {
+            background: var(--bg-main); width: 400px; max-width: 92vw; height: 100%; display: flex; flex-direction: column;
+            box-shadow: -20px 0 50px rgba(0,0,0,0.2); animation: slideInPanel 0.4s cubic-bezier(0.16,1,0.3,1);
+        }
+        @keyframes slideInPanel { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        .wishlist-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 24px 24px 18px; border-bottom: 1px solid #eee; }
+        .wishlist-panel-header h3 { font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
+        .wishlist-panel-header h3 i { color: var(--primary-pink); }
+        .wishlist-panel-header button { background: #F8F9FA; border: none; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; color: var(--text-gray); }
+        .wishlist-panel-header button:hover { background: var(--soft-pink); color: var(--primary-pink); }
+        .wishlist-items { flex: 1; overflow-y: auto; padding: 8px 20px; }
+        .wishlist-item { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid #F2F2F2; animation: fadeUp 0.3s ease; }
+        .wishlist-item img { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; flex-shrink: 0; }
+        .wishlist-item-info { flex: 1; min-width: 0; }
+        .wishlist-item-info h4 { font-size: 0.92rem; color: var(--deep-heritage); margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .wishlist-item-info span { color: var(--primary-pink); font-weight: 700; font-size: 0.88rem; }
+        .wishlist-item button { background: none; border: none; color: var(--text-gray); cursor: pointer; font-size: 0.95rem; padding: 8px; transition: 0.2s; }
+        .wishlist-item button:hover { color: var(--primary-pink); transform: scale(1.15); }
+        .wishlist-empty { text-align: center; padding: 70px 20px; color: var(--text-gray); }
+        .wishlist-empty i { font-size: 2.6rem; color: var(--soft-pink); margin-bottom: 16px; display: block; }
+        .wishlist-panel-footer { display: none; flex-direction: column; gap: 10px; padding: 18px 20px; border-top: 1px solid #eee; }
+        .wishlist-wa-btn {
+            background: var(--whatsapp); color: white; border: none; padding: 14px; border-radius: 30px; font-weight: 700;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem;
+            box-shadow: 0 6px 16px rgba(37,211,102,0.3); transition: 0.25s;
+        }
+        .wishlist-wa-btn:hover { background: #1fb855; transform: translateY(-2px); }
+        .wishlist-callback-btn { background: none; border: none; color: var(--text-gray); text-decoration: underline; cursor: pointer; font-size: 0.82rem; padding: 4px; }
+        .wishlist-callback-btn:hover { color: var(--primary-pink); }
 
         .admin-img-list { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
         .admin-img-thumb { position: relative; width: 70px; height: 70px; border-radius: 10px; overflow: hidden; border: 1px solid #eee; }
@@ -573,7 +652,30 @@
         .footer-bottom { max-width: 1300px; margin: 0 auto; padding: 22px 0 100px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; font-size: 0.8rem; color: rgba(255,255,255,0.45); }
         .footer-bottom a { color: rgba(255,255,255,0.45); text-decoration: none; }
         .footer-bottom a:hover { color: var(--warm-mustard); }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes overlayFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* ================= TOAST NOTIFICATIONS ================= */
+        .toast-container {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999;
+            display: flex; flex-direction: column; gap: 10px; align-items: center; pointer-events: none;
+        }
+        .toast {
+            background: var(--deep-heritage); color: white; padding: 13px 24px; border-radius: 30px;
+            font-size: 0.85rem; font-weight: 600; box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+            display: flex; align-items: center; gap: 10px; white-space: nowrap;
+            animation: toastIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards, toastOut 0.3s ease 2.3s forwards;
+        }
+        .toast i { color: var(--warm-mustard); }
+        @keyframes toastIn { from { opacity: 0; transform: translateY(-24px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes toastOut { to { opacity: 0; transform: translateY(-14px) scale(0.95); } }
+
+        /* ================= CONFETTI BURST (for success states) ================= */
+        .confetti-piece {
+            position: absolute; width: 8px; height: 8px; border-radius: 2px; top: 50%; left: 50%;
+            animation: confettiBurst 0.85s ease-out forwards; pointer-events: none;
+        }
+        @keyframes confettiBurst { to { transform: translate(var(--tx), var(--ty)) rotate(360deg); opacity: 0; } }
         
         @media(max-width: 768px) {
             .vibe-marquee { display: none; }
@@ -614,6 +716,8 @@
     </style>
 </head>
 <body>
+
+    <div class="toast-container" id="toastContainer"></div>
 
     <div class="vibe-marquee">
         <div class="marquee-track">
@@ -941,11 +1045,11 @@
 
     <!-- ================= LOCATION & STORE SECTION ================= -->
     <section id="location-section" class="location-section">
-        <h2 class="section-title">Visit Our Store</h2>
+        <h2 class="section-title reveal">Visit Our Store</h2>
         <p class="section-subtitle">Experience the fabric and aesthetic in person.</p>
         
         <div class="location-wrapper">
-            <div class="address-box">
+            <div class="address-box reveal">
                 <h3>Jagdish Silk Store</h3>
                 <p><i class="fas fa-map-marker-alt"></i> Sarafan Bazaar, Phagwara, Punjab</p>
                 <p><i class="fas fa-phone"></i> +91 98150 68679</p>
@@ -960,12 +1064,12 @@
 
     <!-- ================= GOOGLE REVIEWS SLIDER ================= -->
     <section id="social-proof" class="reviews-section">
-        <h2 class="section-title" style="margin-top:0;">Loved by Phagwara</h2>
+        <h2 class="section-title reveal" style="margin-top:0;">Loved by Phagwara</h2>
         <p class="section-subtitle">Real experiences from our store in Sarafan Bazaar</p>
         
         <div class="reviews-carousel">
             <div class="reviews-track" id="reviewsTrack">
-                <div class="review-card">
+                <div class="review-card reveal">
                     <div class="review-header">
                         <div class="reviewer-initial">A</div>
                         <div class="reviewer-info">
@@ -976,7 +1080,7 @@
                     </div>
                     <p class="review-text">"The quality of their handlooms and bedsheets is just outstanding! I bought a bridal satin set and the cloth is so premium. Best cloth house in Phagwara."</p>
                 </div>
-                <div class="review-card">
+                <div class="review-card reveal">
                     <div class="review-header">
                         <div class="reviewer-initial">S</div>
                         <div class="reviewer-info">
@@ -987,7 +1091,7 @@
                     </div>
                     <p class="review-text">"Their curtains collection completely changed the look of my drawing room. The deep velvet colors are so rich. Very polite staff and great prices."</p>
                 </div>
-                <div class="review-card">
+                <div class="review-card reveal">
                     <div class="review-header">
                         <div class="reviewer-initial">N</div>
                         <div class="reviewer-info">
@@ -1004,7 +1108,7 @@
 
     <!-- ================= INSTAGRAM REELS SECTION ================= -->
     <section id="reels-section" class="ig-reels-section">
-        <h2 class="section-title" style="margin-top:0;">Live From Instagram</h2>
+        <h2 class="section-title reveal" style="margin-top:0;">Live From Instagram</h2>
         <p class="section-subtitle">Watch our latest stock updates and Reels directly from @jagdish_silk_store</p>
         
         <div class="reels-container">
@@ -1071,6 +1175,12 @@
         <a href="javascript:void(0)" onclick="openInstaFollowModal()" class="action-icon ic-ig" title="Instagram"><i class="fab fa-instagram"></i></a>
         <a href="https://maps.google.com/?q=Sarafan+Bazaar,+Phagwara" target="_blank" class="action-icon ic-map" title="Location"><i class="fas fa-map-marker-alt"></i></a>
     </div>
+
+    <!-- ================= WISHLIST: Floating toggle button ================= -->
+    <button class="wishlist-fab" id="wishlistFab" onclick="openWishlistPanel()" title="My Wishlist">
+        <i class="fas fa-heart"></i>
+        <span class="wishlist-count" id="wishlistCount">0</span>
+    </button>
 
     <!-- ================= ADMIN: Floating toggle button ================= -->
     <button class="admin-fab" id="adminFab" onclick="handleAdminFabClick()" title="Admin"><i class="fas fa-lock" id="adminFabIcon"></i></button>
@@ -1239,23 +1349,38 @@
         </div>
     </div>
 
-    <!-- ================= WISHLIST / NOTIFY ME MODAL ================= -->
+    <!-- ================= WISHLIST: Drawer Panel ================= -->
+    <div id="wishlistOverlay" class="wishlist-overlay" onclick="closeWishlistPanelOutside(event)">
+        <div class="wishlist-panel">
+            <div class="wishlist-panel-header">
+                <h3><i class="fas fa-heart"></i> My Wishlist</h3>
+                <button onclick="closeWishlistPanel()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="wishlist-items" id="wishlistItemsContainer"></div>
+            <div class="wishlist-panel-footer" id="wishlistPanelFooter">
+                <button class="wishlist-wa-btn" onclick="enquireWishlistWA()"><i class="fab fa-whatsapp"></i> Enquire on WhatsApp</button>
+                <button class="wishlist-callback-btn" onclick="openWishlistCallbackForm()">Get a Callback Instead</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= WISHLIST: Callback Request Modal ================= -->
     <div id="wishlistModal" class="exit-popup-overlay" onclick="if(event.target.id==='wishlistModal') closeWishlistModal()">
         <div class="exit-popup">
             <button class="modal-close" onclick="closeWishlistModal()"><i class="fas fa-times"></i></button>
-            <div class="exit-popup-emoji">🤍</div>
-            <h3>Saved for You</h3>
-            <p id="wishlistProductLine">We'll keep this one aside — just leave your number and we'll follow up personally.</p>
-            <form onsubmit="return submitWishlist(event)" style="text-align: left;">
-                <div class="admin-field">
+            <div class="exit-popup-emoji">📞</div>
+            <h3>Request a Callback</h3>
+            <p>Leave your number — we'll call or WhatsApp you about the items in your wishlist.</p>
+            <form onsubmit="return submitWishlist(event)">
+                <div class="float-field">
+                    <input type="text" id="wlName" required placeholder=" ">
                     <label>Your Name</label>
-                    <input type="text" id="wlName" required placeholder="Your name">
                 </div>
-                <div class="admin-field">
+                <div class="float-field">
+                    <input type="tel" id="wlNumber" required placeholder=" ">
                     <label>WhatsApp / Phone Number</label>
-                    <input type="tel" id="wlNumber" required placeholder="10-digit number">
                 </div>
-                <button type="submit" class="admin-submit-btn" id="wlSubmitBtn">Save My Interest</button>
+                <button type="submit" class="admin-submit-btn" id="wlSubmitBtn">Request Callback</button>
                 <div class="admin-error" id="wlError"></div>
             </form>
         </div>
@@ -1283,6 +1408,33 @@
         // For safely embedding a raw string inside a single-quoted onclick="fn('...')" attribute
         function escapeJsString(str) {
             return String(str == null ? '' : str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        }
+
+        // ================= TOAST + CONFETTI (shared micro-interactions) =================
+        function showToast(message, icon) {
+            icon = icon || 'fa-check-circle';
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<i class="fas ${icon}"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 2700);
+        }
+
+        function fireConfetti(container) {
+            if (!container) return;
+            const colors = ['#E91E63', '#FFC107', '#25D366', '#2C1B18'];
+            for (let i = 0; i < 18; i++) {
+                const el = document.createElement('div');
+                el.className = 'confetti-piece';
+                el.style.background = colors[i % colors.length];
+                const angle = (Math.PI * 2 * i) / 18;
+                const dist = 60 + Math.random() * 45;
+                el.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+                el.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+                container.appendChild(el);
+                setTimeout(() => el.remove(), 900);
+            }
         }
 
         // ---- Filter tabs (auto-generated from product categories) ----
@@ -1380,7 +1532,7 @@
                     </div>
                     <div class="card-actions">
                         <button class="buy-wa-btn ${isSoldOut ? 'restock-btn' : ''}" onclick="orderWA(this)"><i class="fab fa-whatsapp"></i> ${isSoldOut ? 'Ask About Restock' : 'Reserve Now'}</button>
-                        <button class="share-btn wishlist-btn" onclick="openWishlistModal('${escapeJsString(p.title)}')" title="Save for Later"><i class="fas fa-heart"></i></button>
+                        <button class="share-btn wishlist-btn${isWishlisted(p.id) ? ' active' : ''}" onclick="toggleWishlist('${p.id}', this)" title="Save for Later"><i class="fas fa-heart"></i></button>
                         <button class="share-btn" onclick="shareProduct(this)" title="Share"><i class="fas fa-share-alt"></i></button>
                     </div>
                 </div>
@@ -2172,13 +2324,100 @@
             document.body.style.overflow = '';
         }
 
-        // ================= WISHLIST / NOTIFY ME =================
-        let wishlistProductName = '';
-        function openWishlistModal(productName) {
-            wishlistProductName = productName || '';
-            document.getElementById('wishlistProductLine').textContent = productName
-                ? `We'll keep "${productName}" in mind — just leave your number and we'll follow up personally.`
-                : `We'll keep this one aside — just leave your number and we'll follow up personally.`;
+        // ================= WISHLIST (persistent, saved in this browser) =================
+        let wishlist = JSON.parse(localStorage.getItem('jss_wishlist') || '[]');
+
+        function isWishlisted(id) { return wishlist.includes(id); }
+
+        function updateWishlistBadge() {
+            const countEl = document.getElementById('wishlistCount');
+            if (!countEl) return;
+            if (wishlist.length > 0) {
+                countEl.textContent = wishlist.length;
+                countEl.style.display = 'flex';
+            } else {
+                countEl.style.display = 'none';
+            }
+        }
+
+        function toggleWishlist(id, btn) {
+            const idx = wishlist.indexOf(id);
+            const nowActive = idx === -1;
+            if (nowActive) {
+                wishlist.push(id);
+                showToast('Added to Wishlist', 'fa-heart');
+            } else {
+                wishlist.splice(idx, 1);
+                showToast('Removed from Wishlist', 'fa-heart-crack');
+            }
+            localStorage.setItem('jss_wishlist', JSON.stringify(wishlist));
+            updateWishlistBadge();
+
+            // Update every heart button for this product (card grid can re-render, but update live ones now)
+            document.querySelectorAll(`.wishlist-btn[onclick*="'${id}'"]`).forEach(b => {
+                b.classList.toggle('active', nowActive);
+            });
+            if (btn && nowActive) {
+                btn.classList.add('heart-pop');
+                setTimeout(() => btn.classList.remove('heart-pop'), 450);
+            }
+            if (document.getElementById('wishlistOverlay').classList.contains('active')) renderWishlistPanel();
+        }
+
+        function openWishlistPanel() {
+            renderWishlistPanel();
+            document.getElementById('wishlistOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeWishlistPanel() {
+            document.getElementById('wishlistOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        function closeWishlistPanelOutside(e) {
+            if (e.target.id === 'wishlistOverlay') closeWishlistPanel();
+        }
+
+        function renderWishlistPanel() {
+            const container = document.getElementById('wishlistItemsContainer');
+            const footer = document.getElementById('wishlistPanelFooter');
+            const items = currentProducts.filter(p => wishlist.includes(p.id));
+
+            if (!items.length) {
+                container.innerHTML = `
+                    <div class="wishlist-empty">
+                        <i class="fas fa-heart-crack"></i>
+                        <p>Nothing saved yet.<br>Tap the heart on any product to save it here.</p>
+                    </div>`;
+                footer.style.display = 'none';
+                return;
+            }
+
+            footer.style.display = 'flex';
+            container.innerHTML = items.map(p => {
+                const img = (p.images && p.images[0]) || 'https://images.unsplash.com/photo-1584100936595-c0654b55a2e6?auto=format&fit=crop&w=200&q=80';
+                return `
+                <div class="wishlist-item">
+                    <img src="${escapeHtml(img)}" alt="${escapeHtml(p.title)}">
+                    <div class="wishlist-item-info">
+                        <h4>${escapeHtml(p.title)}</h4>
+                        <span>₹${Number(p.price || 0).toLocaleString('en-IN')}</span>
+                    </div>
+                    <button onclick="toggleWishlist('${p.id}'); renderWishlistPanel();" title="Remove"><i class="fas fa-trash"></i></button>
+                </div>`;
+            }).join('');
+        }
+
+        function enquireWishlistWA() {
+            const items = currentProducts.filter(p => wishlist.includes(p.id));
+            if (!items.length) return;
+            let msg = `Hi Jagdish Lifestyle ✨,\n\nI'm interested in these items from my wishlist:\n\n`;
+            items.forEach((p, i) => { msg += `${i + 1}. ${p.title} — ₹${Number(p.price || 0).toLocaleString('en-IN')}\n`; });
+            msg += `\nCould you share more details?`;
+            window.open(`https://wa.me/919815068679?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function openWishlistCallbackForm() {
+            closeWishlistPanel();
             document.getElementById('wlError').style.display = 'none';
             document.getElementById('wishlistModal').classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -2187,6 +2426,7 @@
             document.getElementById('wishlistModal').classList.remove('active');
             document.body.style.overflow = '';
         }
+
         async function submitWishlist(e) {
             e.preventDefault();
             const errEl = document.getElementById('wlError');
@@ -2201,21 +2441,24 @@
             }
             btn.disabled = true; btn.textContent = 'Saving...';
             try {
+                const items = currentProducts.filter(p => wishlist.includes(p.id)).map(p => p.title).join(', ');
                 await submitToGoogleSheet({
                     form_type: 'Wishlist Interest',
-                    product: wishlistProductName || 'Not specified',
+                    product: items || 'Not specified',
                     name, number,
                     page: window.location.href
                 });
-                document.querySelector('#wishlistModal .exit-popup').innerHTML = `
-                    <div class="exit-popup-emoji">🤍</div>
+                const popup = document.querySelector('#wishlistModal .exit-popup');
+                popup.innerHTML = `
+                    <div class="exit-popup-emoji">🎉</div>
                     <h3>Saved!</h3>
                     <p>Thanks ${escapeHtml(name)} — we'll reach out on WhatsApp about this soon.</p>
                     <button type="button" class="exit-popup-skip" onclick="closeWishlistModal()">Close</button>`;
+                fireConfetti(popup);
             } catch (err) {
                 errEl.textContent = err.message;
                 errEl.style.display = 'block';
-                btn.disabled = false; btn.textContent = 'Save My Interest';
+                btn.disabled = false; btn.textContent = 'Request Callback';
             }
             return false;
         }
@@ -2223,6 +2466,7 @@
         // Kick off the initial catalog load
         fetchProducts();
         fetchCareGuides();
+        updateWishlistBadge();
 
         document.getElementById('footerYear').textContent = new Date().getFullYear();
 
@@ -2341,6 +2585,21 @@
         }
 
         initNotifyBanner();
+
+        // ================= SCROLL-REVEAL ANIMATIONS =================
+        if ('IntersectionObserver' in window) {
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                        revealObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.15 });
+            document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+        } else {
+            document.querySelectorAll('.reveal').forEach(el => el.classList.add('in-view'));
+        }
     </script>
 </body>
 </html>
