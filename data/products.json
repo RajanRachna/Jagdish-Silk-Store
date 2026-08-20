@@ -1,1 +1,186 @@
-[]
+[
+  {
+    "id": "p_mt1f5q2ye1igsb",
+    "title": "Amritsari Royal Velvet Curtains",
+    "description": "Deep, philosophical tones meet premium craftsmanship. Scroll for 7 luxurious velvet color variants.",
+    "category": "curtains",
+    "price": 1299,
+    "oldPrice": 2000,
+    "badge": "7 Colors",
+    "variants": [
+      "7 ft (Window)",
+      "9 ft (Door) +₹300"
+    ],
+    "qty": 25,
+    "images": [
+      "https://images.unsplash.com/photo-1513694203232-719a280e022f?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1540932239986-30128078f3c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+    ],
+    "createdAt": 1787224225354
+  },
+  {
+    "id": "p_mt1f5q2y1u63i7",
+    "title": "Chandigarh Sheer Net Curtains",
+    "description": "Soft, translucent, and incredibly elegant sheer fabrics. View 7 minimalist and floral print variants.",
+    "category": "curtains",
+    "price": 999,
+    "oldPrice": null,
+    "badge": "7 Patterns",
+    "variants": [
+      "7 ft (Window)",
+      "9 ft (Door) +₹200"
+    ],
+    "qty": 25,
+    "images": [
+      "https://images.unsplash.com/photo-1615800098779-1be32e60cca3?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1581428982868-e410dd047a90?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1524061614234-8449637d36ce?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1540932239986-30128078f3c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1513694203232-719a280e022f?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+    ],
+    "createdAt": 1787224225355
+  },
+  {
+    "id": "p_mt1f5q2ygjfjcv",
+    "title": "Midnight Blackout Solids",
+    "description": "Thick aesthetic curtains that block out all light. Perfect for an undisturbed sleep.",
+    "category": "curtains",
+    "price": 1599,
+    "oldPrice": null,
+    "badge": "100% Blackout",
+    "variants": [
+      "7 ft",
+      "9 ft"
+    ],
+    "qty": 25,
+    "images": [
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1540932239986-30128078f3c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+    ],
+    "createdAt": 1787224225356
+  },
+  {
+    "id": "p_mt1f5q2ysvptlm",
+    "title": "Sohni Kudi Glace Cotton Double",
+    "description": "Ultra-soft, wrinkle-free cotton. Scroll through 7 beautiful floral and abstract prints.",
+    "category": "bed-double",
+    "price": 1499,
+    "oldPrice": null,
+    "badge": "7 Patterns",
+    "variants": [
+      "Standard Flat",
+      "Elastic Fitted (+₹200)"
+    ],
+    "qty": 25,
+    "images": [
+      "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1531835551805-16d8e4af8faa?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1631679706909-1844bbd07221?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1520699049698-acd2fccb8cc8?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1618220179428-22790b46a0eb?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+    ],
+    "createdAt": 1787224225357
+  },
+  {
+    "id": "p_mt1f5q2yc7w9eh",
+    "title": "Sardarji's Royal Satin",
+    "description": "High-thread-count bridal satin that shines. The ultimate luxury addition to your bedroom.",
+    "category": "bed-double",
+    "price": 2499,
+    "oldPrice": null,
+    "badge": "Premium Satin",
+    "variants": [
+      "Standard Flat",
+      "Elastic Fitted (+₹200)"
+    ],
+    "qty": 25,
+    "images": [
+      "https://images.unsplash.com/photo-1618220179428-22790b46a0eb?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1531835551805-16d8e4af8faa?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+    ],
+    "createdAt": 1787224225358
+  },
+  {
+    "id": "p_mt1f5q2yqq64jt",
+    "title": "Pastel Daisy Single Set",
+    "description": "Cute, minimalistic pastel prints for kids or guest rooms. Comes in 7 soothing designs.",
+    "category": "bed-single",
+    "price": 799,
+    "oldPrice": null,
+    "badge": "7 Designs",
+    "variants": [
+      "Standard Flat",
+      "Elastic Fitted (+₹150)"
+    ],
+    "qty": 25,
+    "images": [
+      "https://images.unsplash.com/photo-1617325247661-67504e4c9804?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1522771930-78848d92871d?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1615876234886-fd9a39fda97f?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1536846670933-ce6eef8dfe89?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1631679706909-1844bbd07221?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+    ],
+    "createdAt": 1787224225359
+  },
+  {
+    "id": "p_mt1f5q2yfkg02p",
+    "title": "Nawabi Plush 600 GSM Towel",
+    "description": "Thick, highly absorbent combed cotton for a spa-like feel. Browse all 7 premium colors.",
+    "category": "towels",
+    "price": 899,
+    "oldPrice": null,
+    "badge": "7 Luxe Colors",
+    "variants": [
+      "Large Bath Towel",
+      "Hand Towel (Set of 2)"
+    ],
+    "qty": 25,
+    "images": [
+      "https://images.unsplash.com/photo-1584313264624-916c87920ab4?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1618221381711-42ca8ab6e908?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1605615714300-33067e9f3b55?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1518717758536-85ae29035b6d?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1563456396924-4db239e2dc11?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1584313264624-916c87920ab4?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1618221381711-42ca8ab6e908?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+    ],
+    "createdAt": 1787224225360
+  },
+  {
+    "id": "p_mt1f5q2y7yfeya",
+    "title": "Quilted Velvet Protector",
+    "description": "Thick, quilted velvet upgrade. View all 7 rich fabric shades via the gallery arrows.",
+    "category": "sofa",
+    "price": 1199,
+    "oldPrice": null,
+    "badge": "7 Solid Shades",
+    "variants": [
+      "1 Seater",
+      "2 Seater",
+      "3 Seater"
+    ],
+    "qty": 25,
+    "images": [
+      "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1567016376408-0226e4d0c1ea?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1550254478-ead40cc54513?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1538688525198-9b88f6f53126?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+    ],
+    "createdAt": 1787224225361
+  }
+]
