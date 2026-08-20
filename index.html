@@ -120,6 +120,12 @@
         }
         .trust-row i { color: var(--warm-mustard); margin-right: 5px; }
         .trust-sep { opacity: 0.5; }
+        .scroll-nudge {
+            display: none; margin-top: 30px; width: 38px; height: 38px; border-radius: 50%;
+            background: rgba(255,255,255,0.7); color: var(--primary-pink); align-items: center; justify-content: center;
+            text-decoration: none; font-size: 0.9rem; animation: bounceNudge 2s ease-in-out infinite;
+        }
+        @keyframes bounceNudge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
         .btn-hero {
             padding: 15px 35px; border-radius: 30px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
             text-decoration: none; transition: all 0.3s; display: flex; align-items: center; gap: 10px; font-size: 1rem;
@@ -489,18 +495,30 @@
         @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         
         @media(max-width: 768px) {
-            header { padding: 15px 20px; flex-direction: column; gap: 10px; }
-            .header-nav-group { gap: 12px; }
-            .header-wa-btn span { display: none; }
-            .header-wa-btn { padding: 10px 14px; }
-            .logo-text { font-size: 1.5rem; }
-            .hero h1 { font-size: 3rem; }
-            .hero-buttons { flex-direction: column; width: 100%; }
-            .filter-section { top: 110px; padding: 15px; }
-            .filter-controls { flex-direction: column; align-items: stretch; }
-            .sort-select { width: 100%; }
+            header { padding: 14px 18px; }
+            .header-nav-group { display: none; }
+            .logo-text { font-size: 1.3rem; }
+            .logo-sub { font-size: 0.62rem; letter-spacing: 2px; }
+            .header-logo-img { height: 38px; width: 38px; }
+            .hero { min-height: 62vh; height: auto; padding: 50px 20px 40px; }
+            .hero h1 { font-size: 2.4rem; }
+            .hero p { font-size: 1rem; line-height: 1.6; }
+            .hero-chips { gap: 8px; margin-top: 16px; }
+            .hero-chip { font-size: 0.75rem; padding: 6px 13px; }
+            .hero-buttons { flex-direction: column; width: 100%; margin-top: 24px; }
+            .trust-row { margin-top: 18px; font-size: 0.72rem; gap: 6px; }
+            .scroll-nudge { display: flex; }
+            .section-title { font-size: 2rem; margin: 40px 0 12px; }
+            .filter-section { top: 66px; padding: 12px 15px; margin-bottom: 24px; }
+            .filter-controls { flex-direction: column; align-items: stretch; gap: 12px; }
+            .search-input { padding: 11px 42px; font-size: 0.88rem; }
+            .filter-row { gap: 10px; }
+            .sort-select { width: 100%; padding: 10px 14px; font-size: 0.85rem; }
+            .filter-tabs { gap: 8px; }
+            .filter-btn { padding: 8px 14px; font-size: 0.78rem; }
             .floating-bar { width: 92%; justify-content: space-between; padding: 10px 15px; }
-            .catalog-grid { grid-template-columns: 1fr; }
+            .catalog-grid { grid-template-columns: 1fr; gap: 24px; }
+            .card-body { padding: 18px; }
             .notify-banner { bottom: 95px; width: 90vw; padding: 12px 16px; }
             .exit-popup { padding: 30px 22px; }
             .coupon-box { flex-direction: column; text-align: center; }
@@ -558,6 +576,7 @@
             <span class="trust-sep">·</span>
             <span><i class="fas fa-truck-fast"></i> Ships Pan-India</span>
         </div>
+        <a href="#lifestyle-catalog" class="scroll-nudge" aria-label="Scroll to shop"><i class="fas fa-chevron-down"></i></a>
     </section>
 
     <!-- ================= THE "SHOP ALL" FILTER SYSTEM ================= -->
