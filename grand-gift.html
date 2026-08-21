@@ -62,6 +62,18 @@
         @keyframes ringPulse { 0% { transform: scale(0.8); opacity: 0.9; } 100% { transform: scale(1.6); opacity: 0; } }
 
         .sparkle { position: absolute; color: var(--warm-mustard); opacity: 0.7; animation: twinkle 2.5s ease-in-out infinite; }
+
+        .gift-particles { position: fixed; inset: 0; pointer-events: none; z-index: -1; overflow: hidden; }
+        .gift-particle {
+            position: absolute; top: -30px; animation: particleFall linear infinite;
+            opacity: 0.6;
+        }
+        @keyframes particleFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+        }
         @keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.8); } 50% { opacity: 0.9; transform: scale(1.15); } }
 
         .eyebrow {
@@ -206,6 +218,9 @@
 </head>
 <body>
 
+    <audio id="giftSound" src="Retro%20Brass%20Drop.mp3" preload="auto"></audio>
+    <div class="gift-particles" id="giftParticles"></div>
+
     <header>
         <a href="index.html" class="brand">
             <img src="logo-icon-192.png" alt="Jagdish Lifestyle" onerror="this.style.display='none'">
@@ -320,6 +335,46 @@
 
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
+
+        // ================= ENTRANCE SOUND =================
+        // Browsers block audio-with-sound autoplay until there's been a real user
+        // tap/click, so we try immediately, and if that's blocked, we play on the
+        // very first tap/click anywhere on the page instead — still "the moment it opens."
+        function tryPlayGiftSound() {
+            const audio = document.getElementById('giftSound');
+            if (!audio) return;
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(() => {
+                    const playOnce = () => {
+                        audio.play().catch(() => {});
+                        document.removeEventListener('click', playOnce);
+                        document.removeEventListener('touchstart', playOnce);
+                    };
+                    document.addEventListener('click', playOnce, { once: true });
+                    document.addEventListener('touchstart', playOnce, { once: true });
+                });
+            }
+        }
+        tryPlayGiftSound();
+
+        // ================= AMBIENT FLOATING PARTICLES =================
+        (function spawnGiftParticles() {
+            const container = document.getElementById('giftParticles');
+            const symbols = ['🎁', '✨', '🎀'];
+            const count = 10;
+            for (let i = 0; i < count; i++) {
+                const el = document.createElement('span');
+                el.className = 'gift-particle';
+                el.textContent = symbols[i % symbols.length];
+                el.style.left = (Math.random() * 100) + 'vw';
+                el.style.fontSize = (0.8 + Math.random() * 1) + 'rem';
+                const duration = 10 + Math.random() * 8;
+                el.style.animationDuration = duration + 's';
+                el.style.animationDelay = (Math.random() * duration) + 's';
+                container.appendChild(el);
+            }
+        })();
 
         // Tries to open the Instagram app straight to the profile; falls back to web.
         function openInstagramProfile() {
