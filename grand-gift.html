@@ -395,9 +395,11 @@
         // directly-shared link (WhatsApp, Instagram, typed URL, bookmark) has no matching
         // referrer, so they get the full reveal.
         function cameFromThisSite() {
-            if (!document.referrer) return false;
-            try { return new URL(document.referrer).origin === window.location.origin; }
-            catch (e) { return false; }
+            // A reliable marker instead of document.referrer — WhatsApp/Instagram in-app
+            // browsers often mangle or strip the real referrer, which made this unreliable.
+            // Every internal link on the main site to this page carries ?ref=site;
+            // a bare/shared link never will.
+            return new URLSearchParams(window.location.search).get('ref') === 'site';
         }
 
         if (!cameFromThisSite()) {
