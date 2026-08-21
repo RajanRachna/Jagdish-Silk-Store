@@ -13,8 +13,13 @@
     <link rel="canonical" href="https://rajanrachna.github.io/Jagdish-Silk-Store/">
 
     <!-- Favicon (cache-busted so browsers pick up updates) -->
-    <link rel="icon" type="image/png" href="logo-icon-192.png?v=2">
-    <link rel="apple-touch-icon" href="logo-icon-192.png?v=2">
+    <link rel="icon" type="image/png" sizes="512x512" href="logo-icon-512.png?v=2">
+    <link rel="icon" type="image/png" sizes="192x192" href="logo-icon-192.png?v=2">
+    <link rel="apple-touch-icon" sizes="192x192" href="logo-icon-192.png?v=2">
+    <link rel="shortcut icon" href="logo-icon-192.png?v=2">
+    <link rel="manifest" href="site.webmanifest">
+    <meta name="msapplication-TileImage" content="logo-icon-192.png?v=2">
+    <meta name="msapplication-TileColor" content="#2C1B18">
 
     <!-- Social share preview (WhatsApp / Instagram / Facebook link cards) -->
     <meta property="og:title" content="Jagdish Lifestyle | Handloom Gifting & Home">
@@ -187,6 +192,42 @@
         .gift-banner strong { color: #FFFBF7; }
         .gift-banner i:first-child { font-size: 1.1rem; }
         .gift-banner i:last-child { font-size: 0.8rem; opacity: 0.7; }
+
+        /* ================= GIFT FINDER ================= */
+        .gift-finder { padding: 55px 5vw; background: linear-gradient(160deg, var(--soft-pink) 0%, var(--bg-main) 65%); }
+        .gift-finder-inner {
+            max-width: 720px; margin: 0 auto; background: white; border-radius: 28px; padding: 38px 34px;
+            box-shadow: 0 20px 55px rgba(0,0,0,0.07); border: 1px solid rgba(233,30,99,0.1);
+        }
+        .gift-finder-header { display: flex; align-items: center; gap: 16px; margin-bottom: 30px; }
+        .gift-finder-icon { font-size: 2.3rem; flex-shrink: 0; }
+        .gift-finder-header h3 { font-size: 1.4rem; margin-bottom: 4px; }
+        .gift-finder-header p { color: var(--text-gray); font-size: 0.88rem; }
+        .gf-step { display: none; }
+        .gf-step.active { display: block; animation: fadeUp 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+        .gf-step label { display: block; font-weight: 700; color: var(--deep-heritage); margin-bottom: 16px; font-size: 1.02rem; }
+        .gf-options { display: flex; flex-wrap: wrap; gap: 12px; }
+        .gf-chip {
+            background: #F8F9FA; border: 2px solid #EEE; padding: 12px 20px; border-radius: 30px; cursor: pointer;
+            font-family: inherit; font-size: 0.9rem; font-weight: 600; color: var(--text-dark); display: flex; align-items: center; gap: 8px;
+            transition: 0.25s;
+        }
+        .gf-chip:hover { border-color: var(--primary-pink); background: var(--soft-pink); transform: translateY(-3px); }
+        .gf-chip.selected { background: var(--primary-pink); border-color: var(--primary-pink); color: white; }
+        .gf-chip i { color: var(--warm-mustard); }
+        .gf-chip.selected i { color: white; }
+        .gf-result { display: none; text-align: center; }
+        .gf-result.active { display: block; animation: fadeUp 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+        .gf-result p { font-size: 1.08rem; margin-bottom: 22px; line-height: 1.6; color: var(--text-dark); }
+        .gf-result p strong { color: var(--primary-pink); }
+        .gf-cta {
+            background: var(--primary-pink); color: white; border: none; padding: 14px 32px; border-radius: 30px;
+            font-weight: 700; cursor: pointer; font-size: 0.95rem; box-shadow: 0 8px 22px rgba(233,30,99,0.3); margin-right: 14px;
+            transition: 0.25s;
+        }
+        .gf-cta:hover { background: #d81b60; transform: translateY(-2px); }
+        .gf-restart { background: none; border: none; color: var(--text-gray); text-decoration: underline; cursor: pointer; font-size: 0.85rem; }
+        .gf-restart:hover { color: var(--primary-pink); }
         .btn-hero {
             padding: 15px 35px; border-radius: 30px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
             text-decoration: none; transition: all 0.3s; display: flex; align-items: center; gap: 10px; font-size: 1rem;
@@ -686,6 +727,13 @@
         @media(max-width: 768px) {
             .vibe-marquee { display: none; }
             .gift-banner { font-size: 0.78rem; padding: 12px 16px; gap: 8px; }
+            .gift-finder { padding: 40px 20px; }
+            .gift-finder-inner { padding: 28px 22px; border-radius: 22px; }
+            .gift-finder-header { gap: 12px; margin-bottom: 24px; }
+            .gift-finder-icon { font-size: 1.9rem; }
+            .gift-finder-header h3 { font-size: 1.2rem; }
+            .gf-chip { padding: 10px 16px; font-size: 0.85rem; }
+            .gf-cta { width: 100%; margin-right: 0; margin-bottom: 12px; }
             .gift-banner i:last-child { display: none; }
             header { padding: 14px 18px; }
             .header-nav-group { display: none; }
@@ -781,6 +829,42 @@
         <span><strong>The Grand Gift</strong> is coming — enter for a chance to win something special</span>
         <i class="fas fa-arrow-right"></i>
     </a>
+
+    <!-- ================= GIFT FINDER (interactive) ================= -->
+    <section class="gift-finder">
+        <div class="gift-finder-inner reveal">
+            <div class="gift-finder-header">
+                <span class="gift-finder-icon">🎁</span>
+                <div>
+                    <h3>Not Sure What to Gift?</h3>
+                    <p>Answer two quick questions — we'll point you to the perfect collection.</p>
+                </div>
+            </div>
+            <div class="gf-step active" id="gfStep1">
+                <label>Who's it for?</label>
+                <div class="gf-options">
+                    <button type="button" class="gf-chip" onclick="gfSelectWho(this, 'your Parents')"><i class="fas fa-house-user"></i> Parents</button>
+                    <button type="button" class="gf-chip" onclick="gfSelectWho(this, 'your Partner')"><i class="fas fa-heart"></i> Partner</button>
+                    <button type="button" class="gf-chip" onclick="gfSelectWho(this, 'a Friend')"><i class="fas fa-user-group"></i> Friend</button>
+                    <button type="button" class="gf-chip" onclick="gfSelectWho(this, 'a Colleague')"><i class="fas fa-briefcase"></i> Colleague</button>
+                </div>
+            </div>
+            <div class="gf-step" id="gfStep2">
+                <label>What's the occasion?</label>
+                <div class="gf-options">
+                    <button type="button" class="gf-chip" onclick="gfSelectOccasion(this, 'Wedding Shagun')"><i class="fas fa-ring"></i> Wedding</button>
+                    <button type="button" class="gf-chip" onclick="gfSelectOccasion(this, 'Festive Gifting')"><i class="fas fa-sparkles"></i> Diwali / Festive</button>
+                    <button type="button" class="gf-chip" onclick="gfSelectOccasion(this, 'Housewarming')"><i class="fas fa-house"></i> Housewarming</button>
+                    <button type="button" class="gf-chip" onclick="gfSelectOccasion(this, 'Personal Use')"><i class="fas fa-gift"></i> Just Because</button>
+                </div>
+            </div>
+            <div class="gf-result" id="gfResult">
+                <p id="gfResultText"></p>
+                <button type="button" class="gf-cta" onclick="gfGoToCollection()">Show Me <i class="fas fa-arrow-right"></i></button>
+                <button type="button" class="gf-restart" onclick="gfRestart()">Start Over</button>
+            </div>
+        </div>
+    </section>
 
     <!-- ================= THE "SHOP ALL" FILTER SYSTEM ================= -->
     <section id="lifestyle-catalog">
@@ -2682,6 +2766,53 @@
         }
 
         initNotifyBanner();
+
+        // ================= GIFT FINDER =================
+        let gfWho = '';
+        let gfOccasionCategory = '';
+
+        function gfSelectWho(btn, who) {
+            document.querySelectorAll('#gfStep1 .gf-chip').forEach(c => c.classList.remove('selected'));
+            btn.classList.add('selected');
+            gfWho = who;
+            setTimeout(() => {
+                document.getElementById('gfStep1').classList.remove('active');
+                document.getElementById('gfStep2').classList.add('active');
+            }, 200);
+        }
+
+        function gfSelectOccasion(btn, category) {
+            document.querySelectorAll('#gfStep2 .gf-chip').forEach(c => c.classList.remove('selected'));
+            btn.classList.add('selected');
+            gfOccasionCategory = category;
+            document.getElementById('gfResultText').innerHTML = `Perfect gift for ${gfWho} — check out our <strong>${category}</strong> collection.`;
+            setTimeout(() => {
+                document.getElementById('gfStep2').classList.remove('active');
+                document.getElementById('gfResult').classList.add('active');
+            }, 200);
+        }
+
+        function gfGoToCollection() {
+            document.getElementById('lifestyle-catalog').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                const tabsWrap = document.getElementById('filterTabs');
+                const targetBtn = tabsWrap ? Array.from(tabsWrap.querySelectorAll('.filter-btn')).find(b => b.getAttribute('data-filter') === gfOccasionCategory) : null;
+                if (targetBtn) {
+                    targetBtn.click();
+                } else {
+                    const searchInput = document.getElementById('searchInput');
+                    if (searchInput) { searchInput.value = gfOccasionCategory; applyFilters(); }
+                }
+            }, 600);
+        }
+
+        function gfRestart() {
+            document.querySelectorAll('.gf-chip').forEach(c => c.classList.remove('selected'));
+            document.getElementById('gfResult').classList.remove('active');
+            document.getElementById('gfStep2').classList.remove('active');
+            document.getElementById('gfStep1').classList.add('active');
+            gfWho = ''; gfOccasionCategory = '';
+        }
 
         // ================= SCROLL-REVEAL ANIMATIONS =================
         if ('IntersectionObserver' in window) {
