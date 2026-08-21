@@ -691,10 +691,6 @@
         .card-admin-menu button.danger { color: #e74c3c; }
         .card-admin-menu button.danger i { color: #e74c3c; }
         .card-admin-menu button.danger:hover { background: #fdecea; }
-        .out-of-stock-badge {
-            position: absolute; top: 65px; left: 20px; z-index: 6; background: linear-gradient(135deg, var(--primary-pink), #c2185b); color: white;
-            padding: 6px 15px; font-size: 0.75rem; font-weight: 700; border-radius: 20px; display: flex; align-items: center; gap: 5px;
-        }
         .restock-btn { background: var(--warm-mustard) !important; color: var(--deep-heritage) !important; box-shadow: 0 6px 16px rgba(255,193,7,0.35) !important; }
         .restock-btn:hover { background: #ffb300 !important; }
 
@@ -707,6 +703,7 @@
         .tag-launch { background: #FFF3CD; color: #8a6d1a; }
         .tag-bundle { background: #E0F2F1; color: #00695C; }
         .tag-finishing { background: #FFF3E0; color: #E65100; }
+        .tag-soldout { background: #ECEFF1; color: #546E7A; }
 
         .life-card-hidden-admin { opacity: 0.55; }
         .hidden-ribbon {
@@ -1699,7 +1696,6 @@
             const badgeHtml = p.badge ? `<span class="badge"><i class="fas fa-tag"></i> ${escapeHtml(p.badge)}</span>` : '';
             const isSoldOut = !!p.soldOut || (p.qty !== undefined && p.qty !== null && p.qty <= 0);
             const isHidden = p.visible === false;
-            const oosHtml = isSoldOut ? `<span class="out-of-stock-badge"><i class="fas fa-fire"></i> Almost Sold Out</span>` : '';
             const oldPriceHtml = (p.oldPrice && p.oldPrice > p.price) ? `<span class="old-price">₹${Number(p.oldPrice).toLocaleString('en-IN')}</span>` : '';
             const lowStockHtml = (!isSoldOut && p.qty !== undefined && p.qty !== null && p.qty > 0 && p.qty <= 5) ? `<span class="low-stock-chip">Only ${p.qty} left</span>` : '';
             const variants = (p.variants && p.variants.length) ? p.variants : ['Standard'];
@@ -1712,10 +1708,15 @@
                 'Bundle Offer': { icon: 'fa-gift', cls: 'tag-bundle' },
                 'Finishing Fast': { icon: 'fa-hourglass-half', cls: 'tag-finishing' }
             };
-            const tagsHtml = (p.tags && p.tags.length) ? `<div class="product-tags">${p.tags.map(t => {
+            // The sold-out status is rendered as its own chip in the SAME tags row (not a
+            // separate corner badge) — so it never visually overshadows whichever tags are
+            // actually selected on the product.
+            const soldOutChipHtml = isSoldOut ? `<span class="product-tag tag-soldout"><i class="fas fa-clock-rotate-left"></i> Almost Sold Out</span>` : '';
+            const tagChipsHtml = (p.tags && p.tags.length) ? p.tags.map(t => {
                 const meta = TAG_META[t] || { icon: 'fa-tag', cls: 'tag-demand' };
                 return `<span class="product-tag ${meta.cls}"><i class="fas ${meta.icon}"></i> ${escapeHtml(t)}</span>`;
-            }).join('')}</div>` : '';
+            }).join('') : '';
+            const tagsHtml = (soldOutChipHtml || tagChipsHtml) ? `<div class="product-tags">${soldOutChipHtml}${tagChipsHtml}</div>` : '';
 
             const hiddenRibbon = (isAdmin && isHidden) ? `<div class="hidden-ribbon">HIDDEN FROM CUSTOMERS</div>` : '';
             const adminControls = isAdmin ? `
@@ -1734,7 +1735,7 @@
             return `
             <div class="life-card${isAdmin && isHidden ? ' life-card-hidden-admin' : ''}" data-id="${p.id}" data-category="${escapeHtml(p.category)}" data-price="${p.price || 0}">
                 ${hiddenRibbon}
-                ${badgeHtml}${oosHtml}
+                ${badgeHtml}
                 <div class="image-slider" data-index="0">
                     ${sliderNav}
                     <div class="slider-track">${imgTags}</div>
