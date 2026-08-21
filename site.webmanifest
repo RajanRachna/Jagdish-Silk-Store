@@ -1,0 +1,21 @@
+{
+  "name": "Jagdish Lifestyle",
+  "short_name": "Jagdish Lifestyle",
+  "description": "Handloom curtains, bed sets, towels & sofa covers — for festive gifting, weddings, housewarming or your own home.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#FFFBF7",
+  "theme_color": "#2C1B18",
+  "icons": [
+    {
+      "src": "logo-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "logo-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
