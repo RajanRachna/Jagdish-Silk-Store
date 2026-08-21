@@ -22,8 +22,10 @@
       "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
     ],
     "createdAt": 1787224282689,
-    "soldOut": false,
-    "tags": []
+    "soldOut": true,
+    "tags": [
+      "Finishing Fast"
+    ]
   },
   {
     "id": "p_mt1f6ybldihbx5",
