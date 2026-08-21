@@ -82,6 +82,43 @@
         .reassure-item { display: flex; align-items: center; gap: 9px; color: var(--text-gray); font-size: 0.85rem; font-weight: 500; }
         .reassure-item i { color: var(--warm-mustard); }
 
+        .how-to-enter {
+            max-width: 560px; margin: 44px auto 0; padding: 0 20px;
+        }
+        .how-to-enter h3 { text-align: center; font-size: 1.15rem; color: var(--warm-mustard); margin-bottom: 18px; }
+        .entry-steps { display: flex; flex-direction: column; gap: 10px; }
+        .entry-step {
+            display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; text-decoration: none; color: #FFFBF7;
+            transition: 0.25s; cursor: pointer;
+        }
+        .entry-step:hover { background: rgba(255,193,7,0.1); border-color: rgba(255,193,7,0.35); transform: translateX(4px); }
+        .entry-step-num {
+            width: 30px; height: 30px; border-radius: 50%; background: rgba(255,193,7,0.15); color: var(--warm-mustard);
+            display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; flex-shrink: 0;
+        }
+        .entry-step-icon { font-size: 1.3rem; flex-shrink: 0; }
+        .entry-step div { font-size: 0.9rem; color: var(--text-gray); }
+        .entry-step strong { color: #FFFBF7; }
+        .entry-step i.fa-arrow-right { margin-left: auto; opacity: 0.5; font-size: 0.75rem; }
+        .entry-note { text-align: center; color: var(--text-gray); font-size: 0.8rem; margin-top: 16px; }
+
+        .mystery-box {
+            max-width: 260px; margin: 26px auto 0; text-align: center; padding: 16px; background: rgba(233,30,99,0.08);
+            border: 1px dashed rgba(233,30,99,0.4); border-radius: 16px;
+        }
+        .mystery-box i { font-size: 1.4rem; color: var(--primary-pink); margin-bottom: 6px; display: block; }
+        .mystery-box span { font-size: 0.78rem; color: var(--text-gray); }
+
+        .confirm-check { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 20px; font-size: 0.82rem; color: var(--text-gray); line-height: 1.5; }
+        .confirm-check input { margin-top: 3px; accent-color: var(--warm-mustard); flex-shrink: 0; }
+
+        .share-friend-btn {
+            display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; background: var(--whatsapp, #25D366); color: white;
+            border: none; padding: 12px 22px; border-radius: 30px; font-weight: 700; font-size: 0.85rem; cursor: pointer; text-decoration: none;
+        }
+        .share-friend-btn:hover { background: #1fb855; }
+
         .form-wrap {
             max-width: 520px; margin: 50px auto 60px; background: rgba(255,251,247,0.06);
             border: 1px solid rgba(255,193,7,0.2); backdrop-filter: blur(10px);
@@ -201,6 +238,35 @@
         </div>
     </section>
 
+    <div class="how-to-enter reveal">
+        <h3><i class="fas fa-list-check"></i> How to Enter</h3>
+        <div class="entry-steps">
+            <a href="javascript:void(0)" onclick="openInstagramProfile()" class="entry-step">
+                <span class="entry-step-num">1</span>
+                <span class="entry-step-icon">❤️</span>
+                <div><strong>Like</strong> our latest post</div>
+                <i class="fas fa-arrow-right"></i>
+            </a>
+            <a href="javascript:void(0)" onclick="openInstagramProfile()" class="entry-step">
+                <span class="entry-step-num">2</span>
+                <span class="entry-step-icon">💬</span>
+                <div><strong>Comment</strong> your name below it</div>
+                <i class="fas fa-arrow-right"></i>
+            </a>
+            <a href="javascript:void(0)" onclick="openInstagramProfile()" class="entry-step">
+                <span class="entry-step-num">3</span>
+                <span class="entry-step-icon">📲</span>
+                <div><strong>Share</strong> it to your story & tag @jagdish_silk_store</div>
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        <p class="entry-note">Then fill in your details below to lock in your entry ✨</p>
+        <div class="mystery-box">
+            <i class="fas fa-box-open"></i>
+            <span>What's inside? That's the surprise — but trust us, it's worth it.</span>
+        </div>
+    </div>
+
     <div class="form-wrap reveal">
         <div id="formState">
             <h2>Enter Now</h2>
@@ -222,6 +288,10 @@
                     <textarea id="ggMessage" placeholder=" "></textarea>
                     <label>Any Message for Us?</label>
                 </div>
+                <div class="confirm-check">
+                    <input type="checkbox" id="ggConfirmed" required>
+                    <label for="ggConfirmed">I've liked the post, commented my name, and shared it to my story</label>
+                </div>
                 <div class="human-check">
                     <label>Quick Check — Are You Human?</label>
                     <div class="human-options">
@@ -240,6 +310,7 @@
             <div class="emoji">🎉</div>
             <h3>You're In!</h3>
             <p>Fingers crossed. Follow @jagdish_silk_store on Instagram — that's where we'll announce the winner.</p>
+            <a href="javascript:void(0)" onclick="shareGiftPage()" class="share-friend-btn"><i class="fab fa-whatsapp"></i> Tell a Friend, Double Your Odds</a>
         </div>
     </div>
 
@@ -249,6 +320,25 @@
 
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Tries to open the Instagram app straight to the profile; falls back to web.
+        function openInstagramProfile() {
+            const webUrl = 'https://www.instagram.com/jagdish_silk_store/';
+            const appUrl = 'instagram://user?username=jagdish_silk_store';
+            let didHide = false;
+            const onVisibilityChange = () => { if (document.hidden) didHide = true; };
+            document.addEventListener('visibilitychange', onVisibilityChange);
+            window.location.href = appUrl;
+            setTimeout(() => {
+                document.removeEventListener('visibilitychange', onVisibilityChange);
+                if (!didHide) window.open(webUrl, '_blank');
+            }, 1000);
+        }
+
+        function shareGiftPage() {
+            const msg = `Hey! Jagdish Lifestyle is giving away a Grand Gift 🎁 — thought you might want in too. Check it out: ${window.location.href}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+        }
 
         function fireConfetti(container) {
             if (!container) return;
@@ -287,10 +377,16 @@
             const name = document.getElementById('ggName').value.trim();
             const number = document.getElementById('ggNumber').value.trim();
             const address = document.getElementById('ggAddress').value.trim();
+            const confirmed = document.getElementById('ggConfirmed').checked;
             const gotcha = document.querySelector('input[name="_gotcha"]').value;
 
             if (!name || !number || !address) {
                 errEl.textContent = 'Please fill in your name, number, and address.';
+                errEl.style.display = 'block';
+                return false;
+            }
+            if (!confirmed) {
+                errEl.textContent = 'Please confirm you\'ve liked, commented & shared to enter.';
                 errEl.style.display = 'block';
                 return false;
             }
