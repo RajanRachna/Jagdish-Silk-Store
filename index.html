@@ -1699,7 +1699,7 @@
             const badgeHtml = p.badge ? `<span class="badge"><i class="fas fa-tag"></i> ${escapeHtml(p.badge)}</span>` : '';
             const isSoldOut = !!p.soldOut || (p.qty !== undefined && p.qty !== null && p.qty <= 0);
             const isHidden = p.visible === false;
-            const oosHtml = isSoldOut ? `<span class="out-of-stock-badge"><i class="fas fa-fire"></i> High in Demand</span>` : '';
+            const oosHtml = isSoldOut ? `<span class="out-of-stock-badge"><i class="fas fa-fire"></i> Almost Sold Out</span>` : '';
             const oldPriceHtml = (p.oldPrice && p.oldPrice > p.price) ? `<span class="old-price">₹${Number(p.oldPrice).toLocaleString('en-IN')}</span>` : '';
             const lowStockHtml = (!isSoldOut && p.qty !== undefined && p.qty !== null && p.qty > 0 && p.qty <= 5) ? `<span class="low-stock-chip">Only ${p.qty} left</span>` : '';
             const variants = (p.variants && p.variants.length) ? p.variants : ['Standard'];
@@ -1725,7 +1725,7 @@
                         <button type="button" onclick="closeAllCardMenus(); editProduct('${p.id}')"><i class="fas fa-pen"></i> Edit</button>
                         <button type="button" onclick="closeAllCardMenus(); duplicateProduct('${p.id}')"><i class="fas fa-clone"></i> Duplicate</button>
                         <button type="button" onclick="closeAllCardMenus(); toggleProductVisibility('${p.id}')"><i class="fas fa-eye${isHidden ? '' : '-slash'}"></i> ${isHidden ? 'Show to Customers' : 'Hide from Customers'}</button>
-                        <button type="button" onclick="closeAllCardMenus(); toggleSoldOut('${p.id}')"><i class="fas fa-fire"></i> ${isSoldOut ? 'Mark Available' : 'Mark High in Demand'}</button>
+                        <button type="button" onclick="closeAllCardMenus(); toggleSoldOut('${p.id}')"><i class="fas fa-fire"></i> ${isSoldOut ? 'Mark Available Again' : 'Mark Almost Sold Out'}</button>
                         <button type="button" class="danger" onclick="closeAllCardMenus(); deleteProduct('${p.id}')"><i class="fas fa-trash"></i> Delete</button>
                     </div>
                 </div>` : '';
@@ -1879,7 +1879,7 @@
             const number = "919815068679";
 
             if (btn.classList.contains('restock-btn')) {
-                const restockMsg = `Hi Jagdish Lifestyle ✨,\n\nI'm interested in *${name}*${category ? ' (' + category + ')' : ''} — it shows as high in demand right now.\n\n*Variant / Size interested in:* ${variant}\n\nPlease let me know as soon as it's back in stock!`;
+                const restockMsg = `Hi Jagdish Lifestyle ✨,\n\nI'm interested in *${name}*${category ? ' (' + category + ')' : ''} — it's almost sold out right now.\n\n*Variant / Size interested in:* ${variant}\n\nPlease let me know as soon as it's back in stock!`;
                 window.open(`https://wa.me/${number}?text=${encodeURIComponent(restockMsg)}`, '_blank');
                 return;
             }
