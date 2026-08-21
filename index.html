@@ -322,8 +322,12 @@
         
         /* Image Slider */
         .image-slider { position: relative; width: 100%; height: 350px; overflow: hidden; background: #eee; }
-        .slider-track { display: flex; width: 100%; height: 100%; transition: transform 0.4s ease-in-out; }
-        .slider-track img { min-width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .slider-track {
+            display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory;
+            scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;
+        }
+        .slider-track::-webkit-scrollbar { display: none; }
+        .slider-track img { min-width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; scroll-snap-align: start; flex-shrink: 0; }
         .life-card:hover .slider-track img { transform: scale(1.06); }
         .slider-btn {
             position: absolute; top: 50%; transform: translateY(-50%);
@@ -1844,20 +1848,37 @@
             const track = slider.querySelector('.slider-track');
             const images = track.querySelectorAll('img');
             const dots = slider.querySelectorAll('.dot');
-            
+
             let index = parseInt(slider.getAttribute('data-index') || '0');
-            
+
             index += direction;
             if (index < 0) index = images.length - 1;
             if (index >= images.length) index = 0;
-            
+
             slider.setAttribute('data-index', index);
-            track.style.transform = `translateX(-${index * 100}%)`;
-            
+            track.scrollTo({ left: images[index].offsetLeft, behavior: 'smooth' });
+
             dots.forEach((dot, i) => {
                 dot.classList.toggle('active', i === index);
             });
         }
+
+        // Keeps the dots + data-index in sync when someone swipes/drags the images
+        // directly instead of using the arrow buttons. 'scroll' doesn't bubble, so this
+        // listens in the capture phase on the whole document (works for every card,
+        // including ones rendered later).
+        document.addEventListener('scroll', (e) => {
+            const track = e.target;
+            if (!track.classList || !track.classList.contains('slider-track')) return;
+            const slider = track.closest('.image-slider');
+            if (!slider) return;
+            const images = track.querySelectorAll('img');
+            const dots = slider.querySelectorAll('.dot');
+            if (!images.length) return;
+            const index = Math.max(0, Math.min(images.length - 1, Math.round(track.scrollLeft / track.clientWidth)));
+            slider.setAttribute('data-index', index);
+            dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+        }, true);
 
         // WhatsApp Order
         function orderWA(btn) {
