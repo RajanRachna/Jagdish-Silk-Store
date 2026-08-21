@@ -304,6 +304,11 @@
             display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 30px; padding: 0 5vw; max-width: 1400px; margin: 0 auto;
         }
+
+        .skeleton-card { background: white; border-radius: 24px; overflow: hidden; padding: 0 0 22px; }
+        .skeleton-img { width: 100%; height: 350px; background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%); background-size: 200% 100%; animation: skeletonShine 1.5s ease-in-out infinite; }
+        .skeleton-line { height: 14px; margin: 14px 22px 0; border-radius: 6px; background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%); background-size: 200% 100%; animation: skeletonShine 1.5s ease-in-out infinite; }
+        @keyframes skeletonShine { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
         
         .life-card { 
             background: var(--card-bg); border-radius: 24px; overflow: hidden;
@@ -512,6 +517,16 @@
         }
         .admin-fab:hover { transform: scale(1.08); }
         .admin-fab.is-admin { background: var(--primary-pink); color: white; }
+
+        .back-to-top {
+            position: fixed; bottom: 180px; right: 20px; z-index: 3500;
+            width: 46px; height: 46px; border-radius: 50%; background: var(--deep-heritage); color: var(--warm-mustard);
+            border: none; cursor: pointer; font-size: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            display: flex; align-items: center; justify-content: center; transition: 0.3s;
+            opacity: 0; visibility: hidden; transform: translateY(10px);
+        }
+        .back-to-top.visible { opacity: 1; visibility: visible; transform: translateY(0); }
+        .back-to-top:hover { transform: translateY(-3px); background: var(--primary-pink); color: white; }
 
         .wishlist-fab {
             position: fixed; bottom: 110px; left: 20px; z-index: 4000;
@@ -895,7 +910,11 @@
                 <button class="admin-btn-logout" onclick="adminLogout()">Logout</button>
             </div>
         </div>
-        <div class="catalog-grid" id="productGrid"></div>
+        <div class="catalog-grid" id="productGrid">
+            <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-line" style="width:70%"></div><div class="skeleton-line" style="width:40%"></div><div class="skeleton-line" style="width:90%; height:44px; margin-top:12px;"></div></div>
+            <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-line" style="width:70%"></div><div class="skeleton-line" style="width:40%"></div><div class="skeleton-line" style="width:90%; height:44px; margin-top:12px;"></div></div>
+            <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-line" style="width:70%"></div><div class="skeleton-line" style="width:40%"></div><div class="skeleton-line" style="width:90%; height:44px; margin-top:12px;"></div></div>
+        </div>
         <div id="noResults" class="no-results">
             <i class="fas fa-search" style="font-size: 2rem; color: var(--primary-pink); margin-bottom: 15px;"></i><br>
             Oops! No items match this combination. Try clearing your filters.
@@ -1317,6 +1336,9 @@
         <a href="javascript:void(0)" onclick="openInstaFollowModal()" class="action-icon ic-ig" title="Instagram"><i class="fab fa-instagram"></i></a>
         <a href="https://maps.google.com/?q=Sarafan+Bazaar,+Phagwara" target="_blank" class="action-icon ic-map" title="Location"><i class="fas fa-map-marker-alt"></i></a>
     </div>
+
+    <!-- ================= BACK TO TOP ================= -->
+    <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="Back to top"><i class="fas fa-arrow-up"></i></button>
 
     <!-- ================= WISHLIST: Floating toggle button ================= -->
     <button class="wishlist-fab" id="wishlistFab" onclick="openWishlistPanel()" title="My Wishlist">
@@ -2947,6 +2969,12 @@
                 }
             }, 300);
         }
+
+        // ================= BACK TO TOP =================
+        const backToTopBtn = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            backToTopBtn.classList.toggle('visible', window.scrollY > 600);
+        });
 
         // ================= SCROLL-REVEAL ANIMATIONS =================
         if ('IntersectionObserver' in window) {
