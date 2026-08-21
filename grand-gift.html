@@ -76,6 +76,44 @@
         }
         @keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.8); } 50% { opacity: 0.9; transform: scale(1.15); } }
 
+        /* ================= INTRO SPLASH ================= */
+        .intro-splash {
+            position: fixed; inset: 0; z-index: 10000; display: none; align-items: center; justify-content: center;
+            background: radial-gradient(circle at 50% 40%, #4a2f26 0%, var(--deep-heritage) 55%, #150c0a 100%);
+            text-align: center; padding: 20px; transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        .intro-splash.show { display: flex; }
+        .intro-splash.fade-out { opacity: 0; visibility: hidden; pointer-events: none; }
+        .intro-content { position: relative; z-index: 2; max-width: 420px; }
+        .intro-icon {
+            font-size: 3.6rem; color: var(--warm-mustard); margin-bottom: 22px;
+            animation: giftPulse 2.4s ease-in-out infinite;
+            filter: drop-shadow(0 0 30px rgba(255,193,7,0.5));
+        }
+        .intro-content h1 { font-size: 2.2rem; color: #FFFBF7; margin-bottom: 14px; }
+        .intro-content h1 em {
+            font-style: italic; background: linear-gradient(90deg, var(--primary-pink), var(--warm-mustard), var(--primary-pink));
+            background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent;
+            animation: shimmerText 3s linear infinite;
+        }
+        .intro-content p { color: var(--text-gray); font-size: 1rem; margin-bottom: 32px; line-height: 1.6; }
+        .intro-enter-btn {
+            background: linear-gradient(135deg, var(--primary-pink), #ad1457); color: white; border: none;
+            padding: 17px 40px; border-radius: 30px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            cursor: pointer; font-size: 0.95rem; box-shadow: 0 12px 30px rgba(233,30,99,0.4);
+            display: inline-flex; align-items: center; gap: 10px; transition: 0.3s;
+            animation: introBtnPulse 1.8s ease-in-out infinite;
+        }
+        .intro-enter-btn:hover { transform: translateY(-3px) scale(1.03); }
+        @keyframes introBtnPulse {
+            0%, 100% { box-shadow: 0 12px 30px rgba(233,30,99,0.4); }
+            50% { box-shadow: 0 12px 40px rgba(233,30,99,0.65); }
+        }
+        @media (max-width: 480px) {
+            .intro-content h1 { font-size: 1.7rem; }
+            .intro-icon { font-size: 3rem; }
+        }
+
         .eyebrow {
             display: inline-flex; align-items: center; gap: 8px; background: rgba(255,193,7,0.12);
             border: 1px solid rgba(255,193,7,0.3); color: var(--warm-mustard); padding: 7px 18px;
@@ -221,6 +259,19 @@
     <audio id="giftSound" src="Retro%20Brass%20Drop.mp3" preload="auto"></audio>
     <div class="gift-particles" id="giftParticles"></div>
 
+    <div id="introSplash" class="intro-splash">
+        <i class="fas fa-star sparkle" style="top: 15%; left: 15%; font-size: 1rem; animation-delay: 0s;"></i>
+        <i class="fas fa-star sparkle" style="top: 25%; right: 18%; font-size: 0.7rem; animation-delay: 0.7s;"></i>
+        <i class="fas fa-star sparkle" style="bottom: 25%; left: 20%; font-size: 0.8rem; animation-delay: 1.3s;"></i>
+        <i class="fas fa-star sparkle" style="bottom: 18%; right: 22%; font-size: 0.6rem; animation-delay: 0.4s;"></i>
+        <div class="intro-content">
+            <div class="intro-icon"><i class="fas fa-gift"></i></div>
+            <h1>You've Been <em>Invited</em></h1>
+            <p>Someone thinks you deserve a little something special.</p>
+            <button type="button" onclick="enterGiftPage()" class="intro-enter-btn"><i class="fas fa-hand-pointer"></i> Open Your Gift</button>
+        </div>
+    </div>
+
     <header>
         <a href="index.html" class="brand">
             <img src="logo-icon-192.png" alt="Jagdish Lifestyle" onerror="this.style.display='none'">
@@ -338,6 +389,34 @@
 
         // ================= ENTRANCE SOUND =================
         // Browsers block audio-with-sound autoplay until there's been a real user
+        // ================= INTRO SPLASH (only for visitors arriving from outside the site) =================
+        // Internal navigation (clicking a link on our own site) always sends a referrer
+        // from our own origin — skip the splash for those visitors. Anyone arriving via a
+        // directly-shared link (WhatsApp, Instagram, typed URL, bookmark) has no matching
+        // referrer, so they get the full reveal.
+        function cameFromThisSite() {
+            if (!document.referrer) return false;
+            try { return new URL(document.referrer).origin === window.location.origin; }
+            catch (e) { return false; }
+        }
+
+        if (!cameFromThisSite()) {
+            document.getElementById('introSplash').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        } else {
+            tryPlayGiftSound(); // no big reveal here, but still try the ambient sound quietly
+        }
+
+        function enterGiftPage() {
+            const splash = document.getElementById('introSplash');
+            splash.classList.add('fade-out');
+            document.body.style.overflow = '';
+            const audio = document.getElementById('giftSound');
+            if (audio) { audio.currentTime = 0; audio.play().catch(() => {}); }
+            setTimeout(() => splash.remove(), 550);
+        }
+
+        // Browsers block audio-with-sound autoplay until there's been a real user
         // tap/click, so we try immediately, and if that's blocked, we play on the
         // very first tap/click anywhere on the page instead — still "the moment it opens."
         function tryPlayGiftSound() {
@@ -356,7 +435,6 @@
                 });
             }
         }
-        tryPlayGiftSound();
 
         // ================= AMBIENT FLOATING PARTICLES =================
         (function spawnGiftParticles() {
