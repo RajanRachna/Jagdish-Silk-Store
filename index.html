@@ -193,7 +193,7 @@
         .gift-banner i:first-child { font-size: 1.1rem; }
         .gift-banner i:last-child { font-size: 0.8rem; opacity: 0.7; }
 
-        /* ================= GIFT FINDER ================= */
+        /* ================= PRODUCT FINDER ================= */
         .gift-finder { padding: 55px 5vw; background: linear-gradient(160deg, var(--soft-pink) 0%, var(--bg-main) 65%); }
         .gift-finder-inner {
             max-width: 720px; margin: 0 auto; background: white; border-radius: 28px; padding: 38px 34px;
@@ -830,42 +830,6 @@
         <i class="fas fa-arrow-right"></i>
     </a>
 
-    <!-- ================= GIFT FINDER (interactive) ================= -->
-    <section class="gift-finder">
-        <div class="gift-finder-inner reveal">
-            <div class="gift-finder-header">
-                <span class="gift-finder-icon">🎁</span>
-                <div>
-                    <h3>Not Sure What to Gift?</h3>
-                    <p>Answer two quick questions — we'll point you to the perfect collection.</p>
-                </div>
-            </div>
-            <div class="gf-step active" id="gfStep1">
-                <label>Who's it for?</label>
-                <div class="gf-options">
-                    <button type="button" class="gf-chip" onclick="gfSelectWho(this, 'your Parents')"><i class="fas fa-house-user"></i> Parents</button>
-                    <button type="button" class="gf-chip" onclick="gfSelectWho(this, 'your Partner')"><i class="fas fa-heart"></i> Partner</button>
-                    <button type="button" class="gf-chip" onclick="gfSelectWho(this, 'a Friend')"><i class="fas fa-user-group"></i> Friend</button>
-                    <button type="button" class="gf-chip" onclick="gfSelectWho(this, 'a Colleague')"><i class="fas fa-briefcase"></i> Colleague</button>
-                </div>
-            </div>
-            <div class="gf-step" id="gfStep2">
-                <label>What's the occasion?</label>
-                <div class="gf-options">
-                    <button type="button" class="gf-chip" onclick="gfSelectOccasion(this, 'Wedding Shagun')"><i class="fas fa-ring"></i> Wedding</button>
-                    <button type="button" class="gf-chip" onclick="gfSelectOccasion(this, 'Festive Gifting')"><i class="fas fa-sparkles"></i> Diwali / Festive</button>
-                    <button type="button" class="gf-chip" onclick="gfSelectOccasion(this, 'Housewarming')"><i class="fas fa-house"></i> Housewarming</button>
-                    <button type="button" class="gf-chip" onclick="gfSelectOccasion(this, 'Personal Use')"><i class="fas fa-gift"></i> Just Because</button>
-                </div>
-            </div>
-            <div class="gf-result" id="gfResult">
-                <p id="gfResultText"></p>
-                <button type="button" class="gf-cta" onclick="gfGoToCollection()">Show Me <i class="fas fa-arrow-right"></i></button>
-                <button type="button" class="gf-restart" onclick="gfRestart()">Start Over</button>
-            </div>
-        </div>
-    </section>
-
     <!-- ================= THE "SHOP ALL" FILTER SYSTEM ================= -->
     <section id="lifestyle-catalog">
         
@@ -1131,6 +1095,64 @@
 
         </div>
         <!-- end __oldStaticCards -->
+    </section>
+
+    <!-- ================= PRODUCT FINDER (works for gift-shoppers AND personal shoppers) ================= -->
+    <section class="gift-finder" id="productFinder">
+        <div class="gift-finder-inner reveal">
+            <div class="gift-finder-header">
+                <span class="gift-finder-icon">🧭</span>
+                <div>
+                    <h3>Find What You're Looking For</h3>
+                    <p>Two quick taps — whether it's for yourself or someone else, we'll point you the right way.</p>
+                </div>
+            </div>
+
+            <div class="gf-step active" id="pfStep1">
+                <label>What brings you here today?</label>
+                <div class="gf-options">
+                    <button type="button" class="gf-chip" onclick="pfSelectPath('myself')"><i class="fas fa-bag-shopping"></i> Shopping for Myself</button>
+                    <button type="button" class="gf-chip" onclick="pfSelectPath('gift')"><i class="fas fa-gift"></i> Looking for a Gift</button>
+                </div>
+            </div>
+
+            <div class="gf-step" id="pfStepMyself">
+                <label>What are you after?</label>
+                <div class="gf-options">
+                    <button type="button" class="gf-chip" onclick="pfSelectCategory(this, 'Curtains')"><i class="fas fa-square"></i> Curtains</button>
+                    <button type="button" class="gf-chip" onclick="pfSelectCategory(this, 'Bed Sets')"><i class="fas fa-bed"></i> Bed Sets</button>
+                    <button type="button" class="gf-chip" onclick="pfSelectCategory(this, 'Towels')"><i class="fas fa-bath"></i> Towels</button>
+                    <button type="button" class="gf-chip" onclick="pfSelectCategory(this, 'Sofa Covers')"><i class="fas fa-couch"></i> Sofa Covers</button>
+                    <button type="button" class="gf-chip" onclick="pfSelectCategory(this, 'all')"><i class="fas fa-border-all"></i> Show Me Everything</button>
+                </div>
+            </div>
+
+            <div class="gf-step" id="pfStepWho">
+                <label>Who's it for?</label>
+                <div class="gf-options">
+                    <button type="button" class="gf-chip" onclick="pfSelectWho(this, 'your Parents')"><i class="fas fa-house-user"></i> Parents</button>
+                    <button type="button" class="gf-chip" onclick="pfSelectWho(this, 'your Partner')"><i class="fas fa-heart"></i> Partner</button>
+                    <button type="button" class="gf-chip" onclick="pfSelectWho(this, 'a Friend')"><i class="fas fa-user-group"></i> Friend</button>
+                    <button type="button" class="gf-chip" onclick="pfSelectWho(this, 'a Colleague')"><i class="fas fa-briefcase"></i> Colleague</button>
+                </div>
+            </div>
+
+            <div class="gf-step" id="pfStepOccasion">
+                <label>What's the occasion?</label>
+                <div class="gf-options">
+                    <button type="button" class="gf-chip" onclick="pfSelectCategory(this, 'Wedding Shagun')"><i class="fas fa-ring"></i> Wedding</button>
+                    <button type="button" class="gf-chip" onclick="pfSelectCategory(this, 'Festive Gifting')"><i class="fas fa-sparkles"></i> Diwali / Festive</button>
+                    <button type="button" class="gf-chip" onclick="pfSelectCategory(this, 'Housewarming')"><i class="fas fa-house"></i> Housewarming</button>
+                    <button type="button" class="gf-chip" onclick="pfSelectCategory(this, 'Personal Use')"><i class="fas fa-gift"></i> Just Because</button>
+                </div>
+            </div>
+
+            <div class="gf-result" id="pfResult">
+                <p id="pfResultText"></p>
+                <button type="button" class="gf-cta" onclick="pfGoToCollection()">Show Me <i class="fas fa-arrow-right"></i></button>
+                <button type="button" class="gf-restart" onclick="pfRestart()">Start Over</button>
+            </div>
+        </div>
     </section>
 
     <!-- ================= LOCATION & STORE SECTION ================= -->
@@ -2767,51 +2789,69 @@
 
         initNotifyBanner();
 
-        // ================= GIFT FINDER =================
-        let gfWho = '';
-        let gfOccasionCategory = '';
+        // ================= PRODUCT FINDER (branches: self-shopper vs gift-shopper) =================
+        let pfPath = '';
+        let pfWho = '';
+        let pfTargetCategory = '';
 
-        function gfSelectWho(btn, who) {
-            document.querySelectorAll('#gfStep1 .gf-chip').forEach(c => c.classList.remove('selected'));
-            btn.classList.add('selected');
-            gfWho = who;
+        function pfSelectPath(path) {
+            pfPath = path;
+            document.getElementById('pfStep1').classList.remove('active');
             setTimeout(() => {
-                document.getElementById('gfStep1').classList.remove('active');
-                document.getElementById('gfStep2').classList.add('active');
+                if (path === 'myself') {
+                    document.getElementById('pfStepMyself').classList.add('active');
+                } else {
+                    document.getElementById('pfStepWho').classList.add('active');
+                }
             }, 200);
         }
 
-        function gfSelectOccasion(btn, category) {
-            document.querySelectorAll('#gfStep2 .gf-chip').forEach(c => c.classList.remove('selected'));
+        function pfSelectWho(btn, who) {
+            document.querySelectorAll('#pfStepWho .gf-chip').forEach(c => c.classList.remove('selected'));
             btn.classList.add('selected');
-            gfOccasionCategory = category;
-            document.getElementById('gfResultText').innerHTML = `Perfect gift for ${gfWho} — check out our <strong>${category}</strong> collection.`;
+            pfWho = who;
             setTimeout(() => {
-                document.getElementById('gfStep2').classList.remove('active');
-                document.getElementById('gfResult').classList.add('active');
+                document.getElementById('pfStepWho').classList.remove('active');
+                document.getElementById('pfStepOccasion').classList.add('active');
             }, 200);
         }
 
-        function gfGoToCollection() {
+        function pfSelectCategory(btn, category) {
+            document.querySelectorAll('.gf-step.active .gf-chip').forEach(c => c.classList.remove('selected'));
+            if (btn) btn.classList.add('selected');
+            pfTargetCategory = category;
+
+            const resultText = (pfPath === 'myself')
+                ? (category === 'all' ? `Let's show you everything we have.` : `Here's our <strong>${category}</strong> collection.`)
+                : `Perfect gift for ${pfWho} — check out our <strong>${category}</strong> collection.`;
+            document.getElementById('pfResultText').innerHTML = resultText;
+
+            setTimeout(() => {
+                document.querySelectorAll('#productFinder .gf-step.active').forEach(s => s.classList.remove('active'));
+                document.getElementById('pfResult').classList.add('active');
+            }, 200);
+        }
+
+        function pfGoToCollection() {
             document.getElementById('lifestyle-catalog').scrollIntoView({ behavior: 'smooth' });
             setTimeout(() => {
                 const tabsWrap = document.getElementById('filterTabs');
-                const targetBtn = tabsWrap ? Array.from(tabsWrap.querySelectorAll('.filter-btn')).find(b => b.getAttribute('data-filter') === gfOccasionCategory) : null;
+                const targetBtn = tabsWrap ? Array.from(tabsWrap.querySelectorAll('.filter-btn')).find(b => b.getAttribute('data-filter') === pfTargetCategory) : null;
                 if (targetBtn) {
                     targetBtn.click();
-                } else {
+                } else if (pfTargetCategory !== 'all') {
                     const searchInput = document.getElementById('searchInput');
-                    if (searchInput) { searchInput.value = gfOccasionCategory; applyFilters(); }
+                    if (searchInput) { searchInput.value = pfTargetCategory; applyFilters(); }
                 }
             }, 600);
         }
 
-        function gfRestart() {
-            document.querySelectorAll('.gf-chip').forEach(c => c.classList.remove('selected'));
-            document.getElementById('gfResult').classList.remove('active');
-            document.getElementById('gfStep2').classList.remove('active');
-            document.getElementById('gfStep1').classList.add('active');
-            gfWho = ''; gfOccasionCategory = '';
+        function pfRestart() {
+            document.querySelectorAll('#productFinder .gf-chip').forEach(c => c.classList.remove('selected'));
+            document.querySelectorAll('#productFinder .gf-step').forEach(s => s.classList.remove('active'));
+            document.getElementById('pfResult').classList.remove('active');
+            document.getElementById('pfStep1').classList.add('active');
+            pfPath = ''; pfWho = ''; pfTargetCategory = '';
         }
 
         // ================= SCROLL-REVEAL ANIMATIONS =================
