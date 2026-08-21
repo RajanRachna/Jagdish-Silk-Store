@@ -4,7 +4,7 @@
     "title": "Amritsari Royal Velvet Curtains",
     "description": "Deep, philosophical tones meet premium craftsmanship. Scroll for 7 luxurious velvet color variants.",
     "category": "curtains",
-    "price": 507,
+    "price": 4989,
     "oldPrice": 2000,
     "badge": "7 Colors",
     "variants": [
@@ -23,7 +23,9 @@
     ],
     "createdAt": 1787224282689,
     "soldOut": true,
-    "tags": []
+    "tags": [
+      "High in Demand"
+    ]
   },
   {
     "id": "p_mt1f6ybldihbx5",
