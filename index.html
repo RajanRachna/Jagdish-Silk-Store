@@ -190,10 +190,27 @@
 
         /* ================= UNDER CONSTRUCTION MODE ================= */
         .construction-overlay {
-            display: none; position: fixed; inset: 0; z-index: 99999; align-items: center; justify-content: center;
+            display: none; position: fixed; inset: 0; z-index: 99999; flex-direction: column;
             background: radial-gradient(circle at 50% 30%, #3d2721 0%, var(--deep-heritage) 60%, #1a0f0c 100%);
             background-size: 140% 140%; animation: none;
-            text-align: center; padding: 24px; overflow: hidden;
+            text-align: center; overflow-y: auto;
+        }
+        .construction-tape-strip {
+            height: 16px; flex-shrink: 0;
+            background: repeating-linear-gradient(45deg, var(--warm-mustard), var(--warm-mustard) 18px, #1a1512 18px, #1a1512 36px);
+        }
+        .construction-banner-text {
+            flex-shrink: 0; background: var(--deep-heritage); color: var(--warm-mustard); font-weight: 800;
+            letter-spacing: 3px; font-size: 0.85rem; text-transform: uppercase; padding: 11px 12px;
+            border-top: 2px solid #1a1512; border-bottom: 2px solid #1a1512;
+        }
+        .construction-bricks-strip {
+            flex-shrink: 0; font-size: 1.15rem; letter-spacing: 1px; padding: 6px 0; opacity: 0.65;
+            white-space: nowrap; overflow: hidden; background: #1a0f0c;
+        }
+        .construction-main {
+            flex: 1; display: flex; align-items: center; justify-content: center; position: relative;
+            padding: 30px 24px; overflow: hidden; min-height: 0;
         }
         .construction-overlay.active { display: flex; animation: overlayFadeIn 0.3s ease, ambientGlowConstruction 10s ease-in-out infinite; }
         @keyframes ambientGlowConstruction { 0%, 100% { background-position: 50% 0%; } 50% { background-position: 50% 15%; } }
@@ -227,6 +244,8 @@
         @media (max-width: 480px) {
             .construction-content h1 { font-size: 1.7rem; }
             .construction-actions { flex-direction: column; }
+            .construction-banner-text { font-size: 0.68rem; letter-spacing: 1.5px; padding: 9px 8px; }
+            .construction-bricks-strip { font-size: 0.85rem; }
         }
 
         .construction-admin-banner {
@@ -876,16 +895,23 @@
 
     <!-- ================= UNDER CONSTRUCTION: full-site overlay (customers only) ================= -->
     <div id="constructionOverlay" class="construction-overlay">
-        <div class="construction-particles" id="constructionParticles"></div>
-        <div class="construction-content">
-            <img src="logo-icon-192.png" alt="Jagdish Lifestyle" class="construction-logo" onerror="this.style.display='none'">
-            <div class="construction-icon">🚧</div>
-            <div class="construction-eyebrow">Thoda Sabar Karo Ji</div>
-            <h1>We're Sprucing Things Up</h1>
-            <p>Jagdish Lifestyle is getting a little makeover, ve! We'll be back online <em>changi jaldi</em> — shukriya for your patience 💛</p>
-            <div class="construction-actions">
-                <a href="https://wa.me/919815068679?text=Hi%20Jagdish%20Lifestyle!%20I%20saw%20the%20site%20is%20under%20maintenance%20%E2%80%94%20can%20you%20help%3F" target="_blank" class="construction-wa-btn"><i class="fab fa-whatsapp"></i> Message Us on WhatsApp</a>
-                <a href="javascript:void(0)" onclick="openInstagramProfile()" class="construction-ig-btn"><i class="fab fa-instagram"></i> Say Hi on Instagram</a>
+        <div class="construction-tape-strip"></div>
+        <div class="construction-banner-text">🚧 Under Construction 🚧</div>
+        <div class="construction-tape-strip"></div>
+        <div class="construction-bricks-strip">🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱🧱</div>
+
+        <div class="construction-main">
+            <div class="construction-particles" id="constructionParticles"></div>
+            <div class="construction-content">
+                <img src="logo-icon-192.png" alt="Jagdish Lifestyle" class="construction-logo" onerror="this.style.display='none'">
+                <div class="construction-icon">🚧</div>
+                <div class="construction-eyebrow">Thoda Sabar Karo Ji</div>
+                <h1>We're Sprucing Things Up</h1>
+                <p>Jagdish Lifestyle is getting a little makeover, ve! We'll be back online <em>changi jaldi</em> — shukriya for your patience 💛</p>
+                <div class="construction-actions">
+                    <a href="https://wa.me/919815068679?text=Hi%20Jagdish%20Lifestyle!%20I%20saw%20the%20site%20is%20under%20maintenance%20%E2%80%94%20can%20you%20help%3F" target="_blank" class="construction-wa-btn"><i class="fab fa-whatsapp"></i> Message Us on WhatsApp</a>
+                    <a href="javascript:void(0)" onclick="openInstagramProfile()" class="construction-ig-btn"><i class="fab fa-instagram"></i> Say Hi on Instagram</a>
+                </div>
             </div>
         </div>
     </div>
@@ -2197,7 +2223,7 @@
 
         async function fetchSiteStatus() {
             try {
-                const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${SITE_STATUS_PATH}?t=${Date.now()}`);
+                const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${SITE_STATUS_PATH}?t=${Date.now()}`, { cache: 'no-store' });
                 const data = res.ok ? await res.json() : null;
                 siteUnderConstruction = !!(data && data.underConstruction);
             } catch (e) {
@@ -2390,6 +2416,7 @@
                 }
                 fetchProducts(); // re-check catalog now that we're admin (seeds it on the very first login)
                 fetchCareGuides();
+                fetchSiteStatus();
             } else {
                 document.getElementById('adminLoginError').style.display = 'block';
             }
