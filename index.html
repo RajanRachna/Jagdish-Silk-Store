@@ -243,12 +243,7 @@
         .construction-content h1 { font-family: 'Playfair Display', serif; color: #FFFBF7; font-size: 2.1rem; margin-bottom: 16px; }
         .construction-content p { color: var(--text-gray); font-size: 1rem; line-height: 1.7; margin-bottom: 30px; }
         .construction-content p em { color: var(--warm-mustard); font-style: italic; }
-        .construction-auto-note {
-            font-size: 0.78rem !important; color: rgba(255,251,247,0.55) !important; margin-top: -18px !important;
-            margin-bottom: 26px !important; display: flex; align-items: center; justify-content: center; gap: 7px;
-        }
-        .construction-auto-note i { animation: spin 3s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+
         .construction-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
         .construction-wa-btn, .construction-ig-btn {
             display: inline-flex; align-items: center; gap: 10px; padding: 14px 26px;
@@ -927,8 +922,7 @@
                 <div class="construction-icon">🚧</div>
                 <div class="construction-eyebrow">Thoda Sabar Karo Ji</div>
                 <h1>We're Sprucing Things Up</h1>
-                <p>Jagdish Lifestyle is getting a little makeover, ve! We'll be back online <em>changi jaldi</em> — shukriya for your patience 💛</p>
-                <p class="construction-auto-note"><i class="fas fa-arrows-rotate"></i> This page checks itself automatically — no need to refresh, we'll pop back on our own the moment we're ready.</p>
+                <p>Jagdish Lifestyle is sprucing things up, ve! We'll be back online <em>bahut jaldi</em> — shukriya for your patience 💛</p>
                 <div class="construction-actions">
                     <a href="https://wa.me/919815068679?text=Hi%20Jagdish%20Lifestyle!%20I%20saw%20the%20site%20is%20under%20maintenance%20%E2%80%94%20can%20you%20help%3F" target="_blank" class="construction-wa-btn"><i class="fab fa-whatsapp"></i> Message Us on WhatsApp</a>
                     <a href="javascript:void(0)" onclick="openInstagramProfile()" class="construction-ig-btn"><i class="fab fa-instagram"></i> Say Hi on Instagram</a>
@@ -2978,7 +2972,7 @@
                 container.innerHTML = `
                     <div class="wishlist-empty">
                         <i class="fas fa-heart-crack"></i>
-                        <p>Kujh vi nahi yet, ji.<br>Tap the heart on any product to save it here.</p>
+                        <p>Hale kujh nahi, ji.<br>Tap the heart on any product to save it here.</p>
                     </div>`;
                 footer.style.display = 'none';
                 return;
@@ -3002,7 +2996,7 @@
         function enquireWishlistWA() {
             const items = currentProducts.filter(p => wishlist.includes(p.id));
             if (!items.length) return;
-            let msg = `Hi Jagdish Lifestyle ✨ (dil ton pasand aaya!),\n\nI'm interested in these items from my wishlist:\n\n`;
+            let msg = `Hi Jagdish Lifestyle ✨, dil ton pasand aaya —\n\nI'm interested in these items from my wishlist:\n\n`;
             items.forEach((p, i) => { msg += `${i + 1}. ${p.title} — ₹${Number(p.price || 0).toLocaleString('en-IN')}\n`; });
             msg += `\nCould you share more details?`;
             window.open(`https://wa.me/919815068679?text=${encodeURIComponent(msg)}`, '_blank');
