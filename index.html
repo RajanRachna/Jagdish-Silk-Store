@@ -188,20 +188,42 @@
         .construction-overlay {
             display: none; position: fixed; inset: 0; z-index: 99999; align-items: center; justify-content: center;
             background: radial-gradient(circle at 50% 30%, #3d2721 0%, var(--deep-heritage) 60%, #1a0f0c 100%);
-            text-align: center; padding: 24px;
+            background-size: 140% 140%; animation: none;
+            text-align: center; padding: 24px; overflow: hidden;
         }
-        .construction-overlay.active { display: flex; animation: overlayFadeIn 0.3s ease; }
-        .construction-content { max-width: 440px; }
-        .construction-icon { font-size: 4rem; margin-bottom: 22px; animation: constructionBounce 1.6s ease-in-out infinite; display: inline-block; }
+        .construction-overlay.active { display: flex; animation: overlayFadeIn 0.3s ease, ambientGlowConstruction 10s ease-in-out infinite; }
+        @keyframes ambientGlowConstruction { 0%, 100% { background-position: 50% 0%; } 50% { background-position: 50% 15%; } }
+        .construction-particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+        .construction-particle { position: absolute; top: -30px; opacity: 0.5; animation: particleFallConstruction linear infinite; }
+        @keyframes particleFallConstruction {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.5; } 90% { opacity: 0.5; }
+            100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+        }
+        .construction-content { position: relative; z-index: 2; max-width: 460px; }
+        .construction-logo { width: 56px; height: 56px; border-radius: 50%; margin-bottom: 18px; box-shadow: 0 0 25px rgba(255,193,7,0.3); }
+        .construction-icon { font-size: 3.6rem; margin-bottom: 14px; animation: constructionBounce 1.6s ease-in-out infinite; display: inline-block; }
         @keyframes constructionBounce { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-12px) rotate(4deg); } }
-        .construction-content h1 { font-family: 'Playfair Display', serif; color: #FFFBF7; font-size: 2.1rem; margin-bottom: 16px; }
-        .construction-content p { color: var(--text-gray); font-size: 1rem; line-height: 1.7; margin-bottom: 32px; }
-        .construction-wa-btn {
-            display: inline-flex; align-items: center; gap: 10px; background: var(--whatsapp); color: white; padding: 15px 30px;
-            border-radius: 30px; font-weight: 700; text-decoration: none; box-shadow: 0 10px 25px rgba(37,211,102,0.35);
-            transition: 0.25s;
+        .construction-eyebrow {
+            display: inline-block; background: rgba(255,193,7,0.12); border: 1px solid rgba(255,193,7,0.3); color: var(--warm-mustard);
+            padding: 6px 18px; border-radius: 30px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px;
         }
+        .construction-content h1 { font-family: 'Playfair Display', serif; color: #FFFBF7; font-size: 2.1rem; margin-bottom: 16px; }
+        .construction-content p { color: var(--text-gray); font-size: 1rem; line-height: 1.7; margin-bottom: 30px; }
+        .construction-content p em { color: var(--warm-mustard); font-style: italic; }
+        .construction-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+        .construction-wa-btn, .construction-ig-btn {
+            display: inline-flex; align-items: center; gap: 10px; padding: 14px 26px;
+            border-radius: 30px; font-weight: 700; text-decoration: none; transition: 0.25s; font-size: 0.9rem;
+        }
+        .construction-wa-btn { background: var(--whatsapp); color: white; box-shadow: 0 10px 25px rgba(37,211,102,0.35); }
         .construction-wa-btn:hover { background: #1fb855; transform: translateY(-2px); }
+        .construction-ig-btn { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; box-shadow: 0 10px 25px rgba(220,39,67,0.3); }
+        .construction-ig-btn:hover { transform: translateY(-2px); }
+        @media (max-width: 480px) {
+            .construction-content h1 { font-size: 1.7rem; }
+            .construction-actions { flex-direction: column; }
+        }
 
         .construction-admin-banner {
             display: none; position: sticky; top: 0; z-index: 9000; background: #d84315; color: white; padding: 11px 20px;
@@ -544,7 +566,7 @@
 
         /* ================= ADMIN PANEL ================= */
         .admin-fab {
-            position: fixed; bottom: 110px; right: 20px; z-index: 4000;
+            position: fixed; bottom: 110px; right: 20px; z-index: 100000;
             width: 52px; height: 52px; border-radius: 50%; background: var(--deep-heritage); color: var(--warm-mustard);
             border: none; cursor: pointer; font-size: 1.2rem; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             display: flex; align-items: center; justify-content: center; transition: 0.3s;
@@ -594,7 +616,7 @@
 
         .admin-modal-overlay {
             display: none; position: fixed; inset: 0; background: rgba(44,27,24,0.65);
-            backdrop-filter: blur(6px); z-index: 6500; align-items: center; justify-content: center; padding: 20px;
+            backdrop-filter: blur(6px); z-index: 100001; align-items: center; justify-content: center; padding: 20px;
         }
         .admin-modal-overlay.active { display: flex; animation: overlayFadeIn 0.25s ease; }
         .admin-modal {
@@ -850,11 +872,17 @@
 
     <!-- ================= UNDER CONSTRUCTION: full-site overlay (customers only) ================= -->
     <div id="constructionOverlay" class="construction-overlay">
+        <div class="construction-particles" id="constructionParticles"></div>
         <div class="construction-content">
+            <img src="logo-icon-192.png" alt="Jagdish Lifestyle" class="construction-logo" onerror="this.style.display='none'">
             <div class="construction-icon">🚧</div>
+            <div class="construction-eyebrow">Thoda Sabar Karo Ji</div>
             <h1>We're Sprucing Things Up</h1>
-            <p>Jagdish Lifestyle is getting a little makeover. We'll be back online shortly — thank you for your patience!</p>
-            <a href="https://wa.me/919815068679?text=Hi%20Jagdish%20Lifestyle!%20I%20saw%20the%20site%20is%20under%20maintenance%20%E2%80%94%20can%20you%20help%3F" target="_blank" class="construction-wa-btn"><i class="fab fa-whatsapp"></i> Message Us on WhatsApp</a>
+            <p>Jagdish Lifestyle is getting a little makeover, ve! We'll be back online <em>changi jaldi</em> — shukriya for your patience 💛</p>
+            <div class="construction-actions">
+                <a href="https://wa.me/919815068679?text=Hi%20Jagdish%20Lifestyle!%20I%20saw%20the%20site%20is%20under%20maintenance%20%E2%80%94%20can%20you%20help%3F" target="_blank" class="construction-wa-btn"><i class="fab fa-whatsapp"></i> Message Us on WhatsApp</a>
+                <a href="javascript:void(0)" onclick="openInstagramProfile()" class="construction-ig-btn"><i class="fab fa-instagram"></i> Say Hi on Instagram</a>
+            </div>
         </div>
     </div>
 
@@ -917,7 +945,7 @@
 
     <a href="grand-gift.html?ref=site" class="gift-banner">
         <i class="fas fa-gift"></i>
-        <span><strong>The Grand Gift</strong> is coming — enter for a chance to win something special</span>
+        <span>Balle Balle! <strong>The Grand Gift</strong> is coming — enter for a chance to win something special</span>
         <i class="fas fa-arrow-right"></i>
     </a>
 
@@ -2173,6 +2201,26 @@
             applyConstructionState();
         }
 
+        let constructionParticlesSpawned = false;
+        function spawnConstructionParticles() {
+            if (constructionParticlesSpawned) return;
+            const container = document.getElementById('constructionParticles');
+            if (!container) return;
+            constructionParticlesSpawned = true;
+            const symbols = ['🎁', '✨', '🧵'];
+            for (let i = 0; i < 8; i++) {
+                const el = document.createElement('span');
+                el.className = 'construction-particle';
+                el.textContent = symbols[i % symbols.length];
+                el.style.left = (Math.random() * 100) + 'vw';
+                el.style.fontSize = (0.8 + Math.random() * 1) + 'rem';
+                const duration = 11 + Math.random() * 8;
+                el.style.animationDuration = duration + 's';
+                el.style.animationDelay = (Math.random() * duration) + 's';
+                container.appendChild(el);
+            }
+        }
+
         function applyConstructionState() {
             const overlay = document.getElementById('constructionOverlay');
             const adminBanner = document.getElementById('constructionAdminBanner');
@@ -2180,6 +2228,7 @@
             if (siteUnderConstruction && !isAdmin) {
                 overlay.classList.add('active');
                 document.body.style.overflow = 'hidden';
+                spawnConstructionParticles();
             } else {
                 overlay.classList.remove('active');
                 document.body.style.overflow = '';
@@ -2751,7 +2800,7 @@
             const nowActive = idx === -1;
             if (nowActive) {
                 wishlist.push(id);
-                const msgs = ['Added to Wishlist ❤️', 'Ooh, great pick! ✨', 'Saved! Your taste is 🔥', 'Into the wishlist it goes 💕'];
+                const msgs = ['Added to Wishlist ❤️', 'Balle Balle! Great pick ✨', 'Saved! Your taste is 🔥', 'Into the wishlist it goes 💕'];
                 showToast(msgs[Math.floor(Math.random() * msgs.length)], 'fa-heart');
                 if (btn) fireHeartBurst(btn);
             } else {
@@ -2847,7 +2896,7 @@
                 container.innerHTML = `
                     <div class="wishlist-empty">
                         <i class="fas fa-heart-crack"></i>
-                        <p>Nothing saved yet.<br>Tap the heart on any product to save it here.</p>
+                        <p>Kujh vi nahi yet, ji.<br>Tap the heart on any product to save it here.</p>
                     </div>`;
                 footer.style.display = 'none';
                 return;
@@ -2927,11 +2976,17 @@
             return false;
         }
 
-        // Kick off the initial catalog load
-        fetchProducts();
-        fetchCareGuides();
-        fetchSiteStatus();
-        updateWishlistBadge();
+        // Kick off the initial load — but check maintenance status FIRST, so a regular
+        // visitor during maintenance mode never even fetches the catalog/products at all.
+        (async function initSite() {
+            await fetchSiteStatus();
+            if (siteUnderConstruction && !isAdmin) {
+                return; // maintenance page only — no catalog, no products, nothing else
+            }
+            fetchProducts();
+            fetchCareGuides();
+            updateWishlistBadge();
+        })();
 
         document.getElementById('footerYear').textContent = new Date().getFullYear();
 
@@ -3099,7 +3154,7 @@
             const products = getVisibleProducts();
             if (!products.length) return;
             const pick = products[Math.floor(Math.random() * products.length)];
-            const playfulLines = ["Ta-da! ✨", "How about this one? 👀", "Ooh, good choice 🔥", "Found something for you!"];
+            const playfulLines = ["Ta-da! ✨", "Vadhiya Choice! 🔥", "Ooh, good choice 🔥", "Found something for you!"];
             showToast(playfulLines[Math.floor(Math.random() * playfulLines.length)], 'fa-dice');
 
             setTimeout(() => {
