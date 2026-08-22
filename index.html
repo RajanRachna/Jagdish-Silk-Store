@@ -184,6 +184,33 @@
         }
         @keyframes bounceNudge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
 
+        /* ================= UNDER CONSTRUCTION MODE ================= */
+        .construction-overlay {
+            display: none; position: fixed; inset: 0; z-index: 99999; align-items: center; justify-content: center;
+            background: radial-gradient(circle at 50% 30%, #3d2721 0%, var(--deep-heritage) 60%, #1a0f0c 100%);
+            text-align: center; padding: 24px;
+        }
+        .construction-overlay.active { display: flex; animation: overlayFadeIn 0.3s ease; }
+        .construction-content { max-width: 440px; }
+        .construction-icon { font-size: 4rem; margin-bottom: 22px; animation: constructionBounce 1.6s ease-in-out infinite; display: inline-block; }
+        @keyframes constructionBounce { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-12px) rotate(4deg); } }
+        .construction-content h1 { font-family: 'Playfair Display', serif; color: #FFFBF7; font-size: 2.1rem; margin-bottom: 16px; }
+        .construction-content p { color: var(--text-gray); font-size: 1rem; line-height: 1.7; margin-bottom: 32px; }
+        .construction-wa-btn {
+            display: inline-flex; align-items: center; gap: 10px; background: var(--whatsapp); color: white; padding: 15px 30px;
+            border-radius: 30px; font-weight: 700; text-decoration: none; box-shadow: 0 10px 25px rgba(37,211,102,0.35);
+            transition: 0.25s;
+        }
+        .construction-wa-btn:hover { background: #1fb855; transform: translateY(-2px); }
+
+        .construction-admin-banner {
+            display: none; position: sticky; top: 0; z-index: 9000; background: #d84315; color: white; padding: 11px 20px;
+            align-items: center; justify-content: center; gap: 14px; font-size: 0.85rem; font-weight: 600; flex-wrap: wrap; text-align: center;
+        }
+        .construction-admin-banner button {
+            background: white; color: #d84315; border: none; padding: 6px 16px; border-radius: 20px; font-weight: 700; cursor: pointer; font-size: 0.8rem;
+        }
+
         .gift-banner {
             display: flex; align-items: center; justify-content: center; gap: 12px; text-decoration: none;
             background: linear-gradient(90deg, var(--deep-heritage), #4a2f26, var(--deep-heritage));
@@ -821,6 +848,22 @@
 
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- ================= UNDER CONSTRUCTION: full-site overlay (customers only) ================= -->
+    <div id="constructionOverlay" class="construction-overlay">
+        <div class="construction-content">
+            <div class="construction-icon">🚧</div>
+            <h1>We're Sprucing Things Up</h1>
+            <p>Jagdish Lifestyle is getting a little makeover. We'll be back online shortly — thank you for your patience!</p>
+            <a href="https://wa.me/919815068679?text=Hi%20Jagdish%20Lifestyle!%20I%20saw%20the%20site%20is%20under%20maintenance%20%E2%80%94%20can%20you%20help%3F" target="_blank" class="construction-wa-btn"><i class="fab fa-whatsapp"></i> Message Us on WhatsApp</a>
+        </div>
+    </div>
+
+    <!-- ================= UNDER CONSTRUCTION: admin reminder banner ================= -->
+    <div id="constructionAdminBanner" class="construction-admin-banner">
+        <i class="fas fa-triangle-exclamation"></i> Under Construction mode is ON — customers can't see your site right now.
+        <button type="button" onclick="toggleUnderConstruction()">Turn Off</button>
+    </div>
+
     <div class="vibe-marquee">
         <div class="marquee-track">
             <span class="highlight">Free Gift With Every Order</span><span>Pure Handloom</span><span>Old Money Aesthetics</span><span>Sohni Kudi Collection</span><span class="highlight">100% Quality Assured</span><span>Sarafan Bazaar, Phagwara</span>
@@ -911,6 +954,7 @@
                 <button class="admin-btn-add" onclick="openProductForm()"><i class="fas fa-plus"></i> Add New Product</button>
                 <button class="admin-btn-logout" onclick="openCareGuideManager()"><i class="fas fa-shirt"></i> Care Guides</button>
                 <button class="admin-btn-logout" onclick="updateGithubToken()"><i class="fas fa-key"></i> GitHub Token</button>
+                <button class="admin-btn-logout" id="constructionToggleBtn" onclick="toggleUnderConstruction()"><i class="fas fa-person-digging"></i> Maintenance Mode</button>
                 <button class="admin-btn-logout" onclick="adminLogout()">Logout</button>
             </div>
         </div>
@@ -2114,6 +2158,51 @@
             return updated;
         }
 
+        // ================= UNDER CONSTRUCTION MODE (admin-only toggle) =================
+        const SITE_STATUS_PATH = 'data/site-status.json';
+        let siteUnderConstruction = false;
+
+        async function fetchSiteStatus() {
+            try {
+                const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${SITE_STATUS_PATH}?t=${Date.now()}`);
+                const data = res.ok ? await res.json() : null;
+                siteUnderConstruction = !!(data && data.underConstruction);
+            } catch (e) {
+                siteUnderConstruction = false;
+            }
+            applyConstructionState();
+        }
+
+        function applyConstructionState() {
+            const overlay = document.getElementById('constructionOverlay');
+            const adminBanner = document.getElementById('constructionAdminBanner');
+            if (!overlay) return;
+            if (siteUnderConstruction && !isAdmin) {
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            } else {
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            if (adminBanner) adminBanner.style.display = (siteUnderConstruction && isAdmin) ? 'flex' : 'none';
+        }
+
+        async function toggleUnderConstruction() {
+            const goingOn = !siteUnderConstruction;
+            const confirmMsg = goingOn
+                ? 'Turn ON Under Construction mode? Customers will see a "we\'ll be back soon" page instead of the site. You\'ll still see the normal site while logged in as admin.'
+                : 'Turn OFF Under Construction mode? The site will be visible to everyone again.';
+            if (!confirm(confirmMsg)) return;
+            try {
+                await saveJsonToGitHub(SITE_STATUS_PATH, { underConstruction: goingOn }, 'Toggle under construction mode');
+                siteUnderConstruction = goingOn;
+                applyConstructionState();
+                showToast(goingOn ? 'Under Construction mode is ON' : 'Site is live again', goingOn ? 'fa-triangle-exclamation' : 'fa-check-circle');
+            } catch (err) {
+                alert('Could not update: ' + err.message);
+            }
+        }
+
         async function fetchCareGuides() {
             try {
                 let guides = await fetchLatestCareGuidesRaw();
@@ -2207,6 +2296,7 @@
             document.getElementById('adminFab').classList.toggle('is-admin', isAdmin);
             document.getElementById('adminFabIcon').className = isAdmin ? 'fas fa-user-shield' : 'fas fa-lock';
             document.getElementById('adminBar').classList.toggle('active', isAdmin);
+            applyConstructionState();
         }
 
         if (localStorage.getItem('jss_isAdmin') === '1') { isAdmin = true; }
@@ -2840,6 +2930,7 @@
         // Kick off the initial catalog load
         fetchProducts();
         fetchCareGuides();
+        fetchSiteStatus();
         updateWishlistBadge();
 
         document.getElementById('footerYear').textContent = new Date().getFullYear();
