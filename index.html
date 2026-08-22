@@ -157,6 +157,10 @@
             background: linear-gradient(rgba(255,251,247,0.4), rgba(255,251,247,0.95)), url('https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') center/cover;
             display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 20px;
         }
+        .hero-welcome {
+            display: inline-flex; align-items: center; gap: 8px; background: var(--soft-pink); color: var(--primary-pink);
+            padding: 7px 20px; border-radius: 30px; font-size: 0.85rem; font-weight: 700; margin-bottom: 18px;
+        }
         .hero h1 { font-size: 4.5rem; color: var(--deep-heritage); margin-bottom: 10px; line-height: 1.1; }
         .hero h1 span { color: var(--primary-pink); font-style: italic; }
         .hero p { font-size: 1.2rem; color: var(--text-gray); font-weight: 400; max-width: 650px; line-height: 1.8; margin-top: 15px; }
@@ -921,6 +925,7 @@
     </header>
 
     <section class="hero">
+        <div class="hero-welcome">Ji Aayan Nu 👋 — Welcome to Jagdish Lifestyle</div>
         <h1>Handloom, made for <span>Every Occasion</span></h1>
         <p>Premium curtains, bed sets, towels & sofa covers — for festive gifting, weddings, housewarming, or simply your own home.</p>
         <div class="hero-chips">
@@ -1401,7 +1406,7 @@
         </div>
         <div class="footer-bottom">
             <span>&copy; <span id="footerYear"></span> Jagdish Lifestyle. All rights reserved.</span>
-            <span>Orders taken via WhatsApp only &middot; Made with care in Phagwara</span>
+            <span>Orders taken via WhatsApp only &middot; Made with care in Phagwara &middot; Rabb Rakha 🙏</span>
         </div>
     </footer>
 
@@ -2920,7 +2925,7 @@
         function enquireWishlistWA() {
             const items = currentProducts.filter(p => wishlist.includes(p.id));
             if (!items.length) return;
-            let msg = `Hi Jagdish Lifestyle ✨,\n\nI'm interested in these items from my wishlist:\n\n`;
+            let msg = `Hi Jagdish Lifestyle ✨ (dil ton pasand aaya!),\n\nI'm interested in these items from my wishlist:\n\n`;
             items.forEach((p, i) => { msg += `${i + 1}. ${p.title} — ₹${Number(p.price || 0).toLocaleString('en-IN')}\n`; });
             msg += `\nCould you share more details?`;
             window.open(`https://wa.me/919815068679?text=${encodeURIComponent(msg)}`, '_blank');
