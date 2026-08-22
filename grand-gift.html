@@ -169,6 +169,26 @@
         }
         .share-friend-btn:hover { background: #1fb855; }
 
+        .visit-shop-btn {
+            display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; margin-left: 10px;
+            background: var(--warm-mustard); color: var(--deep-heritage); border: none; padding: 12px 22px;
+            border-radius: 30px; font-weight: 700; font-size: 0.85rem; cursor: pointer; text-decoration: none;
+        }
+        .visit-shop-btn:hover { background: #ffb300; }
+
+        .music-toggle {
+            position: fixed; bottom: 30px; left: 20px; z-index: 5000;
+            width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,0.08);
+            border: 1.5px solid rgba(255,193,7,0.35); color: var(--warm-mustard); font-size: 1.1rem;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s;
+        }
+        .music-toggle:hover { background: rgba(255,193,7,0.15); transform: scale(1.08); }
+        .music-toggle.playing { animation: musicPulse 1.8s ease-in-out infinite; }
+        @keyframes musicPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255,193,7,0.5); }
+            50% { box-shadow: 0 0 0 12px rgba(255,193,7,0); }
+        }
+
         .form-wrap {
             max-width: 520px; margin: 50px auto 60px; background: rgba(255,251,247,0.06);
             border: 1px solid rgba(255,193,7,0.2); backdrop-filter: blur(10px);
@@ -267,17 +287,17 @@
         <div class="intro-content">
             <div class="intro-icon"><i class="fas fa-gift"></i></div>
             <h1>You've Been <em>Invited</em></h1>
-            <p>Someone thinks you deserve a little something special.</p>
+            <p>Balle Balle! Someone thinks you deserve a little something special.</p>
             <button type="button" onclick="enterGiftPage()" class="intro-enter-btn"><i class="fas fa-hand-pointer"></i> Open Your Gift</button>
         </div>
     </div>
 
     <header>
-        <a href="index.html" class="brand">
+        <a href="index.html?ref=site" onclick="stopGiftSound()" class="brand">
             <img src="logo-icon-192.png" alt="Jagdish Lifestyle" onerror="this.style.display='none'">
             <span>Jagdish Lifestyle</span>
         </a>
-        <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Shop</a>
+        <a href="index.html?ref=site" onclick="stopGiftSound()" class="back-link"><i class="fas fa-arrow-left"></i> Back to Shop</a>
     </header>
 
     <section class="hero">
@@ -329,7 +349,7 @@
         <p class="entry-note">Then fill in your details below to lock in your entry ✨</p>
         <div class="mystery-box">
             <i class="fas fa-box-open"></i>
-            <span>What's inside? That's the surprise — but trust us, it's worth it.</span>
+            <span>What's inside? That's the surprise — but trust us, it's kamaal ✨</span>
         </div>
     </div>
 
@@ -374,11 +394,17 @@
         </div>
         <div class="success-state" id="ggSuccess">
             <div class="emoji">🎉</div>
-            <h3>You're In!</h3>
-            <p>Fingers crossed. Follow @jagdish_silk_store on Instagram — that's where we'll announce the winner.</p>
+            <h3>Balle Balle! You're In! 🎊</h3>
+            <p>Fingers crossed, ji! Follow @jagdish_silk_store on Instagram — that's where we'll announce the winner.</p>
             <a href="javascript:void(0)" onclick="shareGiftPage()" class="share-friend-btn"><i class="fab fa-whatsapp"></i> Tell a Friend, Double Your Odds</a>
+            <a href="index.html?ref=site" onclick="stopGiftSound()" class="visit-shop-btn"><i class="fas fa-bag-shopping"></i> Visit Our Shop</a>
         </div>
     </div>
+
+    <!-- ================= MUSIC TOGGLE ================= -->
+    <button id="musicToggle" class="music-toggle" onclick="toggleMusic()" title="Turn music on/off">
+        <i class="fas fa-volume-high" id="musicIcon"></i>
+    </button>
 
     <footer>
         &copy; <span id="year"></span> Jagdish Lifestyle. <a href="index.html">Back to the main catalog</a>
@@ -470,7 +496,35 @@
             }, 1000);
         }
 
+        function stopGiftSound() {
+            const audio = document.getElementById('giftSound');
+            if (audio) { audio.pause(); }
+        }
+
+        function toggleMusic() {
+            const audio = document.getElementById('giftSound');
+            const icon = document.getElementById('musicIcon');
+            if (!audio) return;
+            if (audio.paused) {
+                audio.play().catch(() => {});
+                icon.className = 'fas fa-volume-high';
+            } else {
+                audio.pause();
+                icon.className = 'fas fa-volume-xmark';
+            }
+        }
+
+        (function wireMusicToggleHighlight() {
+            const audio = document.getElementById('giftSound');
+            const toggle = document.getElementById('musicToggle');
+            if (!audio || !toggle) return;
+            audio.addEventListener('play', () => { toggle.classList.add('playing'); document.getElementById('musicIcon').className = 'fas fa-volume-high'; });
+            audio.addEventListener('pause', () => { toggle.classList.remove('playing'); document.getElementById('musicIcon').className = 'fas fa-volume-xmark'; });
+            audio.addEventListener('ended', () => toggle.classList.remove('playing'));
+        })();
+
         function shareGiftPage() {
+            stopGiftSound();
             const msg = `Hey! Jagdish Lifestyle is giving away a Grand Gift 🎁 — thought you might want in too. Check it out: ${window.location.href}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
         }
