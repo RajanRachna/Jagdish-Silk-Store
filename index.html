@@ -153,10 +153,12 @@
         .header-wa-btn:hover { background: #1fb855; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(37,211,102,0.4); }
 
         .hero {
-            height: 75vh;
+            height: 75vh; position: relative;
             background: linear-gradient(rgba(255,251,247,0.4), rgba(255,251,247,0.95)), url('https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') center/cover;
             display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 20px;
         }
+        .hero-sparkle { position: absolute; color: var(--warm-mustard); opacity: 0.75; animation: heroTwinkle 2.6s ease-in-out infinite; }
+        @keyframes heroTwinkle { 0%, 100% { opacity: 0.25; transform: scale(0.8); } 50% { opacity: 0.9; transform: scale(1.2); } }
         .hero-welcome {
             display: inline-flex; align-items: center; gap: 8px; background: var(--soft-pink); color: var(--primary-pink);
             padding: 7px 20px; border-radius: 30px; font-size: 0.85rem; font-weight: 700; margin-bottom: 18px;
@@ -969,6 +971,10 @@
     </header>
 
     <section class="hero">
+        <i class="fas fa-star hero-sparkle" style="top: 12%; left: 10%; font-size: 1rem; animation-delay: 0s;"></i>
+        <i class="fas fa-star hero-sparkle" style="top: 18%; right: 12%; font-size: 0.7rem; animation-delay: 0.8s;"></i>
+        <i class="fas fa-heart hero-sparkle" style="top: 30%; right: 8%; font-size: 0.85rem; animation-delay: 1.4s;"></i>
+        <i class="fas fa-gift hero-sparkle" style="bottom: 15%; left: 8%; font-size: 0.9rem; animation-delay: 0.5s;"></i>
         <div class="hero-welcome">Ji Aayan Nu 👋 — Welcome to Jagdish Lifestyle</div>
         <h1>Handloom, made for <span>Every Occasion</span></h1>
         <p>Premium curtains, bed sets, towels & sofa covers — for festive gifting, weddings, housewarming, or simply your own home.</p>
