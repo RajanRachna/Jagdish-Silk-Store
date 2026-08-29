@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill Maker | Jagdish Silk Store</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/png" href="logo-icon-192.png?v=2">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        // This is a SEPARATE Google Sheet, just for Bills — not the same one the main
+        // site uses. Paste that new sheet's own Web App URL here (see setup guide).
+        const GOOGLE_SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzowKr0UgRQuBZvcS858P-WpYbUigwJ6I1IM6qr6rYlZOea4beiz9Dzlr_gyPY_gyWF/exec";
+
+        // ================= SALESMEN LOGINS =================
+        // One entry per salesman: their name, and the SHA-256 hash of their password
+        // (never the plain password itself — same approach as the main site's admin login).
+        //
+        // TO ADD A NEW SALESMAN:
+        //   1. Open this file, find the SALESMEN object just below.
+        //   2. Ask Claude to add "<Name>" with password "<their password>" — it'll generate
+        //      the correct hash line for you. Or generate it yourself in any browser console:
+        //      crypto.subtle.digest('SHA-256', new TextEncoder().encode('their-password'))
+        //        .then(b => console.log(Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')));
+        //   3. Add a line: "Name": "the-hash-that-was-printed",
+        const SALESMEN = {
+            "Rajan": "e83f990fbf77288aba41048d0a6d66f8edfffe3b4e74ad692188835a9b6a6031",
+            "Vishal": "564ab9fa9c80dc8a1986f9042afcafff833ad976425005ba832c41e2a26625f4",
+            "Happy": "c1c8c3ccc32fb3082c246435c7448d8a2cec5541efc8f94691814a9693c8d732"
+        };
+    </script>
+
+    <style>
+        :root {
+            --bg-main: #FFFBF7; --primary-pink: #E91E63; --soft-pink: #FCE4EC;
+            --warm-mustard: #FFC107; --deep-heritage: #2C1B18; --text-dark: #2C3E50;
+            --text-gray: #7F8C8D; --whatsapp: #25D366;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg-main); color: var(--text-dark); }
+        h1, h2, h3 { font-family: 'Playfair Display', serif; color: var(--deep-heritage); }
+
+        header {
+            padding: 16px 5vw; display: flex; align-items: center; justify-content: space-between;
+            background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.04); position: sticky; top: 0; z-index: 100;
+        }
+        .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .brand img { height: 36px; width: 36px; border-radius: 50%; }
+        .brand span { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--primary-pink); font-size: 1.15rem; }
+        .salesman-tag { display: none; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--text-gray); }
+        .salesman-tag strong { color: var(--deep-heritage); }
+        .logout-link { background: none; border: none; color: var(--primary-pink); cursor: pointer; font-size: 0.8rem; text-decoration: underline; }
+
+        /* ================= LOGIN ================= */
+        .login-wrap { max-width: 380px; margin: 90px auto; padding: 0 20px; text-align: center; }
+        .login-wrap .icon { font-size: 2.6rem; color: var(--primary-pink); margin-bottom: 16px; }
+        .login-wrap h1 { font-size: 1.6rem; margin-bottom: 8px; }
+        .login-wrap p { color: var(--text-gray); font-size: 0.9rem; margin-bottom: 28px; }
+        .login-field { margin-bottom: 16px; text-align: left; }
+        .login-field label { display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+        .login-field select, .login-field input {
+            width: 100%; padding: 13px 15px; border: 2px solid #EEE; border-radius: 12px; background: #F8F9FA;
+            font-family: inherit; font-size: 0.95rem; outline: none; transition: 0.25s;
+        }
+        .login-field select:focus, .login-field input:focus { border-color: var(--primary-pink); background: white; }
+        .login-btn {
+            width: 100%; background: var(--primary-pink); color: white; border: none; padding: 15px;
+            border-radius: 30px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
+            font-size: 0.9rem; margin-top: 6px; box-shadow: 0 10px 24px rgba(233,30,99,0.3); transition: 0.25s;
+        }
+        .login-btn:hover { background: #d81b60; transform: translateY(-2px); }
+        .login-error { color: var(--primary-pink); font-size: 0.85rem; margin-top: 14px; display: none; }
+
+        /* ================= BILL MAKER ================= */
+        .bill-page { display: none; max-width: 720px; margin: 30px auto 80px; padding: 0 20px; }
+        .bill-print-area { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 35px rgba(0,0,0,0.06); }
+        .bill-header { text-align: center; margin-bottom: 18px; padding-bottom: 16px; border-bottom: 2px dashed #ddd; }
+        .bill-header h2 { font-size: 1.5rem; margin-bottom: 4px; }
+        .bill-header p { font-size: 0.87rem; color: var(--text-gray); margin: 2px 0; }
+        .bill-meta { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 0.8rem; color: var(--text-gray); margin-bottom: 20px; }
+        .bill-meta strong { color: var(--deep-heritage); }
+        .bill-customer { display: flex; gap: 14px; margin-bottom: 20px; flex-wrap: wrap; }
+        .bill-customer .login-field { flex: 1; min-width: 180px; margin-bottom: 0; }
+        .bill-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+        .bill-table th, .bill-table td { padding: 9px 6px; text-align: left; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+        .bill-table th { color: var(--text-gray); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
+        .bill-item-input, .bill-qty-input, .bill-price-input {
+            width: 100%; border: 1px solid #eee; border-radius: 6px; padding: 8px; font-size: 0.88rem; font-family: inherit;
+        }
+        .bill-qty-input, .bill-price-input { text-align: right; }
+        .bill-amount-cell { text-align: right; font-weight: 700; color: var(--deep-heritage); white-space: nowrap; }
+        .bill-row-remove { background: none; border: none; color: #c0392b; cursor: pointer; font-size: 0.95rem; padding: 6px; }
+        .bill-add-row-btn {
+            background: #F8F9FA; border: 1.5px dashed #ccc; border-radius: 10px; padding: 10px 18px; cursor: pointer;
+            font-size: 0.85rem; color: var(--text-gray); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; font-family: inherit;
+        }
+        .bill-add-row-btn:hover { border-color: var(--primary-pink); color: var(--primary-pink); }
+        .bill-total {
+            display: flex; justify-content: space-between; align-items: center; font-size: 1.25rem; font-weight: 800;
+            color: var(--deep-heritage); padding-top: 16px; border-top: 2px dashed #ddd;
+        }
+        .bill-actions { display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+        .bill-actions button { flex: 1; min-width: 150px; padding: 14px; border-radius: 30px; border: none; font-weight: 700;
+            cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.25s; }
+        .bill-print-btn { background: var(--deep-heritage); color: var(--warm-mustard); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        .bill-print-btn:hover { transform: translateY(-2px); }
+        .bill-save-btn { background: #1D6F42; color: white; box-shadow: 0 8px 20px rgba(29,111,66,0.3); }
+        .bill-save-btn:hover { background: #17a76b; transform: translateY(-2px); }
+        .bill-save-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .bill-clear-btn { background: #F8F9FA; color: var(--text-gray); border: 1px solid #eee !important; box-shadow: none; }
+        .bill-save-msg { text-align: center; font-size: 0.85rem; margin-top: 14px; display: none; }
+        .bill-save-msg.error { color: var(--primary-pink); }
+        .bill-save-msg.success { color: #1D6F42; }
+
+        @media print {
+            body * { visibility: hidden; }
+            #billPrintArea, #billPrintArea * { visibility: visible; }
+            #billPrintArea { position: absolute; top: 0; left: 0; width: 100%; padding: 30px; box-shadow: none; }
+            .no-print { display: none !important; }
+            .bill-item-input, .bill-qty-input, .bill-price-input { border: none; background: transparent; padding: 4px 2px; }
+            header { display: none; }
+        }
+        @media (max-width: 480px) {
+            .bill-actions button { min-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html?ref=site" class="brand">
+            <img src="logo-icon-192.png" alt="Jagdish Silk Store" onerror="this.style.display='none'">
+            <span>Jagdish Silk Store</span>
+        </a>
+        <div class="salesman-tag" id="salesmanTag">
+            <span>Logged in as <strong id="salesmanNameDisplay"></strong></span>
+            <button type="button" class="logout-link" onclick="salesmanLogout()">Logout</button>
+        </div>
+    </header>
+
+    <!-- ================= LOGIN ================= -->
+    <div class="login-wrap" id="loginWrap">
+        <div class="icon"><i class="fas fa-receipt"></i></div>
+        <h1>Bill Maker</h1>
+        <p>Sign in with your salesman login to start billing.</p>
+        <form onsubmit="return salesmanLogin(event)">
+            <div class="login-field">
+                <label>Your Name</label>
+                <select id="loginSalesman" required>
+                    <option value="">Select your name</option>
+                </select>
+            </div>
+            <div class="login-field">
+                <label>Password</label>
+                <input type="password" id="loginPassword" required placeholder="Your password">
+            </div>
+            <button type="submit" class="login-btn">Login</button>
+            <div class="login-error" id="loginError">Wrong password. Try again.</div>
+        </form>
+    </div>
+
+    <!-- ================= BILL MAKER ================= -->
+    <div class="bill-page" id="billPage">
+        <div id="billPrintArea" class="bill-print-area">
+            <div class="bill-header">
+                <h2>Jagdish Silk Store</h2>
+                <p>Sarafan Bazar, Phagwara</p>
+                <p>Phone: 9815068679</p>
+            </div>
+            <div class="bill-meta">
+                <span>Bill No: <strong id="billNo"></strong></span>
+                <span>Date: <strong id="billDate"></strong></span>
+                <span>Time: <strong id="billTime"></strong></span>
+                <span>Billed By: <strong id="billSalesman"></strong></span>
+            </div>
+            <div class="bill-customer">
+                <div class="login-field">
+                    <label>Customer Name</label>
+                    <input type="text" id="billCustName" placeholder="Customer name">
+                </div>
+                <div class="login-field">
+                    <label>Customer Phone</label>
+                    <input type="tel" id="billCustPhone" placeholder="Customer phone number">
+                </div>
+            </div>
+            <table class="bill-table">
+                <thead>
+                    <tr><th>Item</th><th>Qty</th><th>Price</th><th>Amount</th><th class="no-print"></th></tr>
+                </thead>
+                <tbody id="billItemsBody"></tbody>
+            </table>
+            <button type="button" class="no-print bill-add-row-btn" onclick="addBillRow()"><i class="fas fa-plus"></i> Add Item</button>
+            <div class="bill-total">
+                <span>Total</span>
+                <span id="billTotalAmount">₹0</span>
+            </div>
+        </div>
+
+        <div class="bill-actions no-print">
+            <button type="button" class="bill-print-btn" onclick="printBill()"><i class="fas fa-print"></i> Print Bill</button>
+            <button type="button" class="bill-save-btn" id="billSaveBtn" onclick="saveBillToSheet()"><i class="fas fa-cloud-arrow-up"></i> Save Bill</button>
+            <button type="button" class="bill-clear-btn" onclick="resetBillMaker()">Clear / New Bill</button>
+        </div>
+        <div class="bill-save-msg no-print" id="billSaveMsg"></div>
+    </div>
+
+    <script>
+        // ================= SALESMAN LOGIN =================
+        async function sha256Hex(str) {
+            const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+            return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        function populateSalesmenDropdown() {
+            const select = document.getElementById('loginSalesman');
+            Object.keys(SALESMEN).forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name;
+                opt.textContent = name;
+                select.appendChild(opt);
+            });
+        }
+        populateSalesmenDropdown();
+
+        async function salesmanLogin(e) {
+            e.preventDefault();
+            const name = document.getElementById('loginSalesman').value;
+            const password = document.getElementById('loginPassword').value;
+            const errEl = document.getElementById('loginError');
+            errEl.style.display = 'none';
+
+            if (!name || !SALESMEN[name]) {
+                errEl.textContent = 'Please select your name.';
+                errEl.style.display = 'block';
+                return false;
+            }
+            const hash = await sha256Hex(password);
+            if (hash !== SALESMEN[name]) {
+                errEl.textContent = 'Wrong password. Try again.';
+                errEl.style.display = 'block';
+                return false;
+            }
+            sessionStorage.setItem('billMakerSalesman', name);
+            showBillPage(name);
+            return false;
+        }
+
+        function salesmanLogout() {
+            sessionStorage.removeItem('billMakerSalesman');
+            document.getElementById('billPage').style.display = 'none';
+            document.getElementById('salesmanTag').style.display = 'none';
+            document.getElementById('loginWrap').style.display = 'block';
+            document.getElementById('loginPassword').value = '';
+        }
+
+        function showBillPage(name) {
+            document.getElementById('loginWrap').style.display = 'none';
+            document.getElementById('salesmanTag').style.display = 'flex';
+            document.getElementById('salesmanNameDisplay').textContent = name;
+            document.getElementById('billSalesman').textContent = name;
+            document.getElementById('billPage').style.display = 'block';
+            if (!document.getElementById('billItemsBody').children.length) {
+                resetBillMaker();
+            }
+        }
+
+        // Stay logged in for this browser tab/session (clears when the tab closes —
+        // safer on a shared shop counter device than staying logged in forever).
+        (function restoreSession() {
+            const saved = sessionStorage.getItem('billMakerSalesman');
+            if (saved && SALESMEN[saved]) showBillPage(saved);
+        })();
+
+        // ================= BILL MAKER =================
+        function billTimestampParts() {
+            const now = new Date();
+            return {
+                billNo: 'INV-' + now.getTime().toString().slice(-8),
+                date: now.toLocaleDateString('en-IN'),
+                time: now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
+            };
+        }
+
+        function addBillRow() {
+            const tbody = document.getElementById('billItemsBody');
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="text" class="bill-item-input" placeholder="Item name"></td>
+                <td><input type="number" class="bill-qty-input" value="1" min="1" oninput="updateBillRow(this)"></td>
+                <td><input type="number" class="bill-price-input" value="0" min="0" oninput="updateBillRow(this)"></td>
+                <td class="bill-amount-cell">₹0</td>
+                <td class="no-print"><button type="button" class="bill-row-remove" onclick="removeBillRow(this)"><i class="fas fa-trash"></i></button></td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        function removeBillRow(btn) {
+            const tbody = document.getElementById('billItemsBody');
+            if (tbody.children.length <= 1) return;
+            btn.closest('tr').remove();
+            updateBillTotal();
+        }
+
+        function updateBillRow(input) {
+            const tr = input.closest('tr');
+            const qty = parseFloat(tr.querySelector('.bill-qty-input').value) || 0;
+            const price = parseFloat(tr.querySelector('.bill-price-input').value) || 0;
+            tr.querySelector('.bill-amount-cell').textContent = '₹' + (qty * price).toLocaleString('en-IN');
+            updateBillTotal();
+        }
+
+        function updateBillTotal() {
+            let total = 0;
+            document.querySelectorAll('#billItemsBody tr').forEach(tr => {
+                const qty = parseFloat(tr.querySelector('.bill-qty-input')?.value) || 0;
+                const price = parseFloat(tr.querySelector('.bill-price-input')?.value) || 0;
+                total += qty * price;
+            });
+            document.getElementById('billTotalAmount').textContent = '₹' + total.toLocaleString('en-IN');
+        }
+
+        function collectBillData() {
+            const items = [];
+            document.querySelectorAll('#billItemsBody tr').forEach(tr => {
+                const item = tr.querySelector('.bill-item-input').value.trim();
+                const qty = parseFloat(tr.querySelector('.bill-qty-input').value) || 0;
+                const price = parseFloat(tr.querySelector('.bill-price-input').value) || 0;
+                if (item) items.push({ item, qty, price, amount: qty * price });
+            });
+            return {
+                billNo: document.getElementById('billNo').textContent,
+                date: document.getElementById('billDate').textContent,
+                time: document.getElementById('billTime').textContent,
+                salesman: document.getElementById('billSalesman').textContent,
+                custName: document.getElementById('billCustName').value.trim(),
+                custPhone: document.getElementById('billCustPhone').value.trim(),
+                items,
+                total: items.reduce((sum, i) => sum + i.amount, 0)
+            };
+        }
+
+        function printBill() {
+            window.print();
+        }
+
+        async function submitToGoogleSheet(data) {
+            if (!GOOGLE_SHEET_WEBAPP_URL || GOOGLE_SHEET_WEBAPP_URL === 'PASTE_YOUR_GOOGLE_SHEET_WEBAPP_URL') {
+                throw new Error('Not connected to the Sheet yet — ask the shop owner to finish setup.');
+            }
+            const res = await fetch(GOOGLE_SHEET_WEBAPP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(data)
+            });
+            if (!res.ok) throw new Error('Could not save right now. Please try again.');
+        }
+
+        async function saveBillToSheet() {
+            const data = collectBillData();
+            const msgEl = document.getElementById('billSaveMsg');
+            const btn = document.getElementById('billSaveBtn');
+            msgEl.style.display = 'none';
+
+            if (!data.items.length) {
+                msgEl.textContent = 'Add at least one item before saving.';
+                msgEl.className = 'bill-save-msg error';
+                msgEl.style.display = 'block';
+                return;
+            }
+
+            btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            try {
+                // One row per item, all sharing the same Bill No — easiest to analyze later
+                // (sales by item, by salesman, totals per bill) while staying simple to log.
+                for (const it of data.items) {
+                    await submitToGoogleSheet({
+                        form_type: 'Bill Item',
+                        bill_no: data.billNo,
+                        date: data.date,
+                        time: data.time,
+                        salesman: data.salesman,
+                        customer_name: data.custName,
+                        customer_phone: data.custPhone,
+                        item: it.item,
+                        qty: it.qty,
+                        price: it.price,
+                        amount: it.amount,
+                        bill_total: data.total
+                    });
+                }
+                msgEl.textContent = 'Bill saved! ✓';
+                msgEl.className = 'bill-save-msg success';
+                msgEl.style.display = 'block';
+            } catch (err) {
+                msgEl.textContent = err.message;
+                msgEl.className = 'bill-save-msg error';
+                msgEl.style.display = 'block';
+            } finally {
+                btn.disabled = false; btn.innerHTML = '<i class="fas fa-cloud-arrow-up"></i> Save Bill';
+            }
+        }
+
+        function resetBillMaker() {
+            document.getElementById('billCustName').value = '';
+            document.getElementById('billCustPhone').value = '';
+            document.getElementById('billItemsBody').innerHTML = '';
+            addBillRow();
+            updateBillTotal();
+            const t = billTimestampParts();
+            document.getElementById('billNo').textContent = t.billNo;
+            document.getElementById('billDate').textContent = t.date;
+            document.getElementById('billTime').textContent = t.time;
+            document.getElementById('billSaveMsg').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
