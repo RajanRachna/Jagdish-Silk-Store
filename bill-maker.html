@@ -140,9 +140,13 @@
             font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: 0.2s; color: var(--text-gray);
         }
         .payment-chip input:checked + span { background: var(--primary-pink); border-color: var(--primary-pink); color: white; }
-        .bill-bank-field { display: flex; align-items: center; gap: 10px; }
+        .bill-bank-field { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .bill-bank-field label { font-size: 0.72rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.5px; }
-        .bill-bank-field input { padding: 8px 12px; border: 1px solid #ddd; border-radius: 20px; font-family: inherit; font-size: 0.85rem; width: 150px; }
+        .bill-bank-field select, .bill-bank-field input {
+            padding: 8px 12px; border: 1px solid #ddd; border-radius: 20px; font-family: inherit; font-size: 0.85rem;
+        }
+        .bill-bank-field select { width: 180px; }
+        .bill-bank-field input { width: 150px; }
 
         .print-only { display: none; }
         .bill-payment-display { font-size: 0.85rem; color: var(--text-gray); margin-bottom: 12px; }
@@ -179,6 +183,38 @@
         }
         @media (max-width: 480px) {
             .bill-actions button { min-width: 100%; }
+        }
+
+        /* ================= MOBILE: declutter the whole form ================= */
+        @media (max-width: 640px) {
+            .bill-print-area { padding: 18px 14px; }
+            .bill-customer { flex-direction: column; gap: 12px; }
+            .bill-customer .login-field { min-width: 100%; }
+            .bill-row-options { flex-direction: column; align-items: stretch; padding: 12px; gap: 12px; }
+            .payment-chips { justify-content: space-between; }
+            .payment-chip { flex: 1; }
+            .payment-chip span { text-align: center; padding: 9px 8px; }
+            .bill-bank-field { justify-content: space-between; }
+            .bill-bank-field select { width: auto; flex: 1; margin-left: 8px; }
+            .bill-bank-field input { width: 100%; margin-left: 0; }
+
+            /* Item table becomes a stack of small cards instead of a cramped 7-column table */
+            .bill-table thead { display: none; }
+            .bill-table, .bill-table tbody, .bill-table tr, .bill-table td { display: block; width: 100%; }
+            .bill-table tr {
+                margin-bottom: 12px; padding: 12px; border: 1px solid #eee; border-radius: 12px; position: relative; background: #FDFDFD;
+            }
+            .bill-table td { border-bottom: none; padding: 5px 0; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+            .bill-table td::before {
+                content: attr(data-label); font-size: 0.68rem; font-weight: 700; color: var(--text-gray);
+                text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0;
+            }
+            .bill-table td[data-label="Item"] { padding-bottom: 8px; margin-bottom: 6px; border-bottom: 1px dashed #eee; }
+            .bill-table td[data-label="Item"]::before { display: none; }
+            .bill-table td[data-label="Item"] input { text-align: left; font-weight: 600; }
+            .bill-table td input { max-width: 55%; text-align: right; }
+            .bill-table .bill-row-remove-cell { position: absolute; top: 8px; right: 8px; width: auto; padding: 0; }
+            .bill-overall-discount { justify-content: space-between; }
         }
     </style>
 </head>
@@ -253,7 +289,24 @@
                 </div>
                 <div class="bill-bank-field" id="billBankField" style="display:none;">
                     <label>Bank</label>
-                    <input type="text" id="billBankName" placeholder="e.g. HDFC, SBI" oninput="invalidateGeneratedBill()">
+                    <select id="billBankSelect" onchange="onBankSelectChange()">
+                        <option value="">Select bank</option>
+                        <option>State Bank of India</option>
+                        <option>HDFC Bank</option>
+                        <option>ICICI Bank</option>
+                        <option>Punjab National Bank</option>
+                        <option>Punjab &amp; Sind Bank</option>
+                        <option>Axis Bank</option>
+                        <option>Bank of Baroda</option>
+                        <option>Canara Bank</option>
+                        <option>Kotak Mahindra Bank</option>
+                        <option>IndusInd Bank</option>
+                        <option>Yes Bank</option>
+                        <option>Union Bank of India</option>
+                        <option>IDBI Bank</option>
+                        <option>Other</option>
+                    </select>
+                    <input type="text" id="billBankName" placeholder="Type bank name" style="display:none;" oninput="invalidateGeneratedBill()">
                 </div>
             </div>
             <p class="bill-payment-display print-only" id="billPaymentDisplay"></p>
@@ -282,15 +335,15 @@
         </div>
 
         <div class="bill-actions no-print">
-            <button type="button" class="bill-print-btn" onclick="printBill()"><i class="fas fa-print"></i> Print Bill</button>
-            <button type="button" class="bill-generate-btn" id="billGenerateBtn" onclick="generateDigitalBill()"><i class="fas fa-file-invoice"></i> Generate Digital Bill</button>
+            <button type="button" class="bill-generate-btn" id="billGenerateBtn" onclick="generateDigitalBill()"><i class="fas fa-floppy-disk"></i> Save Info</button>
         </div>
 
         <div class="bill-generated-preview no-print" id="billGeneratedPreview" style="display:none;">
-            <p class="bill-preview-label"><i class="fas fa-circle-check"></i> Digital bill ready</p>
+            <p class="bill-preview-label"><i class="fas fa-circle-check"></i> Info saved<span id="billCopyNote"></span></p>
             <img id="billPreviewImg" alt="Generated bill preview" class="bill-preview-img">
             <div class="bill-actions">
-                <button type="button" class="bill-save-btn" id="billSaveBtn" onclick="saveBillToSheet()"><i class="fas fa-cloud-arrow-up"></i> Save Bill</button>
+                <button type="button" class="bill-print-btn" onclick="printBill()"><i class="fas fa-print"></i> Print Bill</button>
+                <button type="button" class="bill-save-btn" id="billSaveBtn" onclick="saveBillToSheet()"><i class="fas fa-cloud-arrow-up"></i> Save to Sheet</button>
             </div>
             <div class="bill-actions">
                 <button type="button" class="bill-wa-customer-btn" id="billWaCustomerBtn" onclick="sendBillToCustomer()" disabled><i class="fab fa-whatsapp"></i> Send to Customer</button>
@@ -396,13 +449,13 @@
             const tbody = document.getElementById('billItemsBody');
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><input type="text" class="bill-item-input" placeholder="Item name" oninput="invalidateGeneratedBill()"></td>
-                <td><input type="number" class="bill-qty-input" value="1" min="1" oninput="updateBillRow(this)"></td>
-                <td><input type="number" class="bill-price-input" value="0" min="0" oninput="updateBillRow(this)"></td>
-                <td class="bill-before-disc-cell">₹0</td>
-                <td><input type="number" class="bill-disc-input" value="0" min="0" oninput="updateBillRow(this)"></td>
-                <td class="bill-amount-cell">₹0</td>
-                <td class="no-print"><button type="button" class="bill-row-remove" onclick="removeBillRow(this)"><i class="fas fa-trash"></i></button></td>
+                <td data-label="Item"><input type="text" class="bill-item-input" placeholder="Item name" oninput="invalidateGeneratedBill()"></td>
+                <td data-label="Qty"><input type="number" class="bill-qty-input" value="1" min="1" oninput="updateBillRow(this)"></td>
+                <td data-label="Price"><input type="number" class="bill-price-input" value="0" min="0" oninput="updateBillRow(this)"></td>
+                <td data-label="Before Disc." class="bill-before-disc-cell">₹0</td>
+                <td data-label="Discount"><input type="number" class="bill-disc-input" value="0" min="0" oninput="updateBillRow(this)"></td>
+                <td data-label="Amount" class="bill-amount-cell">₹0</td>
+                <td class="no-print bill-row-remove-cell"><button type="button" class="bill-row-remove" onclick="removeBillRow(this)"><i class="fas fa-trash"></i></button></td>
             `;
             tbody.appendChild(tr);
             invalidateGeneratedBill();
@@ -456,8 +509,32 @@
             const mode = document.querySelector('input[name="paymentMode"]:checked').value;
             const bankField = document.getElementById('billBankField');
             bankField.style.display = (mode === 'Card' || mode === 'UPI') ? 'flex' : 'none';
-            if (mode === 'Cash') document.getElementById('billBankName').value = '';
+            if (mode === 'Cash') {
+                document.getElementById('billBankSelect').value = '';
+                document.getElementById('billBankName').value = '';
+                document.getElementById('billBankName').style.display = 'none';
+            }
             invalidateGeneratedBill();
+        }
+
+        function onBankSelectChange() {
+            const select = document.getElementById('billBankSelect');
+            const textInput = document.getElementById('billBankName');
+            if (select.value === 'Other') {
+                textInput.style.display = 'block';
+                textInput.value = '';
+                textInput.focus();
+            } else {
+                textInput.style.display = 'none';
+                textInput.value = '';
+            }
+            invalidateGeneratedBill();
+        }
+
+        function getSelectedBank() {
+            const select = document.getElementById('billBankSelect');
+            if (select.value === 'Other') return document.getElementById('billBankName').value.trim();
+            return select.value;
         }
 
         function getPaymentMode() {
@@ -484,7 +561,7 @@
             const overallDiscount = parseFloat(document.getElementById('billOverallDiscount').value) || 0;
             const subtotal = items.reduce((sum, i) => sum + i.amount, 0);
             const mode = getPaymentMode();
-            const bank = document.getElementById('billBankName').value.trim();
+            const bank = getSelectedBank();
             return {
                 billNo: document.getElementById('billNo').textContent,
                 date: document.getElementById('billDate').textContent,
@@ -517,7 +594,7 @@
         async function generateBillImageBlob() {
             const el = document.getElementById('billPrintArea');
             const paymentDisplay = document.getElementById('billPaymentDisplay');
-            const bank = document.getElementById('billBankName').value.trim();
+            const bank = getSelectedBank();
             paymentDisplay.textContent = 'Payment Mode: ' + getPaymentMode() + (bank ? ' (' + bank + ')' : '');
             paymentDisplay.style.display = 'block';
             el.classList.add('bill-capturing');
@@ -532,12 +609,25 @@
             if (!data.items.length) { alert('Add at least one item first.'); return; }
             const btn = document.getElementById('billGenerateBtn');
             const origHtml = btn.innerHTML;
-            btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+            btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
             try {
                 currentBillImageBlob = await generateBillImageBlob();
                 const url = URL.createObjectURL(currentBillImageBlob);
                 document.getElementById('billPreviewImg').src = url;
                 document.getElementById('billGeneratedPreview').style.display = 'block';
+
+                // Copy the customer's number to the clipboard — handy since WhatsApp gives
+                // no way for any website to auto-pick a specific chat when sharing a file;
+                // this saves re-typing the number if it needs pasting in manually.
+                const copyNoteEl = document.getElementById('billCopyNote');
+                copyNoteEl.textContent = '';
+                if (data.custPhone && navigator.clipboard) {
+                    try {
+                        await navigator.clipboard.writeText(data.custPhone);
+                        copyNoteEl.textContent = ' — number copied 📋';
+                    } catch (e) { /* clipboard permission denied — not critical, continue silently */ }
+                }
+
                 onCustPhoneChange();
                 document.getElementById('billGeneratedPreview').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             } finally {
@@ -669,7 +759,9 @@
             document.getElementById('billCustName').value = '';
             document.getElementById('billCustPhone').value = '';
             document.getElementById('billOverallDiscount').value = '0';
+            document.getElementById('billBankSelect').value = '';
             document.getElementById('billBankName').value = '';
+            document.getElementById('billBankName').style.display = 'none';
             document.getElementById('billItemsBody').innerHTML = '';
             document.querySelector('input[name="paymentMode"][value="Cash"]').checked = true;
             document.getElementById('billBankField').style.display = 'none';
