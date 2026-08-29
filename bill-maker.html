@@ -190,6 +190,16 @@
         .bill-capturing .bill-price-input, .bill-capturing .bill-disc-input {
             border: none !important; background: transparent !important; padding: 4px 2px !important;
         }
+        /* Always render as a compact table — even if the editing screen is a phone
+           showing the card-style layout below — so more items fit per page/image. */
+        .bill-capturing .bill-table, .bill-capturing .bill-table tbody { display: table !important; width: 100% !important; }
+        .bill-capturing .bill-table thead { display: table-header-group !important; }
+        .bill-capturing .bill-table tr { display: table-row !important; margin-bottom: 0 !important; padding: 0 !important; border: none !important; background: none !important; }
+        .bill-capturing .bill-table td { display: table-cell !important; padding: 7px 5px !important; border-bottom: 1px solid #eee !important; }
+        .bill-capturing .bill-table td::before { display: none !important; }
+        .bill-capturing .bill-table td[data-label="Item"] { padding-bottom: 7px !important; margin-bottom: 0 !important; border-bottom: 1px solid #eee !important; }
+        .bill-capturing .bill-table td input { max-width: none !important; }
+        .bill-capturing .bill-row-remove-cell { display: none !important; }
 
         @media print {
             body * { visibility: hidden; }
@@ -200,6 +210,14 @@
             .bill-item-input, .bill-qty-input, .bill-price-input, .bill-disc-input { border: none; background: transparent; padding: 4px 2px; }
             header { display: none; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            /* Same fix for printing — force compact rows regardless of screen size. */
+            .bill-table, .bill-table tbody { display: table !important; width: 100% !important; }
+            .bill-table thead { display: table-header-group !important; }
+            .bill-table tr { display: table-row !important; margin-bottom: 0 !important; padding: 0 !important; border: none !important; background: none !important; }
+            .bill-table td { display: table-cell !important; padding: 7px 5px !important; border-bottom: 1px solid #eee !important; }
+            .bill-table td::before { display: none !important; }
+            .bill-table td[data-label="Item"] { padding-bottom: 7px !important; margin-bottom: 0 !important; border-bottom: 1px solid #eee !important; }
+            .bill-table td input { max-width: none !important; }
         }
         @media (max-width: 480px) {
             .bill-actions button { min-width: 100%; }
