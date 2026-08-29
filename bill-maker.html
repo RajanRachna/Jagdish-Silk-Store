@@ -77,9 +77,16 @@
 
         /* ================= BILL MAKER ================= */
         .bill-page { display: none; max-width: 720px; margin: 30px auto 80px; padding: 0 20px; }
-        .bill-print-area { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 35px rgba(0,0,0,0.06); }
-        .bill-header { text-align: center; margin-bottom: 18px; padding-bottom: 16px; border-bottom: 2px dashed #ddd; }
-        .bill-header h2 { font-size: 1.5rem; margin-bottom: 4px; }
+        .bill-print-area {
+            background: white; border-radius: 20px; padding: 34px 30px 28px; box-shadow: 0 10px 35px rgba(0,0,0,0.06);
+            position: relative; overflow: hidden;
+        }
+        .bill-print-area::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px;
+            background: linear-gradient(90deg, var(--primary-pink), var(--warm-mustard), var(--primary-pink));
+        }
+        .bill-header { text-align: center; margin-bottom: 20px; padding-bottom: 18px; border-bottom: 2px dashed #ddd; }
+        .bill-header h2 { font-size: 1.6rem; margin-bottom: 6px; letter-spacing: 0.3px; }
         .bill-header p { font-size: 0.87rem; color: var(--text-gray); margin: 2px 0; }
         .bill-meta { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 0.8rem; color: var(--text-gray); margin-bottom: 20px; }
         .bill-meta strong { color: var(--deep-heritage); }
@@ -103,6 +110,18 @@
             display: flex; justify-content: space-between; align-items: center; font-size: 1.25rem; font-weight: 800;
             color: var(--deep-heritage); padding-top: 16px; border-top: 2px dashed #ddd;
         }
+
+        .bill-footer { margin-top: 24px; text-align: center; }
+        .bill-footer-divider { height: 1px; background: repeating-linear-gradient(90deg, #ddd, #ddd 6px, transparent 6px, transparent 12px); margin-bottom: 16px; }
+        .bill-thanks { font-family: 'Playfair Display', serif; font-style: italic; color: var(--deep-heritage); font-size: 1rem; margin-bottom: 14px; }
+        .bill-cta {
+            display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            color: white; padding: 9px 20px; border-radius: 30px; font-size: 0.8rem; font-weight: 600; margin-bottom: 14px;
+        }
+        .bill-cta strong { font-weight: 800; }
+        .bill-terms { font-size: 0.72rem; color: var(--text-gray); line-height: 1.5; }
+        .bill-terms i { color: var(--primary-pink); margin-right: 4px; }
+
         .bill-actions { display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
         .bill-actions button { flex: 1; min-width: 150px; padding: 14px; border-radius: 30px; border: none; font-weight: 700;
             cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.25s; }
@@ -180,6 +199,7 @@
             .print-only { display: block !important; }
             .bill-item-input, .bill-qty-input, .bill-price-input, .bill-disc-input { border: none; background: transparent; padding: 4px 2px; }
             header { display: none; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
         @media (max-width: 480px) {
             .bill-actions button { min-width: 100%; }
@@ -331,6 +351,15 @@
                     <span>Total Amount</span>
                     <span id="billTotalAmount">₹0</span>
                 </div>
+            </div>
+
+            <div class="bill-footer">
+                <div class="bill-footer-divider"></div>
+                <p class="bill-thanks">Shukriya for shopping with us! 🙏</p>
+                <div class="bill-cta">
+                    <i class="fab fa-instagram"></i> Follow us <strong>@jagdish_silk_store</strong> for new updates &amp; offers!
+                </div>
+                <p class="bill-terms"><i class="fas fa-circle-info"></i> Returns &amp; exchange accepted within 7 days, with this bill.</p>
             </div>
         </div>
 
@@ -718,30 +747,31 @@
 
             btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
             try {
-                // One row per item, all sharing the same Bill No — easiest to analyze later
-                // (sales by item, by salesman, totals per bill) while staying simple to log.
-                for (const it of data.items) {
-                    await submitToGoogleSheet({
-                        form_type: 'Bill Item',
-                        bill_no: data.billNo,
-                        date: data.date,
-                        time: data.time,
-                        salesman: data.salesman,
-                        customer_name: data.custName,
-                        customer_phone: data.custPhone,
-                        payment_mode: data.paymentMode,
-                        bank: data.bank,
-                        gst_number: data.gstNumber,
+                // The whole bill goes in ONE request — the Sheet script puts the bill-level
+                // details (name, bill no, etc.) only on the first item's row, and the total
+                // only on the last, instead of repeating everything on every item row.
+                await submitToGoogleSheet({
+                    form_type: 'Bill',
+                    bill_no: data.billNo,
+                    date: data.date,
+                    time: data.time,
+                    salesman: data.salesman,
+                    customer_name: data.custName,
+                    customer_phone: data.custPhone,
+                    payment_mode: data.paymentMode,
+                    bank: data.bank,
+                    gst_number: data.gstNumber,
+                    overall_discount: data.overallDiscount,
+                    bill_total: data.total,
+                    items: data.items.map(it => ({
                         item: it.item,
                         qty: it.qty,
                         price: it.price,
                         before_discount: it.beforeDiscount,
                         item_discount: it.discount,
-                        amount: it.amount,
-                        overall_discount: data.overallDiscount,
-                        bill_total: data.total
-                    });
-                }
+                        amount: it.amount
+                    }))
+                });
                 msgEl.textContent = 'Bill saved! ✓';
                 msgEl.className = 'bill-save-msg success';
                 msgEl.style.display = 'block';
@@ -750,7 +780,7 @@
                 msgEl.className = 'bill-save-msg error';
                 msgEl.style.display = 'block';
             } finally {
-                btn.disabled = false; btn.innerHTML = '<i class="fas fa-cloud-arrow-up"></i> Save Bill';
+                btn.disabled = false; btn.innerHTML = '<i class="fas fa-cloud-arrow-up"></i> Save to Sheet';
             }
         }
 
