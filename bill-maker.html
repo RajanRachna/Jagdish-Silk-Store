@@ -16,6 +16,11 @@
         // site uses. Paste that new sheet's own Web App URL here (see setup guide).
         const GOOGLE_SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzowKr0UgRQuBZvcS858P-WpYbUigwJ6I1IM6qr6rYlZOea4beiz9Dzlr_gyPY_gyWF/exec";
 
+        // A separate, growing Product Catalog sheet (name → price) — every item you
+        // bill gets remembered here, and this same list powers the autocomplete +
+        // auto-fill-price when typing a new bill. Paste that sheet's own Web App URL.
+        const GOOGLE_CATALOG_WEBAPP_URL = "https://script.google.com/macros/s/AKfycby-IV1fzbKSHInnvmkZnPg8CBycloi3ih3wI71JU9kK3TsJcVylDnmeBhm56Y0sP3Xq/exec";
+
         // ================= SALESMEN LOGINS =================
         // One entry per salesman: their name, and the SHA-256 hash of their password
         // (never the plain password itself — same approach as the main site's admin login).
@@ -134,6 +139,8 @@
         .bill-wa-send-btn { background: var(--whatsapp); color: white; box-shadow: 0 8px 20px rgba(37,211,102,0.3); width: 100%; }
         .bill-wa-send-btn:hover { background: #1fb855; transform: translateY(-2px); }
         .bill-generate-btn { background: var(--deep-heritage); color: var(--warm-mustard); box-shadow: 0 8px 20px rgba(0,0,0,0.2); width: 100%; }
+        .bill-foldcard-btn { background: linear-gradient(135deg, var(--primary-pink), var(--warm-mustard)); color: white; box-shadow: 0 8px 20px rgba(233,30,99,0.25); width: 100%; }
+        .bill-foldcard-btn:hover { transform: translateY(-2px); }
         .bill-generate-btn:hover { transform: translateY(-2px); }
         .bill-generated-preview {
             margin-top: 18px; padding: 18px; background: #F0FBF5; border: 1.5px solid #d4f4e2; border-radius: 16px; text-align: center;
@@ -356,6 +363,7 @@
                 </thead>
                 <tbody id="billItemsBody"></tbody>
             </table>
+            <datalist id="productCatalogList"></datalist>
             <button type="button" class="no-print bill-add-row-btn" onclick="addBillRow()"><i class="fas fa-plus"></i> Add Item</button>
 
             <div class="bill-overall-discount no-print">
@@ -380,6 +388,10 @@
                 </div>
                 <p class="bill-terms"><i class="fas fa-circle-info"></i> Returns &amp; exchange accepted within 7 days, with this bill.</p>
             </div>
+        </div>
+
+        <div class="bill-actions no-print">
+            <button type="button" class="bill-foldcard-btn no-print" onclick="window.open('gift-fold-card.html', '_blank')"><i class="fas fa-gift"></i> Print Gift Fold Card</button>
         </div>
 
         <div class="bill-actions no-print">
@@ -426,6 +438,56 @@
         // touches this, so it must exist before that runs.
         let currentBillImageBlob = null;
 
+        // ================= PRODUCT CATALOG (autocomplete + auto-fill price) =================
+        let productCatalog = {}; // { "product name lowercased": price }
+
+        async function fetchProductCatalog() {
+            if (!GOOGLE_CATALOG_WEBAPP_URL || GOOGLE_CATALOG_WEBAPP_URL === 'PASTE_YOUR_GOOGLE_CATALOG_WEBAPP_URL') return;
+            try {
+                const res = await fetch(GOOGLE_CATALOG_WEBAPP_URL, { cache: 'no-store' });
+                if (!res.ok) return;
+                const data = await res.json();
+                productCatalog = {};
+                const list = document.getElementById('productCatalogList');
+                list.innerHTML = '';
+                (data.items || []).forEach(item => {
+                    if (!item.name) return;
+                    productCatalog[item.name.trim().toLowerCase()] = item.price;
+                    const opt = document.createElement('option');
+                    opt.value = item.name;
+                    list.appendChild(opt);
+                });
+            } catch (e) { /* offline or not set up yet — autocomplete just stays empty */ }
+        }
+
+        // When the item name matches something already in the catalog, fill in its
+        // last-known price automatically.
+        function onItemNameChange(input) {
+            const match = productCatalog[input.value.trim().toLowerCase()];
+            if (match !== undefined && match !== '') {
+                const tr = input.closest('tr');
+                const priceInput = tr.querySelector('.bill-price-input');
+                priceInput.value = match;
+                updateBillRow(priceInput);
+            }
+            invalidateGeneratedBill();
+        }
+
+        // Fire-and-forget — quietly remembers this product (name + price) in the
+        // catalog sheet so it's there for autocomplete next time. Never blocks or
+        // shows an error if the catalog isn't set up yet.
+        function rememberProductsInCatalog(items) {
+            if (!GOOGLE_CATALOG_WEBAPP_URL || GOOGLE_CATALOG_WEBAPP_URL === 'PASTE_YOUR_GOOGLE_CATALOG_WEBAPP_URL') return;
+            items.forEach(it => {
+                if (!it.item) return;
+                fetch(GOOGLE_CATALOG_WEBAPP_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ item_name: it.item, price: it.price })
+                }).catch(() => {});
+            });
+        }
+
         async function salesmanLogin(e) {
             e.preventDefault();
             const name = document.getElementById('loginSalesman').value;
@@ -466,6 +528,7 @@
             if (!document.getElementById('billItemsBody').children.length) {
                 resetBillMaker();
             }
+            fetchProductCatalog();
         }
 
         // Stay logged in for this browser tab/session (clears when the tab closes —
@@ -500,7 +563,7 @@
             const tbody = document.getElementById('billItemsBody');
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td data-label="Item"><input type="text" class="bill-item-input" placeholder="Item name" oninput="invalidateGeneratedBill()"></td>
+                <td data-label="Item"><input type="text" class="bill-item-input" list="productCatalogList" placeholder="Item name" oninput="invalidateGeneratedBill()" onchange="onItemNameChange(this)"></td>
                 <td data-label="Qty"><input type="number" class="bill-qty-input" value="1" min="1" onfocus="this.select()" oninput="updateBillRow(this)"></td>
                 <td data-label="Price"><input type="number" class="bill-price-input" value="0" min="0" onfocus="this.select()" oninput="updateBillRow(this)"></td>
                 <td data-label="Before Disc." class="bill-before-disc-cell">₹0</td>
@@ -674,6 +737,10 @@
                 const url = URL.createObjectURL(currentBillImageBlob);
                 document.getElementById('billPreviewImg').src = url;
                 document.getElementById('billGeneratedPreview').style.display = 'block';
+
+                // Quietly remember these products (name + price) in the growing catalog
+                // sheet, so they're there for autocomplete next time a bill is made.
+                rememberProductsInCatalog(data.items);
 
                 // Copy the customer's number to the clipboard — handy since WhatsApp gives
                 // no way for any website to auto-pick a specific chat when sharing a file;
