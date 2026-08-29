@@ -308,12 +308,12 @@
             </div>
             <div class="bill-customer">
                 <div class="login-field">
-                    <label>Customer Name</label>
-                    <input type="text" id="billCustName" placeholder="Customer name" oninput="invalidateGeneratedBill()">
+                    <label>Name</label>
+                    <input type="text" id="billCustName" placeholder="Name" oninput="invalidateGeneratedBill()">
                 </div>
                 <div class="login-field">
-                    <label>Customer Phone</label>
-                    <input type="tel" id="billCustPhone" placeholder="Customer phone number" oninput="invalidateGeneratedBill()">
+                    <label>Phone Number</label>
+                    <input type="tel" id="billCustPhone" placeholder="Phone number" oninput="invalidateGeneratedBill()">
                 </div>
             </div>
 
@@ -360,7 +360,7 @@
 
             <div class="bill-overall-discount no-print">
                 <label>Overall Discount (₹)</label>
-                <input type="number" id="billOverallDiscount" value="0" min="0" oninput="updateBillTotal(); invalidateGeneratedBill();">
+                <input type="number" id="billOverallDiscount" value="0" min="0" onfocus="this.select()" oninput="cleanLeadingZero(this); updateBillTotal(); invalidateGeneratedBill();">
             </div>
 
             <div class="bill-summary">
@@ -501,10 +501,10 @@
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td data-label="Item"><input type="text" class="bill-item-input" placeholder="Item name" oninput="invalidateGeneratedBill()"></td>
-                <td data-label="Qty"><input type="number" class="bill-qty-input" value="1" min="1" oninput="updateBillRow(this)"></td>
-                <td data-label="Price"><input type="number" class="bill-price-input" value="0" min="0" oninput="updateBillRow(this)"></td>
+                <td data-label="Qty"><input type="number" class="bill-qty-input" value="1" min="1" onfocus="this.select()" oninput="updateBillRow(this)"></td>
+                <td data-label="Price"><input type="number" class="bill-price-input" value="0" min="0" onfocus="this.select()" oninput="updateBillRow(this)"></td>
                 <td data-label="Before Disc." class="bill-before-disc-cell">₹0</td>
-                <td data-label="Discount"><input type="number" class="bill-disc-input" value="0" min="0" oninput="updateBillRow(this)"></td>
+                <td data-label="Discount"><input type="number" class="bill-disc-input" value="0" min="0" onfocus="this.select()" oninput="updateBillRow(this)"></td>
                 <td data-label="Amount" class="bill-amount-cell">₹0</td>
                 <td class="no-print bill-row-remove-cell"><button type="button" class="bill-row-remove" onclick="removeBillRow(this)"><i class="fas fa-trash"></i></button></td>
             `;
@@ -520,7 +520,16 @@
             invalidateGeneratedBill();
         }
 
+        // Strips an accidental leading zero (e.g. typing into a "0" field gives "05"
+        // instead of replacing it) while leaving decimals like "0.5" alone.
+        function cleanLeadingZero(input) {
+            if (input.value.length > 1 && input.value[0] === '0' && input.value[1] !== '.') {
+                input.value = input.value.replace(/^0+/, '') || '0';
+            }
+        }
+
         function updateBillRow(input) {
+            cleanLeadingZero(input);
             const tr = input.closest('tr');
             const qty = parseFloat(tr.querySelector('.bill-qty-input').value) || 0;
             const price = parseFloat(tr.querySelector('.bill-price-input').value) || 0;
