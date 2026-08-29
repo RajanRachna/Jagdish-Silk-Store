@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jagdish Lifestyle</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/png" href="logo-icon-192.png?v=2">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-main: #FFFBF7; --primary-pink: #E91E63; --soft-pink: #FCE4EC;
+            --warm-mustard: #FFC107; --deep-heritage: #2C1B18; --text-gray: #7F8C8D;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(160deg, var(--soft-pink) 0%, var(--bg-main) 45%); color: var(--deep-heritage); min-height: 100vh; }
+        h1, h2 { font-family: 'Playfair Display', serif; }
+
+        .screen-wrap { max-width: 480px; margin: 40px auto; padding: 0 20px; text-align: center; position: relative; }
+        .screen-wrap .icon { font-size: 2.6rem; margin-bottom: 14px; display: inline-block; animation: giftBounce 2.2s ease-in-out infinite; filter: drop-shadow(0 4px 12px rgba(233,30,99,0.25)); }
+        @keyframes giftBounce { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-8px) rotate(4deg); } }
+        .sparkle { position: absolute; color: var(--warm-mustard); opacity: 0.8; animation: twinkle 2.4s ease-in-out infinite; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+        .screen-wrap h1 { font-size: 1.5rem; margin-bottom: 10px; }
+        .screen-wrap p { color: var(--text-gray); font-size: 0.92rem; line-height: 1.7; margin-bottom: 26px; }
+        .print-btn {
+            background: var(--primary-pink); color: white; border: none; padding: 14px 32px; border-radius: 30px;
+            font-weight: 700; font-size: 0.9rem; cursor: pointer; box-shadow: 0 10px 24px rgba(233,30,99,0.3);
+        }
+        .print-btn:hover { transform: translateY(-2px); }
+        .back-link { display: inline-block; margin-top: 18px; color: var(--text-gray); font-size: 0.82rem; text-decoration: none; }
+        .back-link:hover { color: var(--primary-pink); }
+
+        .preview-frame {
+            max-width: 380px; margin: 30px auto 0; border: 1px solid #eee; border-radius: 12px; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        }
+        .preview-frame .fold-panel { padding: 26px 20px; }
+        .preview-frame .fold-panel-top, .preview-frame .fold-panel-bottom { transform: rotate(180deg); }
+
+        @page { margin: 12mm; }
+
+        @media print {
+            .no-print { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: white; }
+            .print-page {
+                display: flex !important; flex-direction: column; height: 100vh; width: 100%;
+            }
+        }
+        @media screen {
+            .print-page { display: none; }
+        }
+
+        .fold-panel { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; position: relative; }
+        .fold-panel-top, .fold-panel-bottom { transform: rotate(180deg); }
+        .fold-panel p { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.25rem; color: var(--deep-heritage); line-height: 1.5; }
+        .fold-sub { display: block; font-size: 0.8rem; color: var(--text-gray); margin-top: 8px; font-style: normal; font-family: 'Poppins', sans-serif; }
+        .fold-panel-bottom p { font-size: 1.1rem; }
+        .fold-panel-bottom em { font-style: italic; color: var(--primary-pink); }
+        .fold-panel-center { border-top: 2px dashed #ddd; border-bottom: 2px dashed #ddd; }
+        .fold-logo-img { width: 56px; height: 56px; border-radius: 50%; margin-bottom: 12px; }
+        .fold-panel-center h2 { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--primary-pink); margin-bottom: 6px; }
+        .fold-panel-center p { font-family: 'Poppins', sans-serif; font-style: normal; font-size: 0.9rem; color: var(--text-gray); }
+        .fold-brand-sub { font-size: 0.7rem !important; text-transform: uppercase; letter-spacing: 1px; color: var(--primary-pink) !important; font-weight: 600; margin-bottom: 6px !important; }
+        .fold-insta {
+            margin-top: 10px !important; font-size: 0.78rem !important; color: var(--deep-heritage) !important;
+            font-style: normal !important; display: flex; align-items: center; gap: 6px; font-weight: 600;
+        }
+        .fold-insta i { color: var(--primary-pink); }
+
+        .print-sparkle { position: absolute; color: var(--warm-mustard); font-size: 0.75rem; opacity: 0.7; }
+        .print-corner { position: absolute; color: var(--soft-pink); font-size: 0.85rem; opacity: 0.8; }
+        .print-corner-tl { top: 10px; left: 10px; }
+        .print-corner-tr { top: 10px; right: 10px; }
+        .print-corner-bl { bottom: 10px; left: 10px; }
+        .print-corner-br { bottom: 10px; right: 10px; }
+        .fold-line { position: absolute; bottom: 0; left: 8%; right: 8%; border-top: 1px dashed #ccc; }
+        .fold-panel-top .fold-line { top: 0; bottom: auto; }
+    </style>
+</head>
+<body>
+
+    <div class="screen-wrap no-print">
+        <i class="fas fa-star sparkle" style="top: 5px; left: 10%; font-size: 0.9rem; animation-delay: 0s;"></i>
+        <i class="fas fa-star sparkle" style="top: 20px; right: 12%; font-size: 0.6rem; animation-delay: 0.8s;"></i>
+        <i class="fas fa-star sparkle" style="top: -5px; right: 30%; font-size: 0.7rem; animation-delay: 1.4s;"></i>
+        <div class="icon">🎁</div>
+        <h1>Gift Fold Card</h1>
+        <p>A little tri-fold note — print it, fold it into three (like folding a letter), and it reads right-side-up once folded. Perfect tucked in with a bill or a gift.</p>
+        <button type="button" class="print-btn" onclick="window.print()"><i class="fas fa-print"></i> Print This</button>
+        <br>
+        <a href="bill-maker.html" class="back-link">← Back to Bill Maker</a>
+
+        <div class="preview-frame">
+            <div class="fold-panel fold-panel-top">
+                <p>We love you and your wallet<span class="fold-sub">(digital, physical, or maybe both) 💛</span></p>
+            </div>
+            <div class="fold-panel fold-panel-center">
+                <img src="logo-icon-192.png" alt="Jagdish Lifestyle" class="fold-logo-img" onerror="this.style.display='none'">
+                <h2>Jagdish Lifestyle</h2>
+                <p class="fold-brand-sub">Digital brand of Jagdish Silk Store</p>
+                <p>Sarafan Bazar, Phagwara</p>
+            </div>
+            <div class="fold-panel fold-panel-bottom">
+                <p>Don't forget to take your <em>cute gift</em>! 🎁</p>
+                <p class="fold-insta"><i class="fab fa-instagram"></i> Also follow us on Instagram @jagdish_silk_store</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= PRINT-ONLY version =================
+         Fold along the two dashed lines (like folding a letter into three) — the
+         top and bottom panels are upside-down on purpose, so they read right-side-up
+         once folded in. -->
+    <div class="print-page">
+        <div class="fold-panel fold-panel-top">
+            <div class="fold-line"></div>
+            <i class="fas fa-star print-sparkle" style="top: 14px; left: 18%;"></i>
+            <i class="fas fa-star print-sparkle" style="top: 22px; right: 16%; font-size: 0.6rem;"></i>
+            <p>We love you and your wallet<span class="fold-sub">(digital, physical, or maybe both) 💛</span></p>
+            <i class="fas fa-heart print-corner print-corner-tl"></i>
+            <i class="fas fa-heart print-corner print-corner-tr"></i>
+        </div>
+        <div class="fold-panel fold-panel-center">
+            <img src="logo-icon-192.png" alt="Jagdish Lifestyle" class="fold-logo-img" onerror="this.style.display='none'">
+            <h2>Jagdish Lifestyle</h2>
+            <p class="fold-brand-sub">Digital brand of Jagdish Silk Store</p>
+            <p>Sarafan Bazar, Phagwara</p>
+        </div>
+        <div class="fold-panel fold-panel-bottom">
+            <div class="fold-line"></div>
+            <i class="fas fa-gift print-corner print-corner-bl"></i>
+            <i class="fas fa-gift print-corner print-corner-br"></i>
+            <p>Don't forget to take your <em>cute gift</em>! 🎁</p>
+            <p class="fold-insta"><i class="fab fa-instagram"></i> Also follow us on Instagram @jagdish_silk_store</p>
+            <i class="fas fa-star print-sparkle" style="bottom: 14px; left: 22%;"></i>
+            <i class="fas fa-star print-sparkle" style="bottom: 20px; right: 20%; font-size: 0.6rem;"></i>
+        </div>
+    </div>
+
+</body>
+</html>
