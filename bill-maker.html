@@ -111,6 +111,36 @@
         .bill-save-btn:hover { background: #17a76b; transform: translateY(-2px); }
         .bill-save-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         .bill-clear-btn { background: #F8F9FA; color: var(--text-gray); border: 1px solid #eee !important; box-shadow: none; }
+        .bill-wa-customer-btn, .bill-wa-shop-btn { background: var(--whatsapp); color: white; box-shadow: 0 8px 20px rgba(37,211,102,0.3); }
+        .bill-wa-customer-btn:hover, .bill-wa-shop-btn:hover { background: #1fb855; transform: translateY(-2px); }
+        .bill-wa-customer-btn:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; transform: none; }
+        .bill-wa-shop-btn { background: #128C7E; }
+        .bill-wa-shop-btn:hover { background: #0e6b60; }
+
+        .bill-gst-line { font-weight: 700; color: var(--deep-heritage) !important; }
+
+        .bill-row-options {
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;
+            margin-bottom: 18px; padding: 14px; background: #F8F9FA; border-radius: 12px;
+        }
+        .bill-payment-mode label:first-child { display: block; font-size: 0.72rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+        .payment-chips { display: flex; gap: 8px; }
+        .payment-chip input { position: absolute; opacity: 0; }
+        .payment-chip span {
+            display: block; padding: 7px 16px; border-radius: 20px; border: 1.5px solid #ddd; background: white;
+            font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: 0.2s; color: var(--text-gray);
+        }
+        .payment-chip input:checked + span { background: var(--primary-pink); border-color: var(--primary-pink); color: white; }
+        .gst-toggle { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 600; color: var(--text-dark); cursor: pointer; }
+        .gst-toggle input { width: 18px; height: 18px; accent-color: var(--primary-pink); cursor: pointer; }
+
+        .print-only { display: none; }
+        .bill-payment-display { font-size: 0.85rem; color: var(--text-gray); margin-bottom: 12px; }
+
+        .bill-overall-discount { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-bottom: 14px; }
+        .bill-overall-discount label { font-size: 0.82rem; color: var(--text-gray); font-weight: 600; }
+        .bill-overall-discount input { width: 110px; padding: 8px 10px; border: 1px solid #eee; border-radius: 8px; text-align: right; font-family: inherit; font-size: 0.88rem; }
+        .bill-disc-input { width: 100%; border: 1px solid #eee; border-radius: 6px; padding: 8px; font-size: 0.88rem; text-align: right; font-family: inherit; }
         .bill-save-msg { text-align: center; font-size: 0.85rem; margin-top: 14px; display: none; }
         .bill-save-msg.error { color: var(--primary-pink); }
         .bill-save-msg.success { color: #1D6F42; }
@@ -120,7 +150,8 @@
             #billPrintArea, #billPrintArea * { visibility: visible; }
             #billPrintArea { position: absolute; top: 0; left: 0; width: 100%; padding: 30px; box-shadow: none; }
             .no-print { display: none !important; }
-            .bill-item-input, .bill-qty-input, .bill-price-input { border: none; background: transparent; padding: 4px 2px; }
+            .print-only { display: block !important; }
+            .bill-item-input, .bill-qty-input, .bill-price-input, .bill-disc-input { border: none; background: transparent; padding: 4px 2px; }
             header { display: none; }
         }
         @media (max-width: 480px) {
@@ -169,6 +200,7 @@
                 <h2>Jagdish Silk Store</h2>
                 <p>Sarafan Bazar, Phagwara</p>
                 <p>Phone: 9815068679</p>
+                <p class="bill-gst-line no-print-hide" id="billGstLine" style="display:none;">GSTIN: 03AKFPP8356H2ZY</p>
             </div>
             <div class="bill-meta">
                 <span>Bill No: <strong id="billNo"></strong></span>
@@ -183,16 +215,39 @@
                 </div>
                 <div class="login-field">
                     <label>Customer Phone</label>
-                    <input type="tel" id="billCustPhone" placeholder="Customer phone number">
+                    <input type="tel" id="billCustPhone" placeholder="Customer phone number" oninput="onCustPhoneChange()">
                 </div>
             </div>
+
+            <div class="bill-row-options no-print">
+                <div class="bill-payment-mode">
+                    <label>Payment Mode</label>
+                    <div class="payment-chips">
+                        <label class="payment-chip"><input type="radio" name="paymentMode" value="Cash" checked onchange="onPaymentModeChange()"><span>Cash</span></label>
+                        <label class="payment-chip"><input type="radio" name="paymentMode" value="Card" onchange="onPaymentModeChange()"><span>Card</span></label>
+                        <label class="payment-chip"><input type="radio" name="paymentMode" value="UPI" onchange="onPaymentModeChange()"><span>UPI</span></label>
+                    </div>
+                </div>
+                <label class="gst-toggle">
+                    <input type="checkbox" id="billGstToggle" onchange="onGstToggleChange()">
+                    <span><i class="fas fa-file-invoice"></i> Show GST on Bill</span>
+                </label>
+            </div>
+            <p class="bill-payment-display print-only" id="billPaymentDisplay"></p>
+
             <table class="bill-table">
                 <thead>
-                    <tr><th>Item</th><th>Qty</th><th>Price</th><th>Amount</th><th class="no-print"></th></tr>
+                    <tr><th>Item</th><th>Qty</th><th>Price</th><th>Disc.</th><th>Amount</th><th class="no-print"></th></tr>
                 </thead>
                 <tbody id="billItemsBody"></tbody>
             </table>
             <button type="button" class="no-print bill-add-row-btn" onclick="addBillRow()"><i class="fas fa-plus"></i> Add Item</button>
+
+            <div class="bill-overall-discount no-print">
+                <label>Overall Discount (₹)</label>
+                <input type="number" id="billOverallDiscount" value="0" min="0" oninput="updateBillTotal()">
+            </div>
+
             <div class="bill-total">
                 <span>Total</span>
                 <span id="billTotalAmount">₹0</span>
@@ -202,6 +257,12 @@
         <div class="bill-actions no-print">
             <button type="button" class="bill-print-btn" onclick="printBill()"><i class="fas fa-print"></i> Print Bill</button>
             <button type="button" class="bill-save-btn" id="billSaveBtn" onclick="saveBillToSheet()"><i class="fas fa-cloud-arrow-up"></i> Save Bill</button>
+        </div>
+        <div class="bill-actions no-print">
+            <button type="button" class="bill-wa-customer-btn" id="billWaCustomerBtn" onclick="sendBillToCustomer()" disabled><i class="fab fa-whatsapp"></i> Send to Customer</button>
+            <button type="button" class="bill-wa-shop-btn" onclick="sendBillCopyToShop()"><i class="fab fa-whatsapp"></i> Send Copy to Shop</button>
+        </div>
+        <div class="bill-actions no-print">
             <button type="button" class="bill-clear-btn" onclick="resetBillMaker()">Clear / New Bill</button>
         </div>
         <div class="bill-save-msg no-print" id="billSaveMsg"></div>
@@ -291,6 +352,7 @@
                 <td><input type="text" class="bill-item-input" placeholder="Item name"></td>
                 <td><input type="number" class="bill-qty-input" value="1" min="1" oninput="updateBillRow(this)"></td>
                 <td><input type="number" class="bill-price-input" value="0" min="0" oninput="updateBillRow(this)"></td>
+                <td><input type="number" class="bill-disc-input" value="0" min="0" oninput="updateBillRow(this)"></td>
                 <td class="bill-amount-cell">₹0</td>
                 <td class="no-print"><button type="button" class="bill-row-remove" onclick="removeBillRow(this)"><i class="fas fa-trash"></i></button></td>
             `;
@@ -308,7 +370,9 @@
             const tr = input.closest('tr');
             const qty = parseFloat(tr.querySelector('.bill-qty-input').value) || 0;
             const price = parseFloat(tr.querySelector('.bill-price-input').value) || 0;
-            tr.querySelector('.bill-amount-cell').textContent = '₹' + (qty * price).toLocaleString('en-IN');
+            const disc = parseFloat(tr.querySelector('.bill-disc-input').value) || 0;
+            const amount = Math.max(0, (qty * price) - disc);
+            tr.querySelector('.bill-amount-cell').textContent = '₹' + amount.toLocaleString('en-IN');
             updateBillTotal();
         }
 
@@ -317,9 +381,37 @@
             document.querySelectorAll('#billItemsBody tr').forEach(tr => {
                 const qty = parseFloat(tr.querySelector('.bill-qty-input')?.value) || 0;
                 const price = parseFloat(tr.querySelector('.bill-price-input')?.value) || 0;
-                total += qty * price;
+                const disc = parseFloat(tr.querySelector('.bill-disc-input')?.value) || 0;
+                total += Math.max(0, (qty * price) - disc);
             });
+            const overallDiscount = parseFloat(document.getElementById('billOverallDiscount')?.value) || 0;
+            total = Math.max(0, total - overallDiscount);
             document.getElementById('billTotalAmount').textContent = '₹' + total.toLocaleString('en-IN');
+        }
+
+        // ================= PAYMENT MODE & GST =================
+        function onPaymentModeChange() {
+            const mode = document.querySelector('input[name="paymentMode"]:checked').value;
+            // Card/UPI usually need a GST invoice — auto-enable, but the checkbox stays
+            // manually clickable too, so it can always be overridden either way.
+            if (mode === 'Card' || mode === 'UPI') {
+                document.getElementById('billGstToggle').checked = true;
+            }
+            onGstToggleChange();
+        }
+
+        function onGstToggleChange() {
+            const on = document.getElementById('billGstToggle').checked;
+            document.getElementById('billGstLine').style.display = on ? 'block' : 'none';
+        }
+
+        function getPaymentMode() {
+            return document.querySelector('input[name="paymentMode"]:checked').value;
+        }
+
+        function onCustPhoneChange() {
+            const phone = document.getElementById('billCustPhone').value.trim();
+            document.getElementById('billWaCustomerBtn').disabled = phone.length < 10;
         }
 
         function collectBillData() {
@@ -328,8 +420,13 @@
                 const item = tr.querySelector('.bill-item-input').value.trim();
                 const qty = parseFloat(tr.querySelector('.bill-qty-input').value) || 0;
                 const price = parseFloat(tr.querySelector('.bill-price-input').value) || 0;
-                if (item) items.push({ item, qty, price, amount: qty * price });
+                const discount = parseFloat(tr.querySelector('.bill-disc-input').value) || 0;
+                const amount = Math.max(0, (qty * price) - discount);
+                if (item) items.push({ item, qty, price, discount, amount });
             });
+            const overallDiscount = parseFloat(document.getElementById('billOverallDiscount').value) || 0;
+            const subtotal = items.reduce((sum, i) => sum + i.amount, 0);
+            const gstOn = document.getElementById('billGstToggle').checked;
             return {
                 billNo: document.getElementById('billNo').textContent,
                 date: document.getElementById('billDate').textContent,
@@ -337,13 +434,54 @@
                 salesman: document.getElementById('billSalesman').textContent,
                 custName: document.getElementById('billCustName').value.trim(),
                 custPhone: document.getElementById('billCustPhone').value.trim(),
+                paymentMode: getPaymentMode(),
+                gstApplied: gstOn,
+                gstNumber: gstOn ? '03AKFPP8356H2ZY' : '',
                 items,
-                total: items.reduce((sum, i) => sum + i.amount, 0)
+                overallDiscount,
+                total: Math.max(0, subtotal - overallDiscount)
             };
         }
 
         function printBill() {
+            document.getElementById('billPaymentDisplay').textContent =
+                'Payment Mode: ' + getPaymentMode() + (document.getElementById('billGstToggle').checked ? ' · GST Applied' : '');
             window.print();
+        }
+
+        // ================= BILL TEXT (shared by both WhatsApp sends) =================
+        function buildBillText(data) {
+            let msg = `*Jagdish Silk Store*\nSarafan Bazar, Phagwara\nPhone: 9815068679\n`;
+            if (data.gstApplied) msg += `GSTIN: ${data.gstNumber}\n`;
+            msg += `\n*Bill No:* ${data.billNo}\n*Date:* ${data.date} ${data.time}\n*Billed By:* ${data.salesman}\n`;
+            if (data.custName) msg += `*Customer:* ${data.custName}\n`;
+            msg += `\n*Items:*\n`;
+            data.items.forEach((it, i) => {
+                msg += `${i + 1}. ${it.item} — Qty ${it.qty} × ₹${it.price}`;
+                if (it.discount > 0) msg += ` (−₹${it.discount})`;
+                msg += ` = ₹${it.amount.toLocaleString('en-IN')}\n`;
+            });
+            if (data.overallDiscount > 0) msg += `\nOverall Discount: −₹${data.overallDiscount.toLocaleString('en-IN')}\n`;
+            msg += `\n*Total: ₹${data.total.toLocaleString('en-IN')}*\n*Payment Mode:* ${data.paymentMode}\n\nShukriya for shopping with us! 🙏`;
+            return msg;
+        }
+
+        function sendBillToCustomer() {
+            const data = collectBillData();
+            if (!data.items.length) { alert('Add at least one item first.'); return; }
+            if (!data.custPhone || data.custPhone.length < 10) { alert('Enter a valid customer phone number first.'); return; }
+            const digits = data.custPhone.replace(/\D/g, '');
+            const number = digits.length === 10 ? '91' + digits : digits;
+            const msg = buildBillText(data);
+            window.open(`https://wa.me/${number}?text=${encodeURIComponent(msg)}`, '_blank');
+            saveBillToSheet();
+        }
+
+        function sendBillCopyToShop() {
+            const data = collectBillData();
+            if (!data.items.length) { alert('Add at least one item first.'); return; }
+            const msg = buildBillText(data);
+            window.open(`https://wa.me/919815068679?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
         async function submitToGoogleSheet(data) {
@@ -384,10 +522,15 @@
                         salesman: data.salesman,
                         customer_name: data.custName,
                         customer_phone: data.custPhone,
+                        payment_mode: data.paymentMode,
+                        gst_applied: data.gstApplied ? 'Yes' : 'No',
+                        gst_number: data.gstNumber,
                         item: it.item,
                         qty: it.qty,
                         price: it.price,
+                        item_discount: it.discount,
                         amount: it.amount,
+                        overall_discount: data.overallDiscount,
                         bill_total: data.total
                     });
                 }
@@ -406,7 +549,12 @@
         function resetBillMaker() {
             document.getElementById('billCustName').value = '';
             document.getElementById('billCustPhone').value = '';
+            document.getElementById('billOverallDiscount').value = '0';
             document.getElementById('billItemsBody').innerHTML = '';
+            document.querySelector('input[name="paymentMode"][value="Cash"]').checked = true;
+            document.getElementById('billGstToggle').checked = false;
+            onGstToggleChange();
+            onCustPhoneChange();
             addBillRow();
             updateBillTotal();
             const t = billTimestampParts();
