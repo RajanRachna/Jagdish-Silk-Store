@@ -161,6 +161,11 @@
         .mystery-box span { font-size: 0.78rem; color: var(--text-gray); }
 
         .confirm-check { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 20px; font-size: 0.82rem; color: var(--text-gray); line-height: 1.5; }
+        .gg-privacy-note {
+            display: flex; align-items: center; gap: 8px; font-size: 0.76rem; color: var(--text-gray);
+            margin: -12px 0 18px 4px; line-height: 1.5;
+        }
+        .gg-privacy-note i { color: var(--warm-mustard); flex-shrink: 0; }
         .confirm-check input { margin-top: 3px; accent-color: var(--warm-mustard); flex-shrink: 0; }
 
         .share-friend-btn {
@@ -346,7 +351,7 @@
                 <i class="fas fa-arrow-right"></i>
             </a>
         </div>
-        <p class="entry-note">Then fill in your details below to lock in your entry ✨</p>
+        <p class="entry-note">Fer neeche apni details bhar do to lock in your entry ✨</p>
         <div class="mystery-box">
             <i class="fas fa-box-open"></i>
             <span>What's inside? That's the surprise — but trust us, it's kamaal ✨</span>
@@ -368,8 +373,9 @@
                 </div>
                 <div class="float-field">
                     <input type="text" id="ggAddress" required placeholder=" ">
-                    <label>Address</label>
+                    <label>Delivery Address (only used if you win)</label>
                 </div>
+                <div class="gg-privacy-note"><i class="fas fa-lock"></i> Your details stay private — we only use them to reach you if you're picked.</div>
                 <div class="float-field">
                     <textarea id="ggMessage" placeholder=" "></textarea>
                     <label>Any Message for Us?</label>
