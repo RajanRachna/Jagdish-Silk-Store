@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bill Maker | Jagdish Silk Store</title>
+    <title>Jagdish Silk Store</title>
     <meta name="robots" content="noindex, nofollow">
     <link rel="icon" type="image/png" href="logo-icon-192.png?v=2">
 
@@ -131,11 +131,8 @@
         .bill-save-btn:hover { background: #17a76b; transform: translateY(-2px); }
         .bill-save-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         .bill-clear-btn { background: #F8F9FA; color: var(--text-gray); border: 1px solid #eee !important; box-shadow: none; }
-        .bill-wa-customer-btn, .bill-wa-shop-btn { background: var(--whatsapp); color: white; box-shadow: 0 8px 20px rgba(37,211,102,0.3); }
-        .bill-wa-customer-btn:hover, .bill-wa-shop-btn:hover { background: #1fb855; transform: translateY(-2px); }
-        .bill-wa-customer-btn:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; transform: none; }
-        .bill-wa-shop-btn { background: #128C7E; }
-        .bill-wa-shop-btn:hover { background: #0e6b60; }
+        .bill-wa-send-btn { background: var(--whatsapp); color: white; box-shadow: 0 8px 20px rgba(37,211,102,0.3); width: 100%; }
+        .bill-wa-send-btn:hover { background: #1fb855; transform: translateY(-2px); }
         .bill-generate-btn { background: var(--deep-heritage); color: var(--warm-mustard); box-shadow: 0 8px 20px rgba(0,0,0,0.2); width: 100%; }
         .bill-generate-btn:hover { transform: translateY(-2px); }
         .bill-generated-preview {
@@ -192,7 +189,8 @@
         }
         /* Always render as a compact table — even if the editing screen is a phone
            showing the card-style layout below — so more items fit per page/image. */
-        .bill-capturing .bill-table, .bill-capturing .bill-table tbody { display: table !important; width: 100% !important; }
+        .bill-capturing .bill-table { display: table !important; width: 100% !important; }
+        .bill-capturing .bill-table tbody { display: table-row-group !important; }
         .bill-capturing .bill-table thead { display: table-header-group !important; }
         .bill-capturing .bill-table tr { display: table-row !important; margin-bottom: 0 !important; padding: 0 !important; border: none !important; background: none !important; }
         .bill-capturing .bill-table td { display: table-cell !important; padding: 7px 5px !important; border-bottom: 1px solid #eee !important; }
@@ -200,6 +198,8 @@
         .bill-capturing .bill-table td[data-label="Item"] { padding-bottom: 7px !important; margin-bottom: 0 !important; border-bottom: 1px solid #eee !important; }
         .bill-capturing .bill-table td input { max-width: none !important; }
         .bill-capturing .bill-row-remove-cell { display: none !important; }
+
+        @page { margin: 12mm; }
 
         @media print {
             body * { visibility: hidden; }
@@ -211,7 +211,8 @@
             header { display: none; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             /* Same fix for printing — force compact rows regardless of screen size. */
-            .bill-table, .bill-table tbody { display: table !important; width: 100% !important; }
+            .bill-table { display: table !important; width: 100% !important; }
+            .bill-table tbody { display: table-row-group !important; }
             .bill-table thead { display: table-header-group !important; }
             .bill-table tr { display: table-row !important; margin-bottom: 0 !important; padding: 0 !important; border: none !important; background: none !important; }
             .bill-table td { display: table-cell !important; padding: 7px 5px !important; border-bottom: 1px solid #eee !important; }
@@ -393,8 +394,7 @@
                 <button type="button" class="bill-save-btn" id="billSaveBtn" onclick="saveBillToSheet()"><i class="fas fa-cloud-arrow-up"></i> Save to Sheet</button>
             </div>
             <div class="bill-actions">
-                <button type="button" class="bill-wa-customer-btn" id="billWaCustomerBtn" onclick="sendBillToCustomer()" disabled><i class="fab fa-whatsapp"></i> Send to Customer</button>
-                <button type="button" class="bill-wa-shop-btn" onclick="sendBillCopyToShop()"><i class="fab fa-whatsapp"></i> Send Copy to Shop</button>
+                <button type="button" class="bill-wa-send-btn" id="billWaSendBtn" onclick="sendBillOnWhatsApp()"><i class="fab fa-whatsapp"></i> Send on WhatsApp</button>
             </div>
         </div>
 
@@ -478,8 +478,12 @@
         // ================= BILL MAKER =================
         function billTimestampParts() {
             const now = new Date();
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = now.toLocaleString('en-IN', { month: 'short' }).toUpperCase(); // e.g. AUG — the "alphabet" part
+            const hh = String(now.getHours()).padStart(2, '0');
+            const mm = String(now.getMinutes()).padStart(2, '0');
             return {
-                billNo: 'INV-' + now.getTime().toString().slice(-8),
+                billNo: `JS-${day}${month}-${hh}${mm}`,
                 date: now.toLocaleDateString('en-IN'),
                 time: now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
             };
@@ -589,9 +593,8 @@
         }
 
         function onCustPhoneChange() {
-            const phone = document.getElementById('billCustPhone').value.trim();
-            const valid = phone.length >= 10;
-            document.getElementById('billWaCustomerBtn').disabled = !valid || !currentBillImageBlob;
+            // Kept as a safe no-op — Send on WhatsApp no longer needs a valid phone
+            // number to enable, since the recipient is picked inside WhatsApp itself.
         }
 
         function collectBillData() {
@@ -699,34 +702,17 @@
             setTimeout(() => URL.revokeObjectURL(url), 4000);
         }
 
-        async function sendBillToCustomer() {
+        async function sendBillOnWhatsApp() {
             if (!currentBillImageBlob) { alert('Please generate the digital bill first.'); return; }
             const data = collectBillData();
-            if (!data.custPhone || data.custPhone.length < 10) { alert('Enter a valid customer phone number first.'); return; }
-            const digits = data.custPhone.replace(/\D/g, '');
-            const number = digits.length === 10 ? '91' + digits : digits;
-            const btn = document.getElementById('billWaCustomerBtn');
+            const btn = document.getElementById('billWaSendBtn');
             const origHtml = btn.innerHTML;
             btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
             try {
+                // Web Share API hands the image straight to WhatsApp with the recipient
+                // picker built in — no need to pre-target a specific number at all.
                 await shareOrDownloadBillImage(currentBillImageBlob, `Bill_${data.billNo}.png`);
-                window.open(`https://wa.me/${number}?text=${encodeURIComponent('Bill No ' + data.billNo + ' — please find the bill image attached.')}`, '_blank');
                 saveBillToSheet();
-            } finally {
-                btn.innerHTML = origHtml;
-                onCustPhoneChange();
-            }
-        }
-
-        async function sendBillCopyToShop() {
-            if (!currentBillImageBlob) { alert('Please generate the digital bill first.'); return; }
-            const data = collectBillData();
-            const btn = document.querySelector('.bill-wa-shop-btn');
-            const origHtml = btn.innerHTML;
-            btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-            try {
-                await shareOrDownloadBillImage(currentBillImageBlob, `Bill_${data.billNo}.png`);
-                window.open(`https://wa.me/919815068679?text=${encodeURIComponent('Bill No ' + data.billNo + ' — copy for records.')}`, '_blank');
             } finally {
                 btn.disabled = false; btn.innerHTML = origHtml;
             }
