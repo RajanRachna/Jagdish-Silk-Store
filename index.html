@@ -177,7 +177,7 @@
         /* A real ladder — two rails + rungs, drawn in pure CSS, no image needed.
            Height tracks the viewport (--buddy-ladder-h), narrow width to match the
            character's size, always in the same fixed spot on the page. */
-        .buddy-ladder { position: absolute; width: 20px; height: var(--buddy-ladder-h); left: 12px; bottom: 0; }
+        .buddy-ladder { position: absolute; width: 15px; height: var(--buddy-ladder-h); left: 15px; bottom: 0; }
         .ladder-rail { position: absolute; top: 0; bottom: 0; width: 3px; background: var(--warm-mustard); border-radius: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
         .ladder-rail-left { left: 0; }
         .ladder-rail-right { right: 0; }
@@ -1025,18 +1025,27 @@
         <div class="buddy-ladder">
             <div class="ladder-rail ladder-rail-left"></div>
             <div class="ladder-rail ladder-rail-right"></div>
-            <div class="ladder-rung" style="bottom:2%;"></div>
-            <div class="ladder-rung" style="bottom:13.5%;"></div>
-            <div class="ladder-rung" style="bottom:25%;"></div>
-            <div class="ladder-rung" style="bottom:36.5%;"></div>
-            <div class="ladder-rung" style="bottom:48%;"></div>
-            <div class="ladder-rung" style="bottom:59.5%;"></div>
-            <div class="ladder-rung" style="bottom:71%;"></div>
-            <div class="ladder-rung" style="bottom:82.5%;"></div>
-            <div class="ladder-rung" style="bottom:94%;"></div>
+            <div class="ladder-rung" style="bottom:2.0%;"></div>
+            <div class="ladder-rung" style="bottom:7.4%;"></div>
+            <div class="ladder-rung" style="bottom:12.8%;"></div>
+            <div class="ladder-rung" style="bottom:18.2%;"></div>
+            <div class="ladder-rung" style="bottom:23.6%;"></div>
+            <div class="ladder-rung" style="bottom:29.1%;"></div>
+            <div class="ladder-rung" style="bottom:34.5%;"></div>
+            <div class="ladder-rung" style="bottom:39.9%;"></div>
+            <div class="ladder-rung" style="bottom:45.3%;"></div>
+            <div class="ladder-rung" style="bottom:50.7%;"></div>
+            <div class="ladder-rung" style="bottom:56.1%;"></div>
+            <div class="ladder-rung" style="bottom:61.5%;"></div>
+            <div class="ladder-rung" style="bottom:66.9%;"></div>
+            <div class="ladder-rung" style="bottom:72.4%;"></div>
+            <div class="ladder-rung" style="bottom:77.8%;"></div>
+            <div class="ladder-rung" style="bottom:83.2%;"></div>
+            <div class="ladder-rung" style="bottom:88.6%;"></div>
+            <div class="ladder-rung" style="bottom:94.0%;"></div>
         </div>
         <img class="buddy-smoke" id="buddySmoke" src="" alt="" style="display:none;">
-        <img class="buddy-char" id="buddyChar" src="mascot-idle.png" alt="Site mascot" data-pose="idle" onclick="openBuddyChat()" onerror="this.dataset.broken='1'; this.style.display='none'; document.getElementById('buddyEmojiFallback').style.display='block';">
+        <img class="buddy-char" id="buddyChar" src="mascot-idle.png" alt="Ahuja Buddy" data-pose="idle" onclick="openBuddyChat()" onerror="this.dataset.broken='1'; this.style.display='none'; document.getElementById('buddyEmojiFallback').style.display='block';">
         <span class="buddy-char" id="buddyEmojiFallback" onclick="openBuddyChat()" style="display:none; font-size:1.9rem; line-height:1; text-align:center;">🧒</span>
         <div class="buddy-bubble" id="buddyBubble"></div>
     </div>
@@ -1047,7 +1056,7 @@
             <div class="buddy-chat-header">
                 <img src="mascot-idle.png" alt="" onerror="this.style.display='none'">
                 <div>
-                    <strong>Jagdish Buddy</strong>
+                    <strong>Ahuja Buddy</strong>
                     <span>Your little shopping helper</span>
                 </div>
                 <button type="button" class="buddy-chat-close" onclick="closeBuddyChat()"><i class="fas fa-times"></i></button>
@@ -3394,6 +3403,7 @@
                 buddy.style.height = '80px';
                 buddy.classList.remove('buddy-flip');
                 buddy.classList.add('buddy-landed'); // hides the ladder — doesn't make sense floating over a card
+                return (rect.left + rect.width / 2) < window.innerWidth / 2 ? 'left' : 'right';
             }
 
             // The character's height ON the ladder is driven directly by how far down
@@ -3571,24 +3581,28 @@
 
                         if (willLand) {
                             const el = landables[Math.floor(Math.random() * landables.length)];
-                            landOnElement(el);
+                            const side = landOnElement(el);
                             playSmokePuff(() => {
                                 buddy.classList.remove('buddy-hidden');
-                                const goToSleep = Math.random() < 0.35;
-                                if (goToSleep) {
-                                    buddy.dataset.sleeping = '1';
-                                    setPose('sleep');
-                                    showBubble('Thodi der aram... 😴', 3000);
-                                } else {
-                                    setPose('idle');
-                                    showBubble('Ithe vi sohna hai! ✨', 2600);
-                                }
+                                // A quick peek in from whichever side it landed on, before settling.
+                                setPose(side === 'left' ? 'peeking-from-left' : 'peeking-from-right');
+                                setTimeout(() => {
+                                    const goToSleep = Math.random() < 0.35;
+                                    if (goToSleep) {
+                                        buddy.dataset.sleeping = '1';
+                                        setPose('sleep');
+                                        showBubble('Thodi der aram... 😴', 3000);
+                                    } else {
+                                        setPose('idle');
+                                        showBubble('Ithe vi sohna hai! ✨', 2600);
+                                    }
+                                }, 1000);
                             });
                         } else {
                             goHomeToLadder();
                             playSmokePuff(() => {
                                 buddy.classList.remove('buddy-hidden');
-                                setPose('peeking-from-right');
+                                setPose('peek');
                                 setTimeout(() => setPose('idle'), 1300);
                             });
                         }
@@ -3629,7 +3643,7 @@
             // ================= BUDDY CHAT (a friendly FAQ helper, not a real AI) =================
             const BUDDY_FAQ = {
                 start: {
-                    bot: "Ji Aayan Nu! 👋 I'm your little Jagdish Lifestyle helper. I can help with products, orders, returns and more — pick something below!",
+                    bot: "Ji Aayan Nu! 👋 I'm Ahuja Buddy, your little Jagdish Lifestyle helper. I can help with products, orders, returns and more — pick something below!",
                     options: [
                         { label: '🧵 What do you sell?', next: 'products' },
                         { label: '🛍️ How do I order?', next: 'order' },
@@ -3755,7 +3769,7 @@
                     if (!buddy.classList.contains('buddy-hidden') && !isMoving()) {
                         setPose('wave');
                         setCharClass('buddy-wave', true);
-                        showBubble("Ji Aayan Nu! Tap me anytime for help 👋", 3600);
+                        showBubble("Ji Aayan Nu! I'm Ahuja Buddy — tap me anytime 👋", 3600);
                         setTimeout(() => {
                             setCharClass('buddy-wave', false);
                             if (!isMoving()) setPose('idle');
