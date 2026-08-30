@@ -13,10 +13,10 @@
     <link rel="canonical" href="https://rajanrachna.github.io/Jagdish-Silk-Store/">
 
     <!-- Favicon (cache-busted so browsers pick up updates) -->
-    <link rel="icon" type="image/png" sizes="512x512" href="logo-icon-512.png?v=2">
-    <link rel="icon" type="image/png" sizes="192x192" href="logo-icon-192.png?v=2">
+    <link rel="icon" type="image/png" sizes="512x512" href="mascot-idle.png?v=1">
+    <link rel="icon" type="image/png" sizes="192x192" href="mascot-idle.png?v=1">
     <link rel="apple-touch-icon" sizes="192x192" href="logo-icon-192.png?v=2">
-    <link rel="shortcut icon" href="logo-icon-192.png?v=2">
+    <link rel="shortcut icon" href="mascot-idle.png?v=1">
     <link rel="manifest" href="site.webmanifest">
     <meta name="msapplication-TileImage" content="logo-icon-192.png?v=2">
     <meta name="msapplication-TileColor" content="#2C1B18">
@@ -161,7 +161,7 @@
         @keyframes heroTwinkle { 0%, 100% { opacity: 0.25; transform: scale(0.8); } 50% { opacity: 0.9; transform: scale(1.2); } }
 
         /* ================= SCROLL BUDDY: climbs a real ladder, slides, waves hi ================= */
-        :root { --buddy-ladder-h: 58vh; }
+        :root { --buddy-ladder-h: 46vh; }
         .buddy-unit {
             position: fixed; z-index: 3500; pointer-events: none; user-select: none;
             width: 44px; height: calc(var(--buddy-ladder-h) + 44px);
@@ -183,6 +183,17 @@
         .ladder-rail-right { right: 0; }
         .ladder-rung { position: absolute; left: 0; right: 0; height: 3px; background: var(--warm-mustard); border-radius: 2px; }
 
+        .buddy-glow {
+            position: absolute; width: 46px; height: 46px; left: -5px; bottom: 0; z-index: 0;
+            border-radius: 50%; pointer-events: none;
+            background: radial-gradient(circle, rgba(255,193,7,0.22) 0%, rgba(233,30,99,0.08) 55%, transparent 75%);
+            animation: buddyGlowPulse 2.4s ease-in-out infinite;
+            transition: bottom 0.18s linear;
+        }
+        @keyframes buddyGlowPulse {
+            0%, 100% { opacity: 0.35; transform: scale(0.9); }
+            50% { opacity: 0.7; transform: scale(1.08); }
+        }
         .buddy-smoke {
             position: absolute; width: 70px; height: 70px; object-fit: contain; left: -23px; bottom: -17px;
             pointer-events: none; z-index: 1;
@@ -191,8 +202,10 @@
             position: absolute; width: 36px; height: 36px; object-fit: contain; z-index: 2;
             filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
             bottom: 0; left: 4px; pointer-events: auto; cursor: pointer;
-            transition: bottom 0.18s linear;
+            transition: bottom 0.18s linear, transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+            transform-origin: bottom center;
         }
+        .buddy-char:hover { transform: scale(1.35); }
         /* Position on the ladder is driven directly by actual scroll progress (in JS) —
            at the very top of the page it's at the very top of the ladder, at the very
            bottom of the page it's back at the ground. No looping animation, so there's
@@ -204,6 +217,7 @@
         }
         /* Idle wave "hi" gesture — triggered every so often, not tied to scrolling */
         .buddy-char.buddy-wave { animation: buddyWave 0.8s ease 2; }
+        .buddy-char.buddy-intro-big { width: 52px; height: 52px; transition: width 0.4s ease, height 0.4s ease; }
         @keyframes buddyWave {
             0%, 100% { transform: rotate(0deg) scale(1); }
             20% { transform: rotate(-14deg) scale(1.08); }
@@ -212,26 +226,28 @@
             80% { transform: rotate(6deg) scale(1.04); }
         }
         @media (max-width: 640px) {
-            :root { --buddy-ladder-h: 40vh; }
+            :root { --buddy-ladder-h: 32vh; }
             .buddy-unit { width: 38px; transform: scale(0.85); }
             .buddy-unit.buddy-flip { transform: scaleX(-0.85) scale(0.85); }
         }
 
         .buddy-bubble {
-            position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%) translateY(8px) scale(0.85);
-            margin-bottom: 8px; background: white; color: var(--deep-heritage); padding: 8px 14px; border-radius: 16px;
-            font-family: 'Poppins', sans-serif; font-size: 0.78rem; font-weight: 600; white-space: nowrap;
+            position: absolute; bottom: 100%; right: -8px; left: auto; transform: translateY(8px) scale(0.85);
+            margin-bottom: 8px; background: white; color: var(--deep-heritage); padding: 10px 15px; border-radius: 16px;
+            font-family: 'Poppins', sans-serif; font-size: 0.8rem; font-weight: 600; white-space: normal;
+            max-width: 190px; width: max-content; line-height: 1.4;
             box-shadow: 0 6px 18px rgba(0,0,0,0.15); border: 1.5px solid var(--soft-pink);
             opacity: 0; pointer-events: none; transition: opacity 0.25s ease, transform 0.25s ease; z-index: 3;
         }
         .buddy-bubble::after {
-            content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+            content: ''; position: absolute; top: 100%; right: 16px; left: auto;
             border: 6px solid transparent; border-top-color: white;
         }
-        .buddy-bubble.buddy-bubble-show { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
-        .buddy-unit.buddy-flip .buddy-bubble { transform: translateX(-50%) translateY(8px) scale(0.85) scaleX(-1); }
-        .buddy-unit.buddy-flip .buddy-bubble.buddy-bubble-show { transform: translateX(-50%) translateY(0) scale(1) scaleX(-1); }
-        @media (max-width: 640px) { .buddy-bubble { font-size: 0.72rem; padding: 7px 12px; white-space: normal; max-width: 150px; } }
+        .buddy-bubble.buddy-bubble-show { opacity: 1; transform: translateY(0) scale(1); }
+        .buddy-unit.buddy-flip .buddy-bubble { right: auto; left: -8px; transform: translateY(8px) scale(0.85) scaleX(-1); }
+        .buddy-unit.buddy-flip .buddy-bubble::after { right: auto; left: 16px; }
+        .buddy-unit.buddy-flip .buddy-bubble.buddy-bubble-show { transform: translateY(0) scale(1) scaleX(-1); }
+        @media (max-width: 640px) { .buddy-bubble { font-size: 0.74rem; padding: 8px 13px; max-width: 155px; } }
 
         /* ================= BUDDY CHAT ================= */
         .buddy-chat-overlay {
@@ -1044,6 +1060,7 @@
             <div class="ladder-rung" style="bottom:88.6%;"></div>
             <div class="ladder-rung" style="bottom:94.0%;"></div>
         </div>
+        <div class="buddy-glow" id="buddyGlow"></div>
         <img class="buddy-smoke" id="buddySmoke" src="" alt="" style="display:none;">
         <img class="buddy-char" id="buddyChar" src="mascot-idle.png" alt="Ahuja Buddy" data-pose="idle" onclick="openBuddyChat()" onerror="this.dataset.broken='1'; this.style.display='none'; document.getElementById('buddyEmojiFallback').style.display='block';">
         <span class="buddy-char" id="buddyEmojiFallback" onclick="openBuddyChat()" style="display:none; font-size:1.9rem; line-height:1; text-align:center;">🧒</span>
@@ -3301,6 +3318,7 @@
             // Both the real image and the emoji fallback get the animation classes —
             // only one is ever actually visible, so this is harmless either way.
             const chars = [img, document.getElementById('buddyEmojiFallback')];
+            const glow = document.getElementById('buddyGlow');
 
             function setCharClass(cls, on) {
                 chars.forEach(el => { if (el) el.classList.toggle(cls, on); });
@@ -3369,7 +3387,10 @@
             // centered — so it reads as a real fixture on the page, not a random pop-up.
             function goHomeToLadder() {
                 buddy.classList.remove('buddy-landed', 'buddy-flip');
-                buddy.style.top = '38%'; buddy.style.left = ''; buddy.style.right = '6px'; buddy.style.bottom = '';
+                // Anchored from the BOTTOM, not a top percentage — so the ground end of
+                // the ladder always stays a safe distance above the floating bar/footer,
+                // and never drifts off the bottom of the screen.
+                buddy.style.top = ''; buddy.style.left = ''; buddy.style.right = '6px'; buddy.style.bottom = '130px';
                 buddy.style.height = ''; // restore the full ladder-tall height (landing shrinks it)
             }
             goHomeToLadder();
@@ -3377,7 +3398,7 @@
             // Real UI elements it's allowed to land on — only ones currently visible on
             // screen right now, so it never "sits" somewhere scrolled out of view.
             function getLandableElements() {
-                const selectors = ['.life-card', '.section-title', '.review-card', '.hero-chip'];
+                const selectors = ['.life-card', '.section-title', '.review-card', '.hero-chip', '.btn-primary', '.surprise-btn', '.filter-btn'];
                 const candidates = [];
                 selectors.forEach(sel => {
                     document.querySelectorAll(sel).forEach(el => {
@@ -3403,6 +3424,7 @@
                 buddy.style.height = '80px';
                 buddy.classList.remove('buddy-flip');
                 buddy.classList.add('buddy-landed'); // hides the ladder — doesn't make sense floating over a card
+                if (glow) glow.style.bottom = '0';
                 return (rect.left + rect.width / 2) < window.innerWidth / 2 ? 'left' : 'right';
             }
 
@@ -3418,6 +3440,7 @@
                 const climbedFraction = (1 - progress).toFixed(4); // 1 = fully up top, 0 = fully at the ground
                 const bottomValue = `calc(var(--buddy-ladder-h) * ${climbedFraction})`;
                 chars.forEach(el => { if (el) el.style.bottom = bottomValue; });
+                if (glow) glow.style.bottom = bottomValue;
             }
 
             window.addEventListener('scroll', () => {
@@ -3456,7 +3479,16 @@
                 scrollAnimTimer = setTimeout(() => {
                     setCharClass('buddy-sliding', false);
                     setCharClass('buddy-climbing', false);
-                    setPose('idle');
+                    // Reached the very bottom of the page (ladder fully descended) — sit
+                    // and rest there, instead of just standing.
+                    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+                    const atBottom = scrollable > 0 && (scrollable - window.scrollY) < 12;
+                    if (atBottom && !buddy.classList.contains('buddy-landed')) {
+                        setPose('sleep');
+                        showBubble('Pahunch gaye! Thodi der baithde haan 😌', 2600);
+                    } else {
+                        setPose('idle');
+                    }
                 }, 500);
             }, { passive: true });
             syncCharToScrollProgress(); // start in the right spot even if the page loads mid-scroll
@@ -3762,18 +3794,21 @@
                 }
             };
 
-            // Introduces itself once per visit, shortly after the page loads.
+            // Introduces itself once per visit, shortly after the page loads — a little
+            // bigger just for this moment, so it actually catches the eye.
             if (!sessionStorage.getItem('jss_buddyIntroduced')) {
                 sessionStorage.setItem('jss_buddyIntroduced', '1');
                 setTimeout(() => {
                     if (!buddy.classList.contains('buddy-hidden') && !isMoving()) {
                         setPose('wave');
                         setCharClass('buddy-wave', true);
-                        showBubble("Ji Aayan Nu! I'm Ahuja Buddy — tap me anytime 👋", 3600);
+                        setCharClass('buddy-intro-big', true);
+                        showBubble("Ji Aayan Nu! I'm Ahuja Buddy — I'm here to help! 👋", 4200);
                         setTimeout(() => {
                             setCharClass('buddy-wave', false);
+                            setCharClass('buddy-intro-big', false);
                             if (!isMoving()) setPose('idle');
-                        }, 1700);
+                        }, 2200);
                     }
                 }, 2500);
             }
