@@ -206,6 +206,12 @@
             transform-origin: bottom center;
         }
         .buddy-char:hover { transform: scale(1.35); }
+        /* A stronger, more directional shadow when it's actually perched/sitting on a
+           real surface (chat panel, card) — makes it read as grounded and 3D instead
+           of just floating over the top. */
+        .buddy-sitting-3d .buddy-char {
+            filter: drop-shadow(0 10px 8px rgba(0,0,0,0.35)) drop-shadow(0 2px 3px rgba(0,0,0,0.25));
+        }
         /* Position on the ladder is driven directly by actual scroll progress (in JS) —
            at the very top of the page it's at the very top of the ladder, at the very
            bottom of the page it's back at the ground. No looping animation, so there's
@@ -1071,7 +1077,7 @@
     <div class="buddy-chat-overlay no-print" id="buddyChatOverlay" onclick="closeModalOutside(event, 'buddyChatOverlay')" style="display:none;">
         <div class="buddy-chat-panel">
             <div class="buddy-chat-header">
-                <img src="mascot-idle.png" alt="" onerror="this.style.display='none'">
+                <img src="mascot-phone-using.png" alt="" onerror="this.style.display='none'">
                 <div>
                     <strong>Ahuja Buddy</strong>
                     <span>Your little shopping helper</span>
@@ -3120,7 +3126,7 @@
                 const msgs = ['Added to Wishlist ❤️', 'Balle Balle! Great pick ✨', 'Saved! Your taste is 🔥', 'Into the wishlist it goes 💕'];
                 showToast(msgs[Math.floor(Math.random() * msgs.length)], 'fa-heart');
                 if (btn) fireHeartBurst(btn);
-                if (window.triggerBuddyLove) window.triggerBuddyLove();
+                if (window.triggerBuddyLove) window.triggerBuddyLove(btn);
             } else {
                 wishlist.splice(idx, 1);
                 showToast('Removed from Wishlist', 'fa-heart-crack');
@@ -3346,18 +3352,17 @@
                 'smoke-animation-growing-big.png', 'smoke-animation-big.png', 'smoke-animation-big-2.png',
                 'smoke-animation-bigest.png'
             ];
-            function playSmokePuff(onMidpoint) {
+            function playSmokePuff(onMidpoint, frameDelay = 65) {
                 if (!smoke || smoke.dataset.broken === '1') { if (onMidpoint) onMidpoint(); return; }
                 smoke.style.transition = '';
                 smoke.style.display = 'block';
                 smoke.style.opacity = '1';
                 let i = 0;
-                const frameDelay = 65;
                 (function nextFrame() {
                     if (i >= SMOKE_FRAMES.length) {
-                        smoke.style.transition = 'opacity 0.35s ease';
+                        smoke.style.transition = 'opacity 0.2s ease';
                         smoke.style.opacity = '0';
-                        setTimeout(() => { smoke.style.display = 'none'; }, 350);
+                        setTimeout(() => { smoke.style.display = 'none'; }, 200);
                         return;
                     }
                     smoke.onerror = () => { smoke.dataset.broken = '1'; smoke.style.display = 'none'; };
@@ -3386,7 +3391,7 @@
             // The ladder always lives in this one fixed spot — right edge, vertically
             // centered — so it reads as a real fixture on the page, not a random pop-up.
             function goHomeToLadder() {
-                buddy.classList.remove('buddy-landed', 'buddy-flip');
+                buddy.classList.remove('buddy-landed', 'buddy-flip', 'buddy-sitting-3d');
                 // Anchored from the BOTTOM, not a top percentage — so the ground end of
                 // the ladder always stays a safe distance above the floating bar/footer,
                 // and never drifts off the bottom of the screen.
@@ -3660,16 +3665,49 @@
 
             // Wishlist hearts trigger the cute-love pose — exposed globally since
             // toggleWishlist() lives outside this closure.
-            window.triggerBuddyLove = function () {
+            window.triggerBuddyLove = function (btn) {
                 if (buddy.classList.contains('buddy-hidden') || isMoving()) return;
                 delete buddy.dataset.sleeping;
-                setPose('cute-love');
-                setCharClass('buddy-wave', true);
-                showBubble('Balle Balle, sohni choice! 💕', 2400);
-                setTimeout(() => {
+
+                if (btn) {
+                    // Instant teleport, in a quick puff of smoke — right next to the heart
+                    // that was just clicked, wherever it happened to be before.
                     setCharClass('buddy-wave', false);
-                    setPose('idle');
-                }, 1800);
+                    playSmokePuff(() => buddy.classList.add('buddy-hidden'), 22);
+                    setTimeout(() => {
+                        const rect = btn.getBoundingClientRect();
+                        const left = Math.min(window.innerWidth - 60, Math.max(8, rect.left + rect.width / 2 - 30));
+                        const top = Math.max(8, rect.top - 62);
+                        buddy.classList.remove('buddy-flip');
+                        buddy.style.left = left + 'px'; buddy.style.top = top + 'px';
+                        buddy.style.right = ''; buddy.style.bottom = '';
+                        buddy.style.height = '80px';
+                        buddy.classList.add('buddy-landed', 'buddy-sitting-3d');
+                        playSmokePuff(() => {
+                            buddy.classList.remove('buddy-hidden');
+                            setPose('cute-love');
+                            setCharClass('buddy-wave', true);
+                            showBubble('Love you too! 💕', 2600);
+                        }, 22);
+                        setTimeout(() => {
+                            setCharClass('buddy-wave', false);
+                            setTimeout(() => {
+                                if (buddy.classList.contains('buddy-landed')) {
+                                    goHomeToLadder();
+                                    if (!isMoving()) setPose('idle');
+                                }
+                            }, 900);
+                        }, 1800);
+                    }, 180);
+                } else {
+                    setPose('cute-love');
+                    setCharClass('buddy-wave', true);
+                    showBubble('Balle Balle, sohni choice! 💕', 2400);
+                    setTimeout(() => {
+                        setCharClass('buddy-wave', false);
+                        setPose('idle');
+                    }, 1800);
+                }
             };
 
             // ================= BUDDY CHAT (a friendly FAQ helper, not a real AI) =================
@@ -3764,19 +3802,20 @@
                 renderBuddyStep('start');
                 delete buddy.dataset.sleeping; // clicking it directly always counts as waking it up
 
-                // Hop up and perch right on top of the chat panel, phone in hand — feels
-                // like it's actually part of the conversation, not off somewhere else.
+                // Hop up and perch right on the panel's top edge, phone in hand — feet
+                // dangling slightly over it so it actually reads as "sitting on", not
+                // floating above it.
                 if (!isMoving()) {
                     requestAnimationFrame(() => {
                         const panel = document.querySelector('.buddy-chat-panel');
                         if (panel) {
                             const rect = panel.getBoundingClientRect();
                             buddy.classList.remove('buddy-flip');
-                            buddy.style.top = Math.max(8, rect.top - 48) + 'px';
+                            buddy.style.top = Math.max(8, rect.top - 70) + 'px';
                             buddy.style.left = Math.min(window.innerWidth - 52, rect.right - 58) + 'px';
                             buddy.style.right = ''; buddy.style.bottom = '';
                             buddy.style.height = '80px';
-                            buddy.classList.add('buddy-landed');
+                            buddy.classList.add('buddy-landed', 'buddy-sitting-3d');
                         }
                         setPose('phone-using');
                     });
