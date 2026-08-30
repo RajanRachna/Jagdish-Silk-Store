@@ -159,6 +159,115 @@
         }
         .hero-sparkle { position: absolute; color: var(--warm-mustard); opacity: 0.75; animation: heroTwinkle 2.6s ease-in-out infinite; }
         @keyframes heroTwinkle { 0%, 100% { opacity: 0.25; transform: scale(0.8); } 50% { opacity: 0.9; transform: scale(1.2); } }
+
+        /* ================= SCROLL BUDDY: climbs a real ladder, slides, waves hi ================= */
+        .buddy-unit {
+            position: fixed; z-index: 3500; pointer-events: none; user-select: none; width: 56px; height: 186px;
+            transition: top 0.7s cubic-bezier(0.34,1.56,0.64,1), left 0.7s cubic-bezier(0.34,1.56,0.64,1),
+                        right 0.7s cubic-bezier(0.34,1.56,0.64,1), bottom 0.7s cubic-bezier(0.34,1.56,0.64,1),
+                        opacity 0.4s ease;
+            opacity: 0.95;
+        }
+        .buddy-unit.buddy-hidden { opacity: 0; }
+        .buddy-unit.buddy-flip { transform: scaleX(-1); }
+        .buddy-unit.buddy-landed .buddy-ladder { display: none; }
+
+        /* A real ladder — two rails + rungs, drawn in pure CSS, no image needed.
+           Fixed at a taller 8-rung height now, always the same spot on the page. */
+        .buddy-ladder { position: absolute; width: 30px; height: 180px; left: 13px; bottom: 0; }
+        .ladder-rail { position: absolute; top: 0; bottom: 0; width: 3px; background: var(--warm-mustard); border-radius: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+        .ladder-rail-left { left: 0; }
+        .ladder-rail-right { right: 0; }
+        .ladder-rung { position: absolute; left: 0; right: 0; height: 3px; background: var(--warm-mustard); border-radius: 2px; }
+
+        .buddy-smoke {
+            position: absolute; width: 70px; height: 70px; object-fit: contain; left: -17px; bottom: -17px;
+            pointer-events: none; z-index: 1;
+        }
+        .buddy-char {
+            position: absolute; width: 36px; height: 36px; object-fit: contain; z-index: 2;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+            bottom: 0; left: 10px; pointer-events: auto; cursor: pointer;
+        }
+        /* Climbing: hops straight up all 8 rungs, one at a time — "steps()" makes
+           the motion literally discrete, like grabbing each rung, not a smooth glide. */
+        .buddy-char.buddy-climbing { animation: buddyClimbRungs 1.9s steps(8) infinite; }
+        @keyframes buddyClimbRungs {
+            0%   { bottom: 0;   transform: rotate(-4deg); }
+            12.5%  { bottom: 20px;  transform: rotate(4deg); }
+            25%    { bottom: 40px;  transform: rotate(-4deg); }
+            37.5%  { bottom: 60px;  transform: rotate(4deg); }
+            50%    { bottom: 80px;  transform: rotate(-4deg); }
+            62.5%  { bottom: 100px; transform: rotate(4deg); }
+            75%    { bottom: 120px; transform: rotate(-4deg); }
+            87.5%  { bottom: 140px; transform: rotate(4deg); }
+            100%   { bottom: 140px; transform: rotate(4deg); }
+        }
+        /* Sliding: a quick swoop straight back down the ladder */
+        .buddy-char.buddy-sliding { animation: buddySlideDown 1s cubic-bezier(0.6,-0.2,0.8,0.4) infinite; }
+        @keyframes buddySlideDown {
+            0%   { bottom: 140px; transform: rotate(14deg); }
+            100% { bottom: 0;     transform: rotate(-8deg); }
+        }
+        /* Idle wave "hi" gesture — triggered every so often, not tied to scrolling */
+        .buddy-char.buddy-wave { animation: buddyWave 0.8s ease 2; }
+        @keyframes buddyWave {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            20% { transform: rotate(-14deg) scale(1.08); }
+            40% { transform: rotate(10deg) scale(1.08); }
+            60% { transform: rotate(-10deg) scale(1.08); }
+            80% { transform: rotate(6deg) scale(1.04); }
+        }
+        @media (max-width: 640px) { .buddy-unit { transform: scale(0.8); } .buddy-unit.buddy-flip { transform: scaleX(-0.8) scale(0.8); } }
+
+        .buddy-bubble {
+            position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%) translateY(8px) scale(0.85);
+            margin-bottom: 8px; background: white; color: var(--deep-heritage); padding: 8px 14px; border-radius: 16px;
+            font-family: 'Poppins', sans-serif; font-size: 0.78rem; font-weight: 600; white-space: nowrap;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.15); border: 1.5px solid var(--soft-pink);
+            opacity: 0; pointer-events: none; transition: opacity 0.25s ease, transform 0.25s ease; z-index: 3;
+        }
+        .buddy-bubble::after {
+            content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+            border: 6px solid transparent; border-top-color: white;
+        }
+        .buddy-bubble.buddy-bubble-show { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+        .buddy-unit.buddy-flip .buddy-bubble { transform: translateX(-50%) translateY(8px) scale(0.85) scaleX(-1); }
+        .buddy-unit.buddy-flip .buddy-bubble.buddy-bubble-show { transform: translateX(-50%) translateY(0) scale(1) scaleX(-1); }
+        @media (max-width: 640px) { .buddy-bubble { font-size: 0.72rem; padding: 7px 12px; white-space: normal; max-width: 150px; } }
+
+        /* ================= BUDDY CHAT ================= */
+        .buddy-chat-overlay {
+            position: fixed; inset: 0; z-index: 6000; background: rgba(44,27,24,0.35);
+            display: flex; align-items: flex-end; justify-content: flex-end; padding: 20px;
+        }
+        .buddy-chat-overlay.active { display: flex; animation: overlayFadeIn 0.2s ease; }
+        .buddy-chat-panel {
+            width: 340px; max-width: 100%; max-height: 70vh; background: white; border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.25); display: flex; flex-direction: column; overflow: hidden;
+        }
+        .buddy-chat-header {
+            display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: var(--deep-heritage); color: white;
+        }
+        .buddy-chat-header img { width: 34px; height: 34px; border-radius: 50%; background: white; }
+        .buddy-chat-header div { flex: 1; display: flex; flex-direction: column; }
+        .buddy-chat-header strong { font-size: 0.9rem; }
+        .buddy-chat-header span { font-size: 0.7rem; color: rgba(255,255,255,0.6); }
+        .buddy-chat-close { background: none; border: none; color: white; font-size: 1rem; cursor: pointer; padding: 6px; }
+        .buddy-chat-body { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+        .buddy-chat-msg {
+            max-width: 85%; padding: 10px 14px; border-radius: 14px; font-size: 0.85rem; line-height: 1.5;
+        }
+        .buddy-chat-msg.buddy-msg-bot { background: var(--soft-pink); color: var(--deep-heritage); align-self: flex-start; border-bottom-left-radius: 4px; }
+        .buddy-chat-msg.buddy-msg-user { background: var(--primary-pink); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .buddy-chat-options { display: flex; flex-direction: column; gap: 8px; }
+        .buddy-chat-option {
+            background: white; border: 1.5px solid var(--soft-pink); color: var(--primary-pink); padding: 9px 14px;
+            border-radius: 20px; font-size: 0.82rem; font-weight: 600; cursor: pointer; text-align: left; font-family: inherit;
+            transition: 0.2s;
+        }
+        .buddy-chat-option:hover { background: var(--soft-pink); }
+        @media (max-width: 480px) { .buddy-chat-overlay { padding: 0; align-items: flex-end; } .buddy-chat-panel { width: 100%; border-radius: 20px 20px 0 0; max-height: 75vh; } }
         .hero-welcome {
             display: inline-flex; align-items: center; gap: 8px; background: var(--soft-pink); color: var(--primary-pink);
             padding: 7px 20px; border-radius: 30px; font-size: 0.85rem; font-weight: 700; margin-bottom: 18px;
@@ -325,7 +434,11 @@
         .btn-secondary { background: transparent; color: var(--deep-heritage); border: 2px solid var(--deep-heritage); }
         .btn-secondary:hover { background: var(--deep-heritage); color: white; transform: translateY(-3px); }
 
-        .section-title { text-align: center; font-size: 2.8rem; color: var(--deep-heritage); margin: 60px 0 20px; font-weight: 700; }
+        .section-title { text-align: center; font-size: 2.8rem; color: var(--deep-heritage); margin: 60px 0 20px; font-weight: 700; position: relative; }
+        .section-title::after {
+            content: ''; display: block; width: 72px; height: 3px; margin: 16px auto 0; border-radius: 3px;
+            background: repeating-linear-gradient(90deg, var(--primary-pink) 0, var(--primary-pink) 6px, transparent 6px, transparent 12px);
+        }
         .section-subtitle { text-align: center; color: var(--text-gray); font-size: 1.1rem; margin-bottom: 40px; }
 
         /* ================= NEW: ADVANCED FILTER BAR ================= */
@@ -910,6 +1023,41 @@
 
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- ================= SCROLL BUDDY: a little silkworm friend ================= -->
+    <div class="buddy-unit" id="scrollBuddy">
+        <div class="buddy-ladder">
+            <div class="ladder-rail ladder-rail-left"></div>
+            <div class="ladder-rail ladder-rail-right"></div>
+            <div class="ladder-rung" style="bottom:8px;"></div>
+            <div class="ladder-rung" style="bottom:28px;"></div>
+            <div class="ladder-rung" style="bottom:48px;"></div>
+            <div class="ladder-rung" style="bottom:68px;"></div>
+            <div class="ladder-rung" style="bottom:88px;"></div>
+            <div class="ladder-rung" style="bottom:108px;"></div>
+            <div class="ladder-rung" style="bottom:128px;"></div>
+            <div class="ladder-rung" style="bottom:148px;"></div>
+        </div>
+        <img class="buddy-smoke" id="buddySmoke" src="" alt="" style="display:none;">
+        <img class="buddy-char" id="buddyChar" src="mascot-idle.png" alt="Site mascot" data-pose="idle" onclick="openBuddyChat()" onerror="this.dataset.broken='1'; this.style.display='none'; document.getElementById('buddyEmojiFallback').style.display='block';">
+        <span class="buddy-char" id="buddyEmojiFallback" onclick="openBuddyChat()" style="display:none; font-size:1.9rem; line-height:1; text-align:center;">🧒</span>
+        <div class="buddy-bubble" id="buddyBubble"></div>
+    </div>
+
+    <!-- ================= BUDDY CHAT: a friendly FAQ helper, not a real AI ================= -->
+    <div class="buddy-chat-overlay no-print" id="buddyChatOverlay" onclick="closeModalOutside(event, 'buddyChatOverlay')" style="display:none;">
+        <div class="buddy-chat-panel">
+            <div class="buddy-chat-header">
+                <img src="mascot-idle.png" alt="" onerror="this.style.display='none'">
+                <div>
+                    <strong>Jagdish Buddy</strong>
+                    <span>Your little shopping helper</span>
+                </div>
+                <button type="button" class="buddy-chat-close" onclick="closeBuddyChat()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="buddy-chat-body" id="buddyChatBody"></div>
+        </div>
+    </div>
+
     <!-- ================= UNDER CONSTRUCTION: full-site overlay (customers only) ================= -->
     <div id="constructionOverlay" class="construction-overlay">
         <div class="construction-brand-header">
@@ -1038,6 +1186,8 @@
                 <button class="admin-btn-logout" onclick="openCareGuideManager()"><i class="fas fa-shirt"></i> Care Guides</button>
                 <a class="admin-btn-logout" href="bill-maker.html" target="_blank"><i class="fas fa-receipt"></i> Bill Maker</a>
                 <a class="admin-btn-logout" href="brand-kit.html" target="_blank"><i class="fas fa-swatchbook"></i> Brand Kit</a>
+                <input type="file" id="heroImageInput" accept="image/*" style="display:none" onchange="handleHeroImageChange(event)">
+                <button class="admin-btn-logout" onclick="document.getElementById('heroImageInput').click()"><i class="fas fa-panorama"></i> Homepage Image</button>
                 <button class="admin-btn-logout" onclick="updateGithubToken()"><i class="fas fa-key"></i> GitHub Token</button>
                 <button class="admin-btn-logout" id="constructionToggleBtn" onclick="toggleUnderConstruction()"><i class="fas fa-person-digging"></i> Maintenance Mode</button>
                 <button class="admin-btn-logout" onclick="adminLogout()">Logout</button>
@@ -2419,6 +2569,63 @@
             return `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${path}`;
         }
 
+        // ================= HOMEPAGE HERO IMAGE (admin-editable) =================
+        const HERO_IMAGE_PATH = 'data/hero-image.json';
+        let heroImageUrl = null; // null = keep the default CSS background
+
+        async function fetchHeroImage() {
+            try {
+                const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${HERO_IMAGE_PATH}?t=${Date.now()}`, { cache: 'no-store' });
+                const data = res.ok ? await res.json() : null;
+                if (data && data.url) {
+                    heroImageUrl = data.url;
+                    applyHeroImage();
+                }
+            } catch (e) { /* keep the default background */ }
+        }
+
+        function applyHeroImage() {
+            if (!heroImageUrl) return;
+            const hero = document.querySelector('.hero');
+            if (!hero) return;
+            hero.style.backgroundImage = `linear-gradient(rgba(255,251,247,0.4), rgba(255,251,247,0.95)), url('${heroImageUrl}')`;
+            hero.style.backgroundSize = 'cover';
+            hero.style.backgroundPosition = 'center';
+        }
+
+        async function handleHeroImageChange(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (!confirm("Change the homepage's hero image? This updates it for every visitor.")) {
+                e.target.value = '';
+                return;
+            }
+            try {
+                showToast('Uploading homepage image...', 'fa-spinner');
+                const base64Content = await compressImage(file, 1920, 0.85);
+                const path = `images/hero_${Date.now()}.jpg`;
+                const res = await fetch(`${GH_API}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`, {
+                    method: 'PUT',
+                    headers: { Authorization: `token ${requireGithubToken()}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: 'Update homepage hero image', content: base64Content, branch: GITHUB_BRANCH })
+                });
+                if (!res.ok) {
+                    let detail = '';
+                    try { detail = (await res.json()).message || ''; } catch (err) {}
+                    throw new Error(`Image upload failed (HTTP ${res.status}${detail ? ': ' + detail : ''}).`);
+                }
+                const url = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${path}`;
+                await saveJsonToGitHub(HERO_IMAGE_PATH, { url }, 'Update homepage hero image');
+                heroImageUrl = url;
+                applyHeroImage();
+                showToast('Homepage image updated!', 'fa-check-circle');
+            } catch (err) {
+                alert('Could not update the homepage image: ' + err.message);
+            } finally {
+                e.target.value = '';
+            }
+        }
+
         async function sha256Hex(str) {
             const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
             return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
@@ -2470,6 +2677,7 @@
                 fetchProducts(); // re-check catalog now that we're admin (seeds it on the very first login)
                 fetchCareGuides();
                 fetchSiteStatus();
+                fetchHeroImage();
             } else {
                 document.getElementById('adminLoginError').style.display = 'block';
             }
@@ -2888,6 +3096,7 @@
                 const msgs = ['Added to Wishlist ❤️', 'Balle Balle! Great pick ✨', 'Saved! Your taste is 🔥', 'Into the wishlist it goes 💕'];
                 showToast(msgs[Math.floor(Math.random() * msgs.length)], 'fa-heart');
                 if (btn) fireHeartBurst(btn);
+                if (window.triggerBuddyLove) window.triggerBuddyLove();
             } else {
                 wishlist.splice(idx, 1);
                 showToast('Removed from Wishlist', 'fa-heart-crack');
@@ -3070,10 +3279,400 @@
             }
             fetchProducts();
             fetchCareGuides();
+            fetchHeroImage();
             updateWishlistBadge();
         })();
 
         document.getElementById('footerYear').textContent = new Date().getFullYear();
+
+        // ================= SCROLL BUDDY =================
+        (function scrollBuddySetup() {
+            const buddy = document.getElementById('scrollBuddy');
+            if (!buddy) return;
+            const img = document.getElementById('buddyChar');
+            const smoke = document.getElementById('buddySmoke');
+            // Both the real image and the emoji fallback get the animation classes —
+            // only one is ever actually visible, so this is harmless either way.
+            const chars = [img, document.getElementById('buddyEmojiFallback')];
+
+            function setCharClass(cls, on) {
+                chars.forEach(el => { if (el) el.classList.toggle(cls, on); });
+            }
+            // True while actively climbing/sliding — gestures skip themselves during this,
+            // since a wave animation would otherwise visually freeze the climb/slide mid-way.
+            function isMoving() {
+                return img && (img.classList.contains('buddy-climbing') || img.classList.contains('buddy-sliding'));
+            }
+
+            // Swaps to the matching pose image (mascot-idle.png, mascot-climb.png, etc.)
+            // Once any pose image fails to load we stop trying and just keep the emoji.
+            function setPose(pose) {
+                if (!img || img.dataset.broken === '1' || img.dataset.pose === pose) return;
+                img.dataset.pose = pose;
+                img.src = `mascot-${pose}.png`;
+            }
+
+            // Plays the 7-frame smoke puff (small → biggest → gone) at the buddy's
+            // current spot. Calls onMidpoint partway through — that's when we swap the
+            // character's visibility/pose, so it looks like it vanishes or appears IN
+            // the smoke rather than just popping before/after it.
+            const SMOKE_FRAMES = [
+                'smoke-animation-start.png', 'smoke-animation-growing.png', 'smoke-animation-growing-2.png',
+                'smoke-animation-growing-big.png', 'smoke-animation-big.png', 'smoke-animation-big-2.png',
+                'smoke-animation-bigest.png'
+            ];
+            function playSmokePuff(onMidpoint) {
+                if (!smoke || smoke.dataset.broken === '1') { if (onMidpoint) onMidpoint(); return; }
+                smoke.style.transition = '';
+                smoke.style.display = 'block';
+                smoke.style.opacity = '1';
+                let i = 0;
+                const frameDelay = 65;
+                (function nextFrame() {
+                    if (i >= SMOKE_FRAMES.length) {
+                        smoke.style.transition = 'opacity 0.35s ease';
+                        smoke.style.opacity = '0';
+                        setTimeout(() => { smoke.style.display = 'none'; }, 350);
+                        return;
+                    }
+                    smoke.onerror = () => { smoke.dataset.broken = '1'; smoke.style.display = 'none'; };
+                    smoke.src = SMOKE_FRAMES[i];
+                    if (i === 3 && onMidpoint) onMidpoint(); // roughly the fullest-cover moment
+                    i++;
+                    setTimeout(nextFrame, frameDelay);
+                })();
+            }
+
+            // Little Punjabi speech bubble above the character's head.
+            const bubble = document.getElementById('buddyBubble');
+            let bubbleTimer = null;
+            function showBubble(text, duration = 3200) {
+                if (!bubble) return;
+                bubble.textContent = text;
+                bubble.classList.add('buddy-bubble-show');
+                clearTimeout(bubbleTimer);
+                bubbleTimer = setTimeout(() => bubble.classList.remove('buddy-bubble-show'), duration);
+            }
+
+            let lastScrollY = window.scrollY;
+            let scrollAnimTimer = null;
+            let inactivityTimer = null;
+
+            // The ladder always lives in this one fixed spot — right edge, vertically
+            // centered — so it reads as a real fixture on the page, not a random pop-up.
+            function goHomeToLadder() {
+                buddy.classList.remove('buddy-landed', 'buddy-flip');
+                buddy.style.top = '38%'; buddy.style.left = ''; buddy.style.right = '6px'; buddy.style.bottom = '';
+            }
+            goHomeToLadder();
+
+            // Real UI elements it's allowed to land on — only ones currently visible on
+            // screen right now, so it never "sits" somewhere scrolled out of view.
+            function getLandableElements() {
+                const selectors = ['.life-card', '.section-title', '.review-card', '.hero-chip'];
+                const candidates = [];
+                selectors.forEach(sel => {
+                    document.querySelectorAll(sel).forEach(el => {
+                        const rect = el.getBoundingClientRect();
+                        if (rect.top > 100 && rect.bottom < window.innerHeight - 60 && rect.width > 50 && rect.height > 20) {
+                            candidates.push(el);
+                        }
+                    });
+                });
+                return candidates;
+            }
+
+            function landOnElement(el) {
+                const rect = el.getBoundingClientRect();
+                const left = Math.min(window.innerWidth - 64, Math.max(8, rect.left + rect.width / 2 - 28));
+                const top = Math.max(8, rect.top - 54);
+                buddy.style.left = left + 'px'; buddy.style.top = top + 'px';
+                buddy.style.right = ''; buddy.style.bottom = '';
+                buddy.classList.remove('buddy-flip');
+                buddy.classList.add('buddy-landed'); // hides the ladder — doesn't make sense floating over a card
+            }
+
+            window.addEventListener('scroll', () => {
+                if (buddy.classList.contains('buddy-hidden')) return;
+                // Any scroll counts as activity — wake up first, before anything else,
+                // so a climb/slide pose set further down never gets clobbered by this.
+                if (buddy.dataset.sleeping) { delete buddy.dataset.sleeping; }
+                clearTimeout(inactivityTimer);
+                inactivityTimer = setTimeout(() => {
+                    if (!buddy.classList.contains('buddy-hidden')) {
+                        buddy.dataset.sleeping = '1';
+                        setPose('sleep');
+                    }
+                }, 50000); // 50s of no activity
+
+                // If it's currently perched on a card/button, hop back to the ladder
+                // first — climbing/sliding only makes sense from the ladder.
+                if (buddy.classList.contains('buddy-landed')) {
+                    goHomeToLadder();
+                }
+                const currentY = window.scrollY;
+                if (currentY > lastScrollY) {
+                    setCharClass('buddy-wave', false); // a gesture mid-flight would otherwise
+                    setCharClass('buddy-sliding', true); // freeze the climb/slide animation —
+                    setCharClass('buddy-climbing', false); // scrolling always takes priority
+                    setPose('slide');
+                } else if (currentY < lastScrollY) {
+                    setCharClass('buddy-wave', false);
+                    setCharClass('buddy-climbing', true);
+                    setCharClass('buddy-sliding', false);
+                    setPose('climb');
+                }
+                lastScrollY = currentY;
+                clearTimeout(scrollAnimTimer);
+                scrollAnimTimer = setTimeout(() => {
+                    setCharClass('buddy-sliding', false);
+                    setCharClass('buddy-climbing', false);
+                    setPose('idle');
+                }, 500);
+            }, { passive: true });
+
+            // A friendly little gesture, now and then, even when nobody's scrolling —
+            // picks a random one each time for variety, with a cute Punjabi line to match.
+            // "fly" is rare — a little surprise, not part of the regular rotation.
+            const GESTURE_LINES = {
+                'wave': ['Ji Aayan Nu! 👋', 'Hello ji!'],
+                'namaste': ['Namaste ji! 🙏', 'Sat Sri Akal!'],
+                'cheer': ['Balle Balle! 🎉', 'Vadhiya!'],
+                'thumbs-up': ['Kamaal hai eh! 👍', 'Vadhiya choice!'],
+                'point': ['Ohh dekho eh! 👀', 'Sohni cheez hai eh!'],
+                'think': ['Ki lena hai aj? 🤔', 'Socho socho...'],
+                'shy': ['Balle... sharam aa gayi! 😳', 'Hehe, kinni sohni site aa!'],
+                'fly': ['Balle Balle, udd gaya! ✈️', 'Wheee!']
+            };
+            const GESTURE_POSES = ['wave', 'namaste', 'cheer', 'thumbs-up', 'point', 'think', 'shy'];
+            function scheduleNextWave() {
+                const delay = 7000 + Math.random() * 9000;
+                setTimeout(() => {
+                    if (!buddy.classList.contains('buddy-hidden') && !buddy.dataset.sleeping && !isMoving()) {
+                        // "fly" shows up rarely — about 1 in 10 times — everything else is even odds.
+                        const pose = Math.random() < 0.1
+                            ? 'fly'
+                            : GESTURE_POSES[Math.floor(Math.random() * GESTURE_POSES.length)];
+                        setPose(pose);
+                        setCharClass('buddy-wave', true);
+                        const lines = GESTURE_LINES[pose];
+                        if (lines) showBubble(lines[Math.floor(Math.random() * lines.length)]);
+                        setTimeout(() => {
+                            setCharClass('buddy-wave', false);
+                            setPose('idle');
+                        }, 1700);
+                    }
+                    scheduleNextWave();
+                }, delay);
+            }
+            scheduleNextWave();
+
+            // Falls "asleep" after a while with no scrolling or clicking — wakes back up
+            // on the next bit of activity. (Scroll handles its own wake-up above, inline,
+            // so a climb/slide pose never gets clobbered by this firing separately.)
+            function markActivity() {
+                if (buddy.dataset.sleeping) {
+                    delete buddy.dataset.sleeping;
+                    setPose('idle');
+                }
+                clearTimeout(inactivityTimer);
+                inactivityTimer = setTimeout(() => {
+                    if (!buddy.classList.contains('buddy-hidden')) {
+                        buddy.dataset.sleeping = '1';
+                        setPose('sleep');
+                    }
+                }, 50000); // 50s of no activity
+            }
+            document.addEventListener('click', markActivity);
+            markActivity();
+
+            // Whenever a WhatsApp link anywhere on the site is clicked, have the buddy
+            // "sit down" with the phone for a moment — feels like it's part of the chat.
+            const PHONE_LINES = ['Chat kardeyo, main vi sun raha! 📱', 'Jaldi reply milega ji!', 'WhatsApp te milde haan!'];
+            let phoneMomentTimer = null;
+            document.addEventListener('click', (e) => {
+                const waLink = e.target.closest('a[href*="wa.me"]');
+                if (!waLink || buddy.classList.contains('buddy-hidden') || isMoving()) return;
+                delete buddy.dataset.sleeping;
+                setPose('phone-using');
+                showBubble(PHONE_LINES[Math.floor(Math.random() * PHONE_LINES.length)], 3800);
+                clearTimeout(phoneMomentTimer);
+                phoneMomentTimer = setTimeout(() => setPose('idle'), 4200);
+            });
+
+            // Randomly vanish (in a puff of smoke), then reappear from a random edge —
+            // peeking in first if it lands on the left/right edge, since there's a pose
+            // for exactly that.
+            function scheduleNextVanish() {
+                const visibleFor = 9000 + Math.random() * 12000; // stays out 9-21s
+                setTimeout(() => {
+                    setPose('fly'); // a glimpse of flying off, just before the smoke covers it
+                    playSmokePuff(() => buddy.classList.add('buddy-hidden'));
+                    const hiddenFor = 3200 + Math.random() * 6000; // hides ~3-9s (a touch longer, to cover the puff)
+                    setTimeout(() => {
+                        const landables = getLandableElements();
+                        // Only offer the "land on something" option when there's actually
+                        // something sensible on screen to land on — otherwise stick to the
+                        // ladder, so it never looks like it's floating in empty space.
+                        const willLand = landables.length > 0 && Math.random() < 0.4;
+
+                        if (willLand) {
+                            const el = landables[Math.floor(Math.random() * landables.length)];
+                            landOnElement(el);
+                            playSmokePuff(() => {
+                                buddy.classList.remove('buddy-hidden');
+                                const goToSleep = Math.random() < 0.35;
+                                if (goToSleep) {
+                                    buddy.dataset.sleeping = '1';
+                                    setPose('sleep');
+                                    showBubble('Thodi der aram... 😴', 3000);
+                                } else {
+                                    setPose('idle');
+                                    showBubble('Ithe vi sohna hai! ✨', 2600);
+                                }
+                            });
+                        } else {
+                            goHomeToLadder();
+                            playSmokePuff(() => {
+                                buddy.classList.remove('buddy-hidden');
+                                setPose('peeking-from-right');
+                                setTimeout(() => setPose('idle'), 1300);
+                            });
+                        }
+                        scheduleNextVanish();
+                    }, hiddenFor);
+                }, visibleFor);
+            }
+            scheduleNextVanish();
+
+            // A little nudge near anything clickable — not on every hover (that'd be
+            // annoying), just occasionally, with a cooldown so it never spams.
+            let lastNudgeTime = 0;
+            const NUDGE_LINES = ['Karo click, darro mat! 😄', 'Bas ek tap door hai!', 'Try karo, changa lagega!'];
+            document.addEventListener('mouseover', (e) => {
+                if (buddy.classList.contains('buddy-hidden') || buddy.dataset.sleeping) return;
+                const target = e.target.closest('button, a, .life-card');
+                if (!target) return;
+                const now = Date.now();
+                if (now - lastNudgeTime < 15000 || Math.random() > 0.15) return;
+                lastNudgeTime = now;
+                showBubble(NUDGE_LINES[Math.floor(Math.random() * NUDGE_LINES.length)], 2200);
+            }, { passive: true });
+
+            // Wishlist hearts trigger the cute-love pose — exposed globally since
+            // toggleWishlist() lives outside this closure.
+            window.triggerBuddyLove = function () {
+                if (buddy.classList.contains('buddy-hidden') || isMoving()) return;
+                delete buddy.dataset.sleeping;
+                setPose('cute-love');
+                setCharClass('buddy-wave', true);
+                showBubble('Balle Balle, sohni choice! 💕', 2400);
+                setTimeout(() => {
+                    setCharClass('buddy-wave', false);
+                    setPose('idle');
+                }, 1800);
+            };
+
+            // ================= BUDDY CHAT (a friendly FAQ helper, not a real AI) =================
+            const BUDDY_FAQ = {
+                start: {
+                    bot: "Ji Aayan Nu! 👋 I'm your little Jagdish Lifestyle helper. I can help with products, orders, returns and more — pick something below!",
+                    options: [
+                        { label: '🧵 What do you sell?', next: 'products' },
+                        { label: '🛍️ How do I order?', next: 'order' },
+                        { label: '🔄 Return / Exchange policy?', next: 'returns' },
+                        { label: '📍 Where are you located?', next: 'location' },
+                        { label: '💍 Bulk / Wedding orders?', next: 'bulk' },
+                        { label: '💬 Talk to a real person', next: 'human' }
+                    ]
+                },
+                products: {
+                    bot: "We're a pure handloom store — curtains, bed sets, towels & sofa covers. Great for festive gifting, weddings, housewarming, or just your own home! 🏠",
+                    options: [{ label: '⬅️ Back to menu', next: 'start' }]
+                },
+                order: {
+                    bot: "Easy! Browse the catalog, tap the WhatsApp button on anything you like, and we'll take it from there. 💛",
+                    options: [{ label: '⬅️ Back to menu', next: 'start' }]
+                },
+                returns: {
+                    bot: 'Returns & exchange are accepted within 7 days, as long as you have the bill. 😊',
+                    options: [{ label: '⬅️ Back to menu', next: 'start' }]
+                },
+                location: {
+                    bot: 'Sarafan Bazar, Phagwara, Punjab! Come say hi in person too. 📍',
+                    options: [{ label: '⬅️ Back to menu', next: 'start' }]
+                },
+                bulk: {
+                    bot: 'We do wedding trousseau, return gifts, and festive hampers at wholesale-friendly prices!',
+                    options: [
+                        { label: 'Open Bulk Orders page', url: 'bulk-order.html' },
+                        { label: '⬅️ Back to menu', next: 'start' }
+                    ]
+                },
+                human: {
+                    bot: "Sure thing — tap below and we'll pick it up on WhatsApp! 💬",
+                    options: [
+                        { label: 'Open WhatsApp', url: 'https://wa.me/919815068679?text=Hi%20Jagdish%20Lifestyle!' },
+                        { label: '⬅️ Back to menu', next: 'start' }
+                    ]
+                }
+            };
+
+            function renderBuddyStep(key) {
+                const step = BUDDY_FAQ[key];
+                if (!step) return;
+                const body = document.getElementById('buddyChatBody');
+                const botMsg = document.createElement('div');
+                botMsg.className = 'buddy-chat-msg buddy-msg-bot';
+                botMsg.textContent = step.bot;
+                body.appendChild(botMsg);
+
+                const optionsWrap = document.createElement('div');
+                optionsWrap.className = 'buddy-chat-options';
+                step.options.forEach(opt => {
+                    const optBtn = document.createElement('button');
+                    optBtn.type = 'button';
+                    optBtn.className = 'buddy-chat-option';
+                    optBtn.textContent = opt.label;
+                    optBtn.onclick = () => handleBuddyOption(opt);
+                    optionsWrap.appendChild(optBtn);
+                });
+                body.appendChild(optionsWrap);
+                body.scrollTop = body.scrollHeight;
+            }
+
+            function handleBuddyOption(opt) {
+                const body = document.getElementById('buddyChatBody');
+                const blocks = body.querySelectorAll('.buddy-chat-options');
+                const lastBlock = blocks[blocks.length - 1];
+                if (lastBlock) lastBlock.remove();
+
+                const userMsg = document.createElement('div');
+                userMsg.className = 'buddy-chat-msg buddy-msg-user';
+                userMsg.textContent = opt.label;
+                body.appendChild(userMsg);
+                body.scrollTop = body.scrollHeight;
+
+                if (opt.url) { window.open(opt.url, '_blank'); return; }
+                setTimeout(() => renderBuddyStep(opt.next), 300);
+            }
+
+            window.openBuddyChat = function () {
+                const overlay = document.getElementById('buddyChatOverlay');
+                overlay.style.display = 'flex';
+                requestAnimationFrame(() => overlay.classList.add('active'));
+                document.getElementById('buddyChatBody').innerHTML = '';
+                renderBuddyStep('start');
+                delete buddy.dataset.sleeping; // clicking it directly always counts as waking it up
+                if (!isMoving()) setPose('wave');
+                setTimeout(() => { if (!isMoving()) setPose('idle'); }, 1500);
+            };
+            window.closeBuddyChat = function () {
+                const overlay = document.getElementById('buddyChatOverlay');
+                overlay.classList.remove('active');
+                setTimeout(() => { overlay.style.display = 'none'; }, 200);
+            };
+        })();
 
         function normalizeKey(str) { return String(str || '').trim().toLowerCase(); }
 
