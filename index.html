@@ -161,8 +161,10 @@
         @keyframes heroTwinkle { 0%, 100% { opacity: 0.25; transform: scale(0.8); } 50% { opacity: 0.9; transform: scale(1.2); } }
 
         /* ================= SCROLL BUDDY: climbs a real ladder, slides, waves hi ================= */
+        :root { --buddy-ladder-h: 58vh; }
         .buddy-unit {
-            position: fixed; z-index: 3500; pointer-events: none; user-select: none; width: 56px; height: 186px;
+            position: fixed; z-index: 3500; pointer-events: none; user-select: none;
+            width: 44px; height: calc(var(--buddy-ladder-h) + 44px);
             transition: top 0.7s cubic-bezier(0.34,1.56,0.64,1), left 0.7s cubic-bezier(0.34,1.56,0.64,1),
                         right 0.7s cubic-bezier(0.34,1.56,0.64,1), bottom 0.7s cubic-bezier(0.34,1.56,0.64,1),
                         opacity 0.4s ease;
@@ -173,41 +175,32 @@
         .buddy-unit.buddy-landed .buddy-ladder { display: none; }
 
         /* A real ladder — two rails + rungs, drawn in pure CSS, no image needed.
-           Fixed at a taller 8-rung height now, always the same spot on the page. */
-        .buddy-ladder { position: absolute; width: 30px; height: 180px; left: 13px; bottom: 0; }
+           Height tracks the viewport (--buddy-ladder-h), narrow width to match the
+           character's size, always in the same fixed spot on the page. */
+        .buddy-ladder { position: absolute; width: 20px; height: var(--buddy-ladder-h); left: 12px; bottom: 0; }
         .ladder-rail { position: absolute; top: 0; bottom: 0; width: 3px; background: var(--warm-mustard); border-radius: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
         .ladder-rail-left { left: 0; }
         .ladder-rail-right { right: 0; }
         .ladder-rung { position: absolute; left: 0; right: 0; height: 3px; background: var(--warm-mustard); border-radius: 2px; }
 
         .buddy-smoke {
-            position: absolute; width: 70px; height: 70px; object-fit: contain; left: -17px; bottom: -17px;
+            position: absolute; width: 70px; height: 70px; object-fit: contain; left: -23px; bottom: -17px;
             pointer-events: none; z-index: 1;
         }
         .buddy-char {
             position: absolute; width: 36px; height: 36px; object-fit: contain; z-index: 2;
             filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
-            bottom: 0; left: 10px; pointer-events: auto; cursor: pointer;
+            bottom: 0; left: 4px; pointer-events: auto; cursor: pointer;
+            transition: bottom 0.18s linear;
         }
-        /* Climbing: hops straight up all 8 rungs, one at a time — "steps()" makes
-           the motion literally discrete, like grabbing each rung, not a smooth glide. */
-        .buddy-char.buddy-climbing { animation: buddyClimbRungs 1.9s steps(8) infinite; }
-        @keyframes buddyClimbRungs {
-            0%   { bottom: 0;   transform: rotate(-4deg); }
-            12.5%  { bottom: 20px;  transform: rotate(4deg); }
-            25%    { bottom: 40px;  transform: rotate(-4deg); }
-            37.5%  { bottom: 60px;  transform: rotate(4deg); }
-            50%    { bottom: 80px;  transform: rotate(-4deg); }
-            62.5%  { bottom: 100px; transform: rotate(4deg); }
-            75%    { bottom: 120px; transform: rotate(-4deg); }
-            87.5%  { bottom: 140px; transform: rotate(4deg); }
-            100%   { bottom: 140px; transform: rotate(4deg); }
-        }
-        /* Sliding: a quick swoop straight back down the ladder */
-        .buddy-char.buddy-sliding { animation: buddySlideDown 1s cubic-bezier(0.6,-0.2,0.8,0.4) infinite; }
-        @keyframes buddySlideDown {
-            0%   { bottom: 140px; transform: rotate(14deg); }
-            100% { bottom: 0;     transform: rotate(-8deg); }
+        /* Position on the ladder is driven directly by actual scroll progress (in JS) —
+           at the very top of the page it's at the very top of the ladder, at the very
+           bottom of the page it's back at the ground. No looping animation, so there's
+           never a "snap back to start" glitch no matter how long or fast you scroll. */
+        .buddy-char.buddy-climbing, .buddy-char.buddy-sliding { animation: buddyWobble 0.35s ease-in-out infinite; }
+        @keyframes buddyWobble {
+            0%, 100% { transform: rotate(-4deg); }
+            50% { transform: rotate(4deg); }
         }
         /* Idle wave "hi" gesture — triggered every so often, not tied to scrolling */
         .buddy-char.buddy-wave { animation: buddyWave 0.8s ease 2; }
@@ -218,7 +211,11 @@
             60% { transform: rotate(-10deg) scale(1.08); }
             80% { transform: rotate(6deg) scale(1.04); }
         }
-        @media (max-width: 640px) { .buddy-unit { transform: scale(0.8); } .buddy-unit.buddy-flip { transform: scaleX(-0.8) scale(0.8); } }
+        @media (max-width: 640px) {
+            :root { --buddy-ladder-h: 40vh; }
+            .buddy-unit { width: 38px; transform: scale(0.85); }
+            .buddy-unit.buddy-flip { transform: scaleX(-0.85) scale(0.85); }
+        }
 
         .buddy-bubble {
             position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%) translateY(8px) scale(0.85);
@@ -1028,14 +1025,15 @@
         <div class="buddy-ladder">
             <div class="ladder-rail ladder-rail-left"></div>
             <div class="ladder-rail ladder-rail-right"></div>
-            <div class="ladder-rung" style="bottom:8px;"></div>
-            <div class="ladder-rung" style="bottom:28px;"></div>
-            <div class="ladder-rung" style="bottom:48px;"></div>
-            <div class="ladder-rung" style="bottom:68px;"></div>
-            <div class="ladder-rung" style="bottom:88px;"></div>
-            <div class="ladder-rung" style="bottom:108px;"></div>
-            <div class="ladder-rung" style="bottom:128px;"></div>
-            <div class="ladder-rung" style="bottom:148px;"></div>
+            <div class="ladder-rung" style="bottom:2%;"></div>
+            <div class="ladder-rung" style="bottom:13.5%;"></div>
+            <div class="ladder-rung" style="bottom:25%;"></div>
+            <div class="ladder-rung" style="bottom:36.5%;"></div>
+            <div class="ladder-rung" style="bottom:48%;"></div>
+            <div class="ladder-rung" style="bottom:59.5%;"></div>
+            <div class="ladder-rung" style="bottom:71%;"></div>
+            <div class="ladder-rung" style="bottom:82.5%;"></div>
+            <div class="ladder-rung" style="bottom:94%;"></div>
         </div>
         <img class="buddy-smoke" id="buddySmoke" src="" alt="" style="display:none;">
         <img class="buddy-char" id="buddyChar" src="mascot-idle.png" alt="Site mascot" data-pose="idle" onclick="openBuddyChat()" onerror="this.dataset.broken='1'; this.style.display='none'; document.getElementById('buddyEmojiFallback').style.display='block';">
@@ -3363,6 +3361,7 @@
             function goHomeToLadder() {
                 buddy.classList.remove('buddy-landed', 'buddy-flip');
                 buddy.style.top = '38%'; buddy.style.left = ''; buddy.style.right = '6px'; buddy.style.bottom = '';
+                buddy.style.height = ''; // restore the full ladder-tall height (landing shrinks it)
             }
             goHomeToLadder();
 
@@ -3382,14 +3381,33 @@
                 return candidates;
             }
 
+            // While landed on something, the container shrinks to a small fixed height —
+            // the ladder is much taller now, and without this the character (which sits
+            // at the bottom of the container) would end up far below wherever it's meant
+            // to be perched.
             function landOnElement(el) {
                 const rect = el.getBoundingClientRect();
                 const left = Math.min(window.innerWidth - 64, Math.max(8, rect.left + rect.width / 2 - 28));
                 const top = Math.max(8, rect.top - 54);
                 buddy.style.left = left + 'px'; buddy.style.top = top + 'px';
                 buddy.style.right = ''; buddy.style.bottom = '';
+                buddy.style.height = '80px';
                 buddy.classList.remove('buddy-flip');
                 buddy.classList.add('buddy-landed'); // hides the ladder — doesn't make sense floating over a card
+            }
+
+            // The character's height ON the ladder is driven directly by how far down
+            // the whole PAGE you've scrolled — top of the page = top of the ladder,
+            // bottom of the page = back on the ground. It's a continuous 1:1 mapping,
+            // not a repeating animation, so there's no cycle to "reset" or glitch on —
+            // scrolling further just keeps sliding it further, exactly like a real slider.
+            function syncCharToScrollProgress() {
+                if (buddy.classList.contains('buddy-landed') || buddy.classList.contains('buddy-hidden')) return;
+                const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+                const progress = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0;
+                const climbedFraction = (1 - progress).toFixed(4); // 1 = fully up top, 0 = fully at the ground
+                const bottomValue = `calc(var(--buddy-ladder-h) * ${climbedFraction})`;
+                chars.forEach(el => { if (el) el.style.bottom = bottomValue; });
             }
 
             window.addEventListener('scroll', () => {
@@ -3410,6 +3428,7 @@
                 if (buddy.classList.contains('buddy-landed')) {
                     goHomeToLadder();
                 }
+                syncCharToScrollProgress();
                 const currentY = window.scrollY;
                 if (currentY > lastScrollY) {
                     setCharClass('buddy-wave', false); // a gesture mid-flight would otherwise
@@ -3430,6 +3449,7 @@
                     setPose('idle');
                 }, 500);
             }, { passive: true });
+            syncCharToScrollProgress(); // start in the right spot even if the page loads mid-scroll
 
             // A friendly little gesture, now and then, even when nobody's scrolling —
             // picks a random one each time for variety, with a cute Punjabi line to match.
@@ -3445,22 +3465,50 @@
                 'fly': ['Balle Balle, udd gaya! ✈️', 'Wheee!']
             };
             const GESTURE_POSES = ['wave', 'namaste', 'cheer', 'thumbs-up', 'point', 'think', 'shy'];
+
+            // A quick run-cycle, frame by frame — used as a rare special moment, same
+            // spirit as the "fly" surprise.
+            const RUN_SEQUENCE = [
+                'started-walking-towards-right', 'started-walking-towards-right2', 'started-walking-towards-right3',
+                'started-walking-towards-right4', 'started-walking-towards-right5',
+                'started-running-towards-right', 'started-runningfast-towards-right', 'stoped-running-towards-right'
+            ];
+            function playRunSequence(onDone) {
+                let i = 0;
+                (function nextFrame() {
+                    if (i >= RUN_SEQUENCE.length || isMoving()) { if (onDone) onDone(); return; }
+                    setPose(RUN_SEQUENCE[i]);
+                    i++;
+                    setTimeout(nextFrame, 150);
+                })();
+            }
+
             function scheduleNextWave() {
                 const delay = 7000 + Math.random() * 9000;
                 setTimeout(() => {
                     if (!buddy.classList.contains('buddy-hidden') && !buddy.dataset.sleeping && !isMoving()) {
-                        // "fly" shows up rarely — about 1 in 10 times — everything else is even odds.
-                        const pose = Math.random() < 0.1
-                            ? 'fly'
-                            : GESTURE_POSES[Math.floor(Math.random() * GESTURE_POSES.length)];
-                        setPose(pose);
-                        setCharClass('buddy-wave', true);
-                        const lines = GESTURE_LINES[pose];
-                        if (lines) showBubble(lines[Math.floor(Math.random() * lines.length)]);
-                        setTimeout(() => {
+                        const roll = Math.random();
+                        if (roll < 0.08) {
+                            // Rare: a little run cycle across the spot.
                             setCharClass('buddy-wave', false);
-                            setPose('idle');
-                        }, 1700);
+                            showBubble('Balle Balle, daudta jaan! 🏃', 2000);
+                            playRunSequence(() => { if (!isMoving()) setPose('idle'); });
+                        } else if (roll < 0.16) {
+                            // Rare: a glimpse of flying.
+                            setPose('fly');
+                            showBubble('Balle Balle, udd gaya! ✈️', 2000);
+                            setTimeout(() => { if (!isMoving()) setPose('idle'); }, 1700);
+                        } else {
+                            const pose = GESTURE_POSES[Math.floor(Math.random() * GESTURE_POSES.length)];
+                            setPose(pose);
+                            setCharClass('buddy-wave', true);
+                            const lines = GESTURE_LINES[pose];
+                            if (lines) showBubble(lines[Math.floor(Math.random() * lines.length)]);
+                            setTimeout(() => {
+                                setCharClass('buddy-wave', false);
+                                if (!isMoving()) setPose('idle');
+                            }, 1700);
+                        }
                     }
                     scheduleNextWave();
                 }, delay);
@@ -3506,6 +3554,11 @@
             function scheduleNextVanish() {
                 const visibleFor = 9000 + Math.random() * 12000; // stays out 9-21s
                 setTimeout(() => {
+                    // Never interrupt an active climb/slide with a vanish — wait for it
+                    // to finish first, so it always stays in the SAME animation while
+                    // actually moving, instead of switching to "fly" mid-climb.
+                    if (isMoving()) { scheduleNextVanish(); return; }
+                    setCharClass('buddy-wave', false);
                     setPose('fly'); // a glimpse of flying off, just before the smoke covers it
                     playSmokePuff(() => buddy.classList.add('buddy-hidden'));
                     const hiddenFor = 3200 + Math.random() * 6000; // hides ~3-9s (a touch longer, to cover the puff)
@@ -3664,14 +3717,52 @@
                 document.getElementById('buddyChatBody').innerHTML = '';
                 renderBuddyStep('start');
                 delete buddy.dataset.sleeping; // clicking it directly always counts as waking it up
-                if (!isMoving()) setPose('wave');
-                setTimeout(() => { if (!isMoving()) setPose('idle'); }, 1500);
+
+                // Hop up and perch right on top of the chat panel, phone in hand — feels
+                // like it's actually part of the conversation, not off somewhere else.
+                if (!isMoving()) {
+                    requestAnimationFrame(() => {
+                        const panel = document.querySelector('.buddy-chat-panel');
+                        if (panel) {
+                            const rect = panel.getBoundingClientRect();
+                            buddy.classList.remove('buddy-flip');
+                            buddy.style.top = Math.max(8, rect.top - 48) + 'px';
+                            buddy.style.left = Math.min(window.innerWidth - 52, rect.right - 58) + 'px';
+                            buddy.style.right = ''; buddy.style.bottom = '';
+                            buddy.style.height = '80px';
+                            buddy.classList.add('buddy-landed');
+                        }
+                        setPose('phone-using');
+                    });
+                }
             };
             window.closeBuddyChat = function () {
                 const overlay = document.getElementById('buddyChatOverlay');
                 overlay.classList.remove('active');
                 setTimeout(() => { overlay.style.display = 'none'; }, 200);
+                // Head back to the ladder once the chat closes, instead of staying
+                // parked where the (now-gone) chat panel used to be.
+                if (buddy.classList.contains('buddy-landed')) {
+                    goHomeToLadder();
+                    if (!isMoving()) setPose('idle');
+                }
             };
+
+            // Introduces itself once per visit, shortly after the page loads.
+            if (!sessionStorage.getItem('jss_buddyIntroduced')) {
+                sessionStorage.setItem('jss_buddyIntroduced', '1');
+                setTimeout(() => {
+                    if (!buddy.classList.contains('buddy-hidden') && !isMoving()) {
+                        setPose('wave');
+                        setCharClass('buddy-wave', true);
+                        showBubble("Ji Aayan Nu! Tap me anytime for help 👋", 3600);
+                        setTimeout(() => {
+                            setCharClass('buddy-wave', false);
+                            if (!isMoving()) setPose('idle');
+                        }, 1700);
+                    }
+                }, 2500);
+            }
         })();
 
         function normalizeKey(str) { return String(str || '').trim().toLowerCase(); }
