@@ -3392,6 +3392,7 @@
             // centered — so it reads as a real fixture on the page, not a random pop-up.
             function goHomeToLadder() {
                 buddy.classList.remove('buddy-landed', 'buddy-flip', 'buddy-sitting-3d');
+                setCharClass('buddy-intro-big', false); // safety cleanup in case a rapid re-click interrupted mid-sequence
                 // Anchored from the BOTTOM, not a top percentage — so the ground end of
                 // the ladder always stays a safe distance above the floating bar/footer,
                 // and never drifts off the bottom of the screen.
@@ -3670,27 +3671,42 @@
                 delete buddy.dataset.sleeping;
 
                 if (btn) {
-                    // Instant teleport, in a quick puff of smoke — right next to the heart
+                    // Instant teleport, in a quick puff of smoke — right behind the heart
                     // that was just clicked, wherever it happened to be before.
                     setCharClass('buddy-wave', false);
                     playSmokePuff(() => buddy.classList.add('buddy-hidden'), 22);
                     setTimeout(() => {
                         const rect = btn.getBoundingClientRect();
-                        const left = Math.min(window.innerWidth - 60, Math.max(8, rect.left + rect.width / 2 - 30));
-                        const top = Math.max(8, rect.top - 62);
+                        // Centered horizontally on the heart (container is 44px wide, so
+                        // half of that — not the old, wrong 30px guess). Vertically, its
+                        // feet land just above the heart's top edge, not overlapping into
+                        // the icon itself, so it reads as "peeking from behind" it.
+                        const left = Math.min(window.innerWidth - 48, Math.max(8, rect.left + rect.width / 2 - 22));
+                        const top = Math.max(8, rect.top - 86);
+
+                        // Snap instantly to the new spot — the ladder's normal glide
+                        // transition would otherwise slide it across the whole screen
+                        // while it's meant to be a clean teleport.
+                        const prevTransition = buddy.style.transition;
+                        buddy.style.transition = 'opacity 0.3s ease';
                         buddy.classList.remove('buddy-flip');
                         buddy.style.left = left + 'px'; buddy.style.top = top + 'px';
                         buddy.style.right = ''; buddy.style.bottom = '';
                         buddy.style.height = '80px';
                         buddy.classList.add('buddy-landed', 'buddy-sitting-3d');
+                        void buddy.offsetHeight; // force layout so the snap actually applies before anything else reads it
+                        buddy.style.transition = prevTransition;
+
                         playSmokePuff(() => {
                             buddy.classList.remove('buddy-hidden');
                             setPose('cute-love');
                             setCharClass('buddy-wave', true);
+                            setCharClass('buddy-intro-big', true); // a little bigger for this moment
                             showBubble('Love you too! 💕', 2600);
                         }, 22);
                         setTimeout(() => {
                             setCharClass('buddy-wave', false);
+                            setCharClass('buddy-intro-big', false);
                             setTimeout(() => {
                                 if (buddy.classList.contains('buddy-landed')) {
                                     goHomeToLadder();
@@ -3698,7 +3714,7 @@
                                 }
                             }, 900);
                         }, 1800);
-                    }, 180);
+                    }, 160);
                 } else {
                     setPose('cute-love');
                     setCharClass('buddy-wave', true);
